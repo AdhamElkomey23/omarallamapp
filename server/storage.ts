@@ -1,49 +1,60 @@
 import { 
-  categories, 
-  artisans, 
-  products, 
-  reviews,
-  type Category, 
-  type InsertCategory,
-  type Artisan, 
-  type InsertArtisan,
+  products,
+  sales,
+  expenses,
+  activityLogs,
+  users,
   type Product, 
   type InsertProduct,
-  type Review, 
-  type InsertReview,
-  type ProductFilter,
+  type Sale,
+  type InsertSale,
+  type Expense,
+  type InsertExpense,
+  type ActivityLog,
+  type InsertActivityLog,
   type User,
   type InsertUser,
-  users
+  type DateRangeFilter
 } from "@shared/schema";
-import { seedData } from "./data/seed-data";
 
-// Modify the interface with any CRUD methods needed
+// Storage interface with CRUD methods for our Fertilizer Factory Finance Management app
 export interface IStorage {
-  // Categories
-  getAllCategories(): Promise<Category[]>;
-  getCategory(id: number): Promise<Category | undefined>;
-  getCategoryBySlug(slug: string): Promise<Category | undefined>;
-  createCategory(category: InsertCategory): Promise<Category>;
-
-  // Artisans
-  getAllArtisans(): Promise<Artisan[]>;
-  getFeaturedArtisans(limit?: number): Promise<Artisan[]>;
-  getArtisan(id: number): Promise<Artisan | undefined>;
-  createArtisan(artisan: InsertArtisan): Promise<Artisan>;
-
   // Products
   getAllProducts(): Promise<Product[]>;
-  getProductsWithFilters(filters: ProductFilter): Promise<Product[]>;
-  getFeaturedProducts(filters: ProductFilter, limit?: number): Promise<Product[]>;
-  getProductWithDetails(id: number): Promise<Product | undefined>;
+  getProduct(id: number): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: number): Promise<boolean>;
   
-  // Reviews
-  getAllReviews(): Promise<Review[]>;
-  getFeaturedReviews(limit?: number): Promise<Review[]>;
-  getReviewsByProductId(productId: number): Promise<Review[]>;
-  createReview(review: InsertReview): Promise<Review>;
+  // Sales
+  getAllSales(): Promise<Sale[]>;
+  getSalesByDateRange(startDate?: Date, endDate?: Date): Promise<Sale[]>;
+  getSalesByProductId(productId: number): Promise<Sale[]>;
+  createSale(sale: InsertSale): Promise<Sale>;
+  deleteSale(id: number): Promise<boolean>;
+  
+  // Expenses
+  getAllExpenses(): Promise<Expense[]>;
+  getExpensesByDateRange(startDate?: Date, endDate?: Date): Promise<Expense[]>;
+  getExpensesByCategory(category: string): Promise<Expense[]>;
+  createExpense(expense: InsertExpense): Promise<Expense>;
+  deleteExpense(id: number): Promise<boolean>;
+  
+  // Activity Logs
+  getAllActivityLogs(): Promise<ActivityLog[]>;
+  getActivityLogsByDateRange(startDate?: Date, endDate?: Date): Promise<ActivityLog[]>;
+  createActivityLog(log: InsertActivityLog): Promise<ActivityLog>;
+  deleteActivityLog(id: number): Promise<boolean>;
+  
+  // Dashboard Data
+  getDashboardData(filter?: DateRangeFilter): Promise<{
+    totalIncome: number;
+    totalExpenses: number;
+    profit: number;
+    topSellingProducts: Array<{productId: number, productName: string, totalSold: number, totalRevenue: number}>;
+    topExpenses: Array<{expenseName: string, amount: number, category: string}>;
+    recentTransactions: Array<{id: number, type: 'sale' | 'expense', amount: number, description: string, date: Date}>;
+  }>;
   
   // Users
   getUser(id: number): Promise<User | undefined>;
@@ -53,137 +64,134 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private categories: Map<number, Category>;
-  private artisans: Map<number, Artisan>;
   private products: Map<number, Product>;
-  private reviews: Map<number, Review>;
+  private sales: Map<number, Sale>;
+  private expenses: Map<number, Expense>;
+  private activityLogs: Map<number, ActivityLog>;
   
   private userCounter: number;
-  private categoryCounter: number;
-  private artisanCounter: number;
   private productCounter: number;
-  private reviewCounter: number;
+  private saleCounter: number;
+  private expenseCounter: number;
+  private activityLogCounter: number;
 
   constructor() {
     // Initialize maps
     this.users = new Map();
-    this.categories = new Map();
-    this.artisans = new Map();
     this.products = new Map();
-    this.reviews = new Map();
+    this.sales = new Map();
+    this.expenses = new Map();
+    this.activityLogs = new Map();
     
     // Initialize counters
     this.userCounter = 1;
-    this.categoryCounter = 1;
-    this.artisanCounter = 1;
     this.productCounter = 1;
-    this.reviewCounter = 1;
+    this.saleCounter = 1;
+    this.expenseCounter = 1;
+    this.activityLogCounter = 1;
     
     // Load seed data
     this.loadSeedData();
   }
 
   private loadSeedData() {
-    // Load categories
-    seedData.categories.forEach(category => {
-      const newCategory: Category = {
-        ...category,
-        id: this.categoryCounter++
+    // Sample user
+    const user: User = {
+      id: this.userCounter++,
+      username: 'admin',
+      password: 'admin123' // In a real app, this would be hashed
+    };
+    this.users.set(user.id, user);
+    
+    // Sample products
+    const sampleProducts = [
+      { name: 'NPK Fertilizer', unitPrice: 2500, stockQuantity: 150 },
+      { name: 'Urea', unitPrice: 1800, stockQuantity: 200 },
+      { name: 'Organic Compost', unitPrice: 1200, stockQuantity: 100 },
+      { name: 'Phosphate', unitPrice: 2200, stockQuantity: 80 },
+      { name: 'Potassium Nitrate', unitPrice: 3000, stockQuantity: 60 }
+    ];
+    
+    sampleProducts.forEach(prod => {
+      const product: Product = {
+        id: this.productCounter++,
+        name: prod.name,
+        unitPrice: prod.unitPrice,
+        stockQuantity: prod.stockQuantity || 0,
+        createdAt: new Date()
       };
-      this.categories.set(newCategory.id, newCategory);
+      this.products.set(product.id, product);
     });
     
-    // Load artisans
-    seedData.artisans.forEach(artisan => {
-      const newArtisan: Artisan = {
-        ...artisan,
-        id: this.artisanCounter++
-      };
-      this.artisans.set(newArtisan.id, newArtisan);
-    });
+    // Sample sales (last 30 days)
+    const today = new Date();
+    const sampleSales = [
+      { productId: 1, quantity: 20, totalAmount: 50000, saleDate: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000) },
+      { productId: 2, quantity: 15, totalAmount: 27000, saleDate: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000) },
+      { productId: 3, quantity: 10, totalAmount: 12000, saleDate: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000) },
+      { productId: 1, quantity: 25, totalAmount: 62500, saleDate: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000) },
+      { productId: 4, quantity: 8, totalAmount: 17600, saleDate: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000) }
+    ];
     
-    // Load products
-    seedData.products.forEach(product => {
-      const newProduct: Product = {
-        ...product,
-        id: this.productCounter++
+    sampleSales.forEach(sale => {
+      const newSale: Sale = {
+        id: this.saleCounter++,
+        productId: sale.productId,
+        quantity: sale.quantity,
+        totalAmount: sale.totalAmount,
+        saleDate: sale.saleDate,
+        createdAt: new Date()
       };
-      this.products.set(newProduct.id, newProduct);
-    });
-    
-    // Load reviews
-    seedData.reviews.forEach(review => {
-      const newReview: Review = {
-        ...review,
-        id: this.reviewCounter++
-      };
-      this.reviews.set(newReview.id, newReview);
+      this.sales.set(newSale.id, newSale);
       
-      // Update product's average rating and review count
-      this.updateProductRatingStats(review.productId);
+      // Update product stock
+      const product = this.products.get(sale.productId);
+      if (product) {
+        this.products.set(product.id, {
+          ...product,
+          stockQuantity: product.stockQuantity - sale.quantity
+        });
+      }
     });
-  }
-
-  private updateProductRatingStats(productId: number) {
-    const product = this.products.get(productId);
-    if (!product) return;
     
-    // Get all reviews for this product
-    const productReviews = Array.from(this.reviews.values())
-      .filter(review => review.productId === productId);
+    // Sample expenses
+    const sampleExpenses = [
+      { name: 'Electricity Bill', amount: 15000, category: 'Utilities', expenseDate: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000) },
+      { name: 'Worker Salaries', amount: 50000, category: 'Salaries', expenseDate: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000) },
+      { name: 'Equipment Repair', amount: 8000, category: 'Maintenance', expenseDate: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000) },
+      { name: 'Raw Materials', amount: 35000, category: 'RawMaterials', expenseDate: new Date(today.getTime() - 12 * 24 * 60 * 60 * 1000) },
+      { name: 'Transportation', amount: 12000, category: 'Transportation', expenseDate: new Date(today.getTime() - 18 * 24 * 60 * 60 * 1000) }
+    ];
     
-    // Calculate average rating
-    const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
-    const avgRating = productReviews.length > 0 ? totalRating / productReviews.length : 0;
-    
-    // Update product
-    this.products.set(productId, {
-      ...product,
-      averageRating: parseFloat(avgRating.toFixed(1)),
-      reviewCount: productReviews.length
+    sampleExpenses.forEach(expense => {
+      const newExpense: Expense = {
+        id: this.expenseCounter++,
+        name: expense.name,
+        amount: expense.amount,
+        category: expense.category,
+        expenseDate: expense.expenseDate,
+        createdAt: new Date()
+      };
+      this.expenses.set(newExpense.id, newExpense);
     });
-  }
-
-  // Category Methods
-  async getAllCategories(): Promise<Category[]> {
-    return Array.from(this.categories.values());
-  }
-
-  async getCategory(id: number): Promise<Category | undefined> {
-    return this.categories.get(id);
-  }
-
-  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
-    return Array.from(this.categories.values()).find(
-      category => category.slug === slug
-    );
-  }
-
-  async createCategory(insertCategory: InsertCategory): Promise<Category> {
-    const id = this.categoryCounter++;
-    const category: Category = { ...insertCategory, id };
-    this.categories.set(id, category);
-    return category;
-  }
-
-  // Artisan Methods
-  async getAllArtisans(): Promise<Artisan[]> {
-    return Array.from(this.artisans.values());
-  }
-
-  async getFeaturedArtisans(limit = 3): Promise<Artisan[]> {
-    return Array.from(this.artisans.values()).slice(0, limit);
-  }
-
-  async getArtisan(id: number): Promise<Artisan | undefined> {
-    return this.artisans.get(id);
-  }
-
-  async createArtisan(insertArtisan: InsertArtisan): Promise<Artisan> {
-    const id = this.artisanCounter++;
-    const artisan: Artisan = { ...insertArtisan, id };
-    this.artisans.set(id, artisan);
-    return artisan;
+    
+    // Sample activity logs
+    const sampleLogs = [
+      { title: 'Equipment Maintenance', description: 'Mixer machine repaired', logDate: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000) },
+      { title: 'Inventory Check', description: 'Monthly inventory verification completed', logDate: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000) },
+      { title: 'Process Improvement', description: 'Implemented new mixing procedure for higher efficiency', logDate: new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000) }
+    ];
+    
+    sampleLogs.forEach(log => {
+      const newLog: ActivityLog = {
+        id: this.activityLogCounter++,
+        title: log.title,
+        description: log.description,
+        logDate: log.logDate,
+        createdAt: new Date()
+      };
+      this.activityLogs.set(newLog.id, newLog);
+    });
   }
 
   // Product Methods
@@ -191,128 +199,375 @@ export class MemStorage implements IStorage {
     return Array.from(this.products.values());
   }
 
-  async getProductsWithFilters(filters: ProductFilter): Promise<Product[]> {
-    let filteredProducts = Array.from(this.products.values());
-    
-    // Apply category filter
-    if (filters.categoryIds && filters.categoryIds.length > 0) {
-      filteredProducts = filteredProducts.filter(product => 
-        filters.categoryIds!.includes(product.categoryId)
-      );
-    }
-    
-    // Apply artisan filter
-    if (filters.artisanIds && filters.artisanIds.length > 0) {
-      filteredProducts = filteredProducts.filter(product => 
-        filters.artisanIds!.includes(product.artisanId)
-      );
-    }
-    
-    // Apply price range filter
-    if (filters.priceRanges && filters.priceRanges.length > 0) {
-      filteredProducts = filteredProducts.filter(product => 
-        filters.priceRanges!.some(([min, max]) => 
-          product.price >= min && (max === Infinity || product.price <= max)
-        )
-      );
-    }
-    
-    // Apply customizable filter
-    if (filters.isCustomizable !== undefined) {
-      filteredProducts = filteredProducts.filter(product => 
-        product.isCustomizable === filters.isCustomizable
-      );
-    }
-    
-    // Apply search query filter
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
-      filteredProducts = filteredProducts.filter(product => 
-        product.name.toLowerCase().includes(query) || 
-        product.description.toLowerCase().includes(query)
-      );
-    }
-    
-    // Add artisan name to each product
-    return filteredProducts.map(product => {
-      const artisan = this.artisans.get(product.artisanId);
-      return {
-        ...product,
-        artisanName: artisan ? artisan.businessName : 'Unknown Artisan'
-      };
-    });
-  }
-
-  async getFeaturedProducts(filters: ProductFilter, limit = 6): Promise<Product[]> {
-    // Get filtered products
-    const filteredProducts = await this.getProductsWithFilters(filters);
-    
-    // Sort by rating and limit results
-    return filteredProducts
-      .sort((a, b) => b.averageRating - a.averageRating)
-      .slice(0, limit);
-  }
-
-  async getProductWithDetails(id: number): Promise<Product | undefined> {
-    const product = this.products.get(id);
-    if (!product) return undefined;
-    
-    // Get artisan details
-    const artisan = this.artisans.get(product.artisanId);
-    
-    return {
-      ...product,
-      artisanName: artisan ? artisan.businessName : 'Unknown Artisan'
-    };
+  async getProduct(id: number): Promise<Product | undefined> {
+    return this.products.get(id);
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = this.productCounter++;
     const product: Product = { 
       ...insertProduct, 
-      id, 
-      averageRating: 0, 
-      reviewCount: 0,
+      id,
       createdAt: new Date()
     };
     this.products.set(id, product);
     return product;
   }
-
-  // Review Methods
-  async getAllReviews(): Promise<Review[]> {
-    return Array.from(this.reviews.values());
+  
+  async updateProduct(id: number, productUpdate: Partial<InsertProduct>): Promise<Product | undefined> {
+    const existingProduct = this.products.get(id);
+    if (!existingProduct) return undefined;
+    
+    const updatedProduct: Product = {
+      ...existingProduct,
+      ...productUpdate
+    };
+    
+    this.products.set(id, updatedProduct);
+    return updatedProduct;
+  }
+  
+  async deleteProduct(id: number): Promise<boolean> {
+    return this.products.delete(id);
   }
 
-  async getFeaturedReviews(limit = 3): Promise<Review[]> {
-    return Array.from(this.reviews.values())
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, limit);
+  // Sale Methods
+  async getAllSales(): Promise<Sale[]> {
+    return Array.from(this.sales.values());
   }
-
-  async getReviewsByProductId(productId: number): Promise<Review[]> {
-    return Array.from(this.reviews.values())
-      .filter(review => review.productId === productId)
-      .sort((a, b) => 
-        // Sort by verified purchase first, then by date (newest first)
-        (b.isVerifiedPurchase ? 1 : 0) - (a.isVerifiedPurchase ? 1 : 0) ||
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+  
+  async getSalesByDateRange(startDate?: Date, endDate?: Date): Promise<Sale[]> {
+    let filteredSales = Array.from(this.sales.values());
+    
+    if (startDate) {
+      filteredSales = filteredSales.filter(sale => {
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return saleDate >= startDate;
+      });
+    }
+    
+    if (endDate) {
+      filteredSales = filteredSales.filter(sale => {
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return saleDate <= endDate;
+      });
+    }
+    
+    return filteredSales.sort((a, b) => {
+      const dateA = a.saleDate instanceof Date ? a.saleDate : new Date(a.saleDate);
+      const dateB = b.saleDate instanceof Date ? b.saleDate : new Date(b.saleDate);
+      return dateB.getTime() - dateA.getTime();
+    });
   }
-
-  async createReview(insertReview: InsertReview): Promise<Review> {
-    const id = this.reviewCounter++;
-    const review: Review = { 
-      ...insertReview, 
+  
+  async getSalesByProductId(productId: number): Promise<Sale[]> {
+    return Array.from(this.sales.values())
+      .filter(sale => sale.productId === productId)
+      .sort((a, b) => {
+        const dateA = a.saleDate instanceof Date ? a.saleDate : new Date(a.saleDate);
+        const dateB = b.saleDate instanceof Date ? b.saleDate : new Date(b.saleDate);
+        return dateB.getTime() - dateA.getTime();
+      });
+  }
+  
+  async createSale(insertSale: InsertSale): Promise<Sale> {
+    const id = this.saleCounter++;
+    
+    // Ensure saleDate is a Date object
+    const saleDate = insertSale.saleDate instanceof Date 
+      ? insertSale.saleDate 
+      : new Date(insertSale.saleDate);
+    
+    const sale: Sale = {
+      ...insertSale,
+      saleDate,
       id,
       createdAt: new Date()
     };
-    this.reviews.set(id, review);
+    this.sales.set(id, sale);
     
-    // Update product's average rating and review count
-    this.updateProductRatingStats(review.productId);
+    // Update product stock
+    const product = this.products.get(sale.productId);
+    if (product) {
+      this.products.set(product.id, {
+        ...product,
+        stockQuantity: product.stockQuantity - sale.quantity
+      });
+    }
     
-    return review;
+    return sale;
+  }
+  
+  async deleteSale(id: number): Promise<boolean> {
+    const sale = this.sales.get(id);
+    if (!sale) return false;
+    
+    // Restore product stock
+    const product = this.products.get(sale.productId);
+    if (product) {
+      this.products.set(product.id, {
+        ...product,
+        stockQuantity: product.stockQuantity + sale.quantity
+      });
+    }
+    
+    return this.sales.delete(id);
+  }
+
+  // Expense Methods
+  async getAllExpenses(): Promise<Expense[]> {
+    return Array.from(this.expenses.values());
+  }
+  
+  async getExpensesByDateRange(startDate?: Date, endDate?: Date): Promise<Expense[]> {
+    let filteredExpenses = Array.from(this.expenses.values());
+    
+    if (startDate) {
+      filteredExpenses = filteredExpenses.filter(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return expenseDate >= startDate;
+      });
+    }
+    
+    if (endDate) {
+      filteredExpenses = filteredExpenses.filter(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return expenseDate <= endDate;
+      });
+    }
+    
+    return filteredExpenses.sort((a, b) => {
+      const dateA = a.expenseDate instanceof Date ? a.expenseDate : new Date(a.expenseDate);
+      const dateB = b.expenseDate instanceof Date ? b.expenseDate : new Date(b.expenseDate);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+  
+  async getExpensesByCategory(category: string): Promise<Expense[]> {
+    return Array.from(this.expenses.values())
+      .filter(expense => expense.category === category)
+      .sort((a, b) => {
+        const dateA = a.expenseDate instanceof Date ? a.expenseDate : new Date(a.expenseDate);
+        const dateB = b.expenseDate instanceof Date ? b.expenseDate : new Date(b.expenseDate);
+        return dateB.getTime() - dateA.getTime();
+      });
+  }
+  
+  async createExpense(insertExpense: InsertExpense): Promise<Expense> {
+    const id = this.expenseCounter++;
+    
+    // Ensure expenseDate is a Date object
+    const expenseDate = insertExpense.expenseDate instanceof Date 
+      ? insertExpense.expenseDate 
+      : new Date(insertExpense.expenseDate);
+    
+    const expense: Expense = {
+      ...insertExpense,
+      expenseDate,
+      id,
+      createdAt: new Date()
+    };
+    this.expenses.set(id, expense);
+    return expense;
+  }
+  
+  async deleteExpense(id: number): Promise<boolean> {
+    return this.expenses.delete(id);
+  }
+
+  // Activity Log Methods
+  async getAllActivityLogs(): Promise<ActivityLog[]> {
+    return Array.from(this.activityLogs.values());
+  }
+  
+  async getActivityLogsByDateRange(startDate?: Date, endDate?: Date): Promise<ActivityLog[]> {
+    let filteredLogs = Array.from(this.activityLogs.values());
+    
+    if (startDate) {
+      filteredLogs = filteredLogs.filter(log => {
+        const logDate = log.logDate instanceof Date ? log.logDate : new Date(log.logDate);
+        return logDate >= startDate;
+      });
+    }
+    
+    if (endDate) {
+      filteredLogs = filteredLogs.filter(log => {
+        const logDate = log.logDate instanceof Date ? log.logDate : new Date(log.logDate);
+        return logDate <= endDate;
+      });
+    }
+    
+    return filteredLogs.sort((a, b) => {
+      const dateA = a.logDate instanceof Date ? a.logDate : new Date(a.logDate);
+      const dateB = b.logDate instanceof Date ? b.logDate : new Date(b.logDate);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+  
+  async createActivityLog(insertLog: InsertActivityLog): Promise<ActivityLog> {
+    const id = this.activityLogCounter++;
+    
+    // Ensure logDate is a Date object
+    const logDate = insertLog.logDate instanceof Date 
+      ? insertLog.logDate 
+      : new Date(insertLog.logDate);
+    
+    const log: ActivityLog = {
+      ...insertLog,
+      logDate,
+      id,
+      createdAt: new Date()
+    };
+    this.activityLogs.set(id, log);
+    return log;
+  }
+  
+  async deleteActivityLog(id: number): Promise<boolean> {
+    return this.activityLogs.delete(id);
+  }
+
+  // Dashboard Data Methods
+  async getDashboardData(filter?: DateRangeFilter): Promise<{
+    totalIncome: number;
+    totalExpenses: number;
+    profit: number;
+    topSellingProducts: Array<{productId: number, productName: string, totalSold: number, totalRevenue: number}>;
+    topExpenses: Array<{expenseName: string, amount: number, category: string}>;
+    recentTransactions: Array<{id: number, type: 'sale' | 'expense', amount: number, description: string, date: Date}>;
+  }> {
+    // Filter data by date range if provided
+    let filteredSales = Array.from(this.sales.values());
+    let filteredExpenses = Array.from(this.expenses.values());
+    
+    if (filter?.startDate) {
+      filteredSales = filteredSales.filter(sale => {
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return saleDate >= filter.startDate!;
+      });
+      
+      filteredExpenses = filteredExpenses.filter(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return expenseDate >= filter.startDate!;
+      });
+    }
+    
+    if (filter?.endDate) {
+      filteredSales = filteredSales.filter(sale => {
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return saleDate <= filter.endDate!;
+      });
+      
+      filteredExpenses = filteredExpenses.filter(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return expenseDate <= filter.endDate!;
+      });
+    }
+    
+    // Filter by product if specified
+    if (filter?.productId) {
+      filteredSales = filteredSales.filter(sale => sale.productId === filter.productId);
+    }
+    
+    // Filter by expense category if specified
+    if (filter?.category) {
+      filteredExpenses = filteredExpenses.filter(expense => expense.category === filter.category);
+    }
+    
+    // Calculate total income
+    const totalIncome = filteredSales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+    
+    // Calculate total expenses
+    const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    
+    // Calculate profit/loss
+    const profit = totalIncome - totalExpenses;
+    
+    // Calculate top selling products
+    const productSales = new Map<number, {totalSold: number, totalRevenue: number}>();
+    
+    filteredSales.forEach(sale => {
+      const existing = productSales.get(sale.productId) || {totalSold: 0, totalRevenue: 0};
+      productSales.set(sale.productId, {
+        totalSold: existing.totalSold + sale.quantity,
+        totalRevenue: existing.totalRevenue + sale.totalAmount
+      });
+    });
+    
+    const topSellingProducts = Array.from(productSales.entries())
+      .map(([productId, data]) => {
+        const product = this.products.get(productId);
+        return {
+          productId,
+          productName: product ? product.name : 'Unknown Product',
+          totalSold: data.totalSold,
+          totalRevenue: data.totalRevenue
+        };
+      })
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, 5); // Top 5 products
+    
+    // Get top expenses
+    const topExpenses = filteredExpenses
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5) // Top 5 expenses
+      .map(expense => ({
+        expenseName: expense.name,
+        amount: expense.amount,
+        category: expense.category
+      }));
+    
+    // Get recent transactions (last 7 days if no filter)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    let recentSales = filteredSales;
+    let recentExpenses = filteredExpenses;
+    
+    if (!filter?.startDate && !filter?.endDate) {
+      recentSales = recentSales.filter(sale => {
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return saleDate >= sevenDaysAgo;
+      });
+      
+      recentExpenses = recentExpenses.filter(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return expenseDate >= sevenDaysAgo;
+      });
+    }
+    
+    // Combine and sort sales and expenses for recent transactions
+    const recentTransactions = [
+      ...recentSales.map(sale => {
+        const product = this.products.get(sale.productId);
+        const saleDate = sale.saleDate instanceof Date ? sale.saleDate : new Date(sale.saleDate);
+        return {
+          id: sale.id,
+          type: 'sale' as const,
+          amount: sale.totalAmount,
+          description: `Sale: ${product?.name || 'Unknown Product'} (${sale.quantity} units)`,
+          date: saleDate
+        };
+      }),
+      ...recentExpenses.map(expense => {
+        const expenseDate = expense.expenseDate instanceof Date ? expense.expenseDate : new Date(expense.expenseDate);
+        return {
+          id: expense.id,
+          type: 'expense' as const,
+          amount: expense.amount,
+          description: `Expense: ${expense.name} (${expense.category})`,
+          date: expenseDate
+        };
+      })
+    ].sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    return {
+      totalIncome,
+      totalExpenses,
+      profit,
+      topSellingProducts,
+      topExpenses,
+      recentTransactions
+    };
   }
 
   // User Methods

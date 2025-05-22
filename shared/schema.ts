@@ -1,96 +1,8 @@
-import { pgTable, text, serial, integer, boolean, doublePrecision, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, doublePrecision, timestamp, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Categories Table
-export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  imageUrl: text("image_url").notNull(),
-});
-
-export const insertCategorySchema = createInsertSchema(categories).omit({ id: true });
-export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = typeof categories.$inferSelect;
-
-// Artisans Table
-export const artisans = pgTable("artisans", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  businessName: text("business_name").notNull(),
-  description: text("description").notNull(),
-  imageUrl: text("image_url").notNull(),
-  tags: text("tags").array().notNull(),
-});
-
-export const insertArtisanSchema = createInsertSchema(artisans).omit({ id: true });
-export type InsertArtisan = z.infer<typeof insertArtisanSchema>;
-export type Artisan = typeof artisans.$inferSelect;
-
-// Products Table
-export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  price: doublePrecision("price").notNull(),
-  categoryId: integer("category_id").notNull(),
-  artisanId: integer("artisan_id").notNull(),
-  isCustomizable: boolean("is_customizable").notNull().default(false),
-  imageUrl: text("image_url").notNull(),
-  imageUrls: text("image_urls").array().notNull(),
-  customizationOptions: text("customization_options").notNull(),
-  averageRating: doublePrecision("average_rating").notNull().default(0),
-  reviewCount: integer("review_count").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-export const insertProductSchema = createInsertSchema(products).omit({ id: true, createdAt: true, averageRating: true, reviewCount: true });
-export type InsertProduct = z.infer<typeof insertProductSchema>;
-export type Product = typeof products.$inferSelect;
-
-// Reviews Table
-export const reviews = pgTable("reviews", {
-  id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull(),
-  userName: text("user_name").notNull(),
-  email: text("email").notNull(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  rating: integer("rating").notNull(),
-  isVerifiedPurchase: boolean("is_verified_purchase").notNull().default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, createdAt: true });
-export type InsertReview = z.infer<typeof insertReviewSchema>;
-export type Review = typeof reviews.$inferSelect;
-
-// Cart Items Schema (for client-side only)
-export const cartItemSchema = z.object({
-  id: z.string(),
-  productId: z.number(),
-  name: z.string(),
-  price: z.number(),
-  imageUrl: z.string(),
-  quantity: z.number(),
-  customizations: z.record(z.string(), z.string()).optional(),
-});
-
-export type CartItem = z.infer<typeof cartItemSchema>;
-
-// Product Filtering Schema
-export const productFilterSchema = z.object({
-  categoryIds: z.array(z.number()).optional(),
-  artisanIds: z.array(z.number()).optional(),
-  priceRanges: z.array(z.tuple([z.number(), z.number()])).optional(),
-  searchQuery: z.string().optional(),
-  isCustomizable: z.boolean().optional(),
-});
-
-export type ProductFilter = z.infer<typeof productFilterSchema>;
-
-// User schema (used for session storage only)
+// Users Table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -104,3 +16,100 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+// Products Table
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  unitPrice: doublePrecision("unit_price").notNull(),
+  stockQuantity: integer("stock_quantity").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertProductSchema = createInsertSchema(products).omit({ id: true, createdAt: true });
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type Product = typeof products.$inferSelect;
+
+// Sales Table
+export const sales = pgTable("sales", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull(),
+  quantity: integer("quantity").notNull(),
+  totalAmount: doublePrecision("total_amount").notNull(),
+  saleDate: date("sale_date").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// For the insert schema, we need to handle dates properly
+export const insertSaleSchema = createInsertSchema(sales).omit({ id: true, createdAt: true });
+export type InsertSale = z.infer<typeof insertSaleSchema>;
+export type Sale = {
+  id: number;
+  productId: number;
+  quantity: number;
+  totalAmount: number;
+  saleDate: Date;
+  createdAt: Date;
+};
+
+// Expense Categories Enum
+export const expenseCategoryEnum = z.enum([
+  "Utilities",
+  "Salaries",
+  "Maintenance",
+  "RawMaterials",
+  "Transportation",
+  "Other"
+]);
+
+export type ExpenseCategory = z.infer<typeof expenseCategoryEnum>;
+
+// Expenses Table
+export const expenses = pgTable("expenses", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  amount: doublePrecision("amount").notNull(),
+  category: text("category").notNull(), // Will store ExpenseCategory values
+  expenseDate: date("expense_date").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertExpenseSchema = createInsertSchema(expenses).omit({ id: true, createdAt: true });
+export type InsertExpense = z.infer<typeof insertExpenseSchema>;
+export type Expense = {
+  id: number;
+  name: string;
+  amount: number;
+  category: string;
+  expenseDate: Date;
+  createdAt: Date;
+};
+
+// Activity Logs Table
+export const activityLogs = pgTable("activity_logs", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  logDate: date("log_date").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({ id: true, createdAt: true });
+export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+export type ActivityLog = {
+  id: number;
+  title: string;
+  description: string;
+  logDate: Date;
+  createdAt: Date;
+};
+
+// Dashboard Filter Schema (for client-side only)
+export const dateRangeFilterSchema = z.object({
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
+  productId: z.number().optional(),
+  category: z.string().optional(),
+});
+
+export type DateRangeFilter = z.infer<typeof dateRangeFilterSchema>;

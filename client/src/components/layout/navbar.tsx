@@ -1,105 +1,78 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'wouter';
-import { useCart } from '@/hooks/use-cart';
+import { useState } from "react";
+import { Link } from "wouter";
+import {
+  LuBell,
+  LuUser,
+  LuSearch,
+  LuCalendar
+} from "react-icons/lu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
-  const { items } = useCart();
-
-  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Shop', path: '/categories' },
-    { name: 'Artisans', path: '/artisans' },
-    { name: 'About', path: '/about' },
-  ];
+  const [searchQuery, setSearchQuery] = useState("");
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center">
-          <Link href="/" className="flex items-center">
-            <i className="ri-seedling-line text-2xl text-primary mr-2"></i>
-            <span className="font-heading text-xl font-bold text-primary">Artisana</span>
-          </Link>
-        </div>
-        
-        <div className="hidden md:flex items-center space-x-8">
-          <nav className="flex items-center space-x-6">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.path} 
-                href={link.path} 
-                className={`font-accent text-sm font-medium transition-all ${location === link.path ? 'text-primary' : 'hover:text-primary'}`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-          
-          <div className="flex items-center space-x-4">
-            <Link href="/search" className="text-lg hover:text-primary transition-all">
-              <i className="ri-search-line"></i>
-            </Link>
-            <Link href="/account" className="text-lg hover:text-primary transition-all">
-              <i className="ri-user-line"></i>
-            </Link>
-            <Link href="/cart" className="text-lg hover:text-primary transition-all relative">
-              <i className="ri-shopping-cart-2-line"></i>
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+    <header className="sticky top-0 z-30 bg-white border-b">
+      <div className="container flex items-center justify-between h-16 px-4 md:px-6">
+        {/* Search */}
+        <div className="hidden md:flex w-[240px] lg:w-[280px] space-x-2">
+          <div className="relative w-full">
+            <LuSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="pl-8 bg-background"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
         </div>
-        
-        <button 
-          onClick={toggleMobileMenu} 
-          className="md:hidden text-gray-600 focus:outline-none"
-          aria-label="Toggle mobile menu"
-        >
-          <i className="ri-menu-line text-2xl"></i>
-        </button>
-      </div>
-      
-      {/* Mobile menu */}
-      <div className={`md:hidden bg-white px-4 pt-2 pb-4 ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <nav className="flex flex-col space-y-4">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.path} 
-              href={link.path} 
-              className={`font-accent text-sm font-medium ${location === link.path ? 'text-primary' : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-        
-        <div className="flex items-center space-x-6 mt-4">
-          <Link href="/search" className="text-lg" onClick={() => setIsMobileMenuOpen(false)}>
-            <i className="ri-search-line"></i>
-          </Link>
-          <Link href="/account" className="text-lg" onClick={() => setIsMobileMenuOpen(false)}>
-            <i className="ri-user-line"></i>
-          </Link>
-          <Link href="/cart" className="text-lg relative" onClick={() => setIsMobileMenuOpen(false)}>
-            <i className="ri-shopping-cart-2-line"></i>
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {totalItems}
-              </span>
-            )}
-          </Link>
+
+        {/* Date display for larger screens */}
+        <div className="hidden md:flex items-center">
+          <LuCalendar className="mr-2 h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{currentDate}</span>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="icon" className="relative">
+            <LuBell className="h-5 w-5" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <LuUser className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/settings">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/login">Logout</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
