@@ -42,7 +42,7 @@ import {
   Plus, 
   Filter, 
   CalendarIcon,
-  PieChart
+  PieChart as PieChartIcon
 } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
