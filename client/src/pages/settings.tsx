@@ -34,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { LuAlertCircle, LuInfo, LuUser, LuShield } from "react-icons/lu";
+import { AlertCircle, Info, User, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Profile form schema
