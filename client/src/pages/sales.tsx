@@ -37,7 +37,7 @@ export default function Sales() {
     queryKey: ['/api/sales', productFilter],
     queryFn: async () => {
       let queryParams = '';
-      if (productFilter) {
+      if (productFilter && productFilter !== 'all') {
         queryParams = `?productId=${productFilter}`;
       }
       
@@ -145,7 +145,7 @@ export default function Sales() {
                         <SelectContent>
                           {products.map((product) => (
                             <SelectItem key={product.id} value={product.id.toString()}>
-                              {product.name} - ${product.price.toFixed(2)}
+                              {product.name} - ${product.unitPrice.toFixed(2)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -255,7 +255,7 @@ export default function Sales() {
                   <SelectValue placeholder="All products" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All products</SelectItem>
+                  <SelectItem value="all">All products</SelectItem>
                   {products.map((product) => (
                     <SelectItem key={product.id} value={product.id.toString()}>
                       {product.name}
