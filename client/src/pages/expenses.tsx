@@ -1,91 +1,29 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { formatCurrency } from "@/lib/utils";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { 
-  Plus, 
-  Filter, 
-  CalendarIcon,
-  PieChart as PieChartIcon
-} from "lucide-react";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { z } from "zod";
 import { format } from "date-fns";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip
-} from "recharts";
+import { Calendar as CalendarIcon, Plus, PieChart, Calendar } from "lucide-react";
 
-// Expense categories
-const EXPENSE_CATEGORIES = [
-  "Utilities",
-  "Salaries",
-  "Maintenance",
-  "RawMaterials",
-  "Transportation",
-  "Other"
-];
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { insertExpenseSchema, type Expense, type ExpenseCategory } from "../../../shared/schema";
 
-// Colors for the pie chart
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A569BD', '#FF6B6B'];
-
-// Form schema for expenses
-const expenseFormSchema = z.object({
-  name: z.string().min(1, "Expense name is required"),
-  amount: z.coerce.number().min(0.01, "Amount must be greater than 0"),
-  category: z.string().min(1, "Category is required"),
+// Form validation schema
+const expenseFormSchema = insertExpenseSchema.extend({
   expenseDate: z.date({
-    required_error: "Expense date is required",
+    required_error: "Expense date is required.",
   }),
 });
 
@@ -93,46 +31,62 @@ type ExpenseFormValues = z.infer<typeof expenseFormSchema>;
 
 export default function Expenses() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [dateFilter, setDateFilter] = useState<{startDate?: Date, endDate?: Date}>({});
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
+  const [dateFilter, setDateFilter] = useState<{startDate?: Date, endDate?: Date}>({});
+  const { toast } = useToast();
 
-  // Fetch expenses with filters
-  const { data: expenses, isLoading } = useQuery({
-    queryKey: ['/api/expenses', dateFilter, categoryFilter],
-    queryFn: () => {
+  // Fetch expenses
+  const { data: expenses = [], isLoading } = useQuery({
+    queryKey: ['/api/expenses', categoryFilter, dateFilter],
+    queryFn: async () => {
       let queryParams = '';
       const params = new URLSearchParams();
-      
-      if (dateFilter.startDate) {
-        params.append('startDate', dateFilter.startDate.toISOString());
-      }
-      
-      if (dateFilter.endDate) {
-        params.append('endDate', dateFilter.endDate.toISOString());
-      }
       
       if (categoryFilter) {
         params.append('category', categoryFilter);
       }
-      
-      if (params.toString()) {
-        queryParams = `?${params.toString()}`;
+      if (dateFilter.startDate) {
+        params.append('startDate', dateFilter.startDate.toISOString());
+      }
+      if (dateFilter.endDate) {
+        params.append('endDate', dateFilter.endDate.toISOString());
       }
       
-      return apiRequest(`/api/expenses${queryParams}`);
+      if (params.toString()) {
+        queryParams = '?' + params.toString();
+      }
+      
+      const response = await fetch(`/api/expenses${queryParams}`);
+      if (!response.ok) throw new Error('Failed to fetch expenses');
+      return response.json() as Promise<Expense[]>;
     }
   });
 
   const addExpenseMutation = useMutation({
-    mutationFn: (values: ExpenseFormValues) => 
-      apiRequest('/api/expenses', {
+    mutationFn: async (values: ExpenseFormValues) => {
+      const response = await fetch('/api/expenses', {
         method: 'POST',
-        body: JSON.stringify(values)
-      }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) throw new Error('Failed to add expense');
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/expenses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
       setIsAddDialogOpen(false);
+      toast({
+        title: "Expense Added",
+        description: "Your expense has been recorded successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to add expense. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 
@@ -141,42 +95,35 @@ export default function Expenses() {
     defaultValues: {
       name: "",
       amount: 0,
-      category: "",
+      category: "utilities",
       expenseDate: new Date(),
-    }
+    },
   });
 
   function onSubmit(values: ExpenseFormValues) {
     addExpenseMutation.mutate(values);
-    form.reset();
   }
 
-  // Calculate totals and prepare chart data
-  const totalExpenseAmount = (expenses || []).reduce((sum: number, expense: any) => sum + expense.amount, 0);
-  
-  // Group expenses by category for the pie chart
-  const expensesByCategory = (expenses || []).reduce((acc: Record<string, number>, expense: any) => {
-    if (!acc[expense.category]) {
-      acc[expense.category] = 0;
-    }
-    acc[expense.category] += expense.amount;
+  // Calculate summary data
+  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const expensesByCategory = expenses.reduce((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
-  }, {});
-  
-  const pieChartData = Object.entries(expensesByCategory).map(([name, value]) => ({ name, value }));
-
-  // Handle date range filter
-  const handleDateRangeSelect = (range: { from?: Date; to?: Date }) => {
-    setDateFilter({
-      startDate: range.from,
-      endDate: range.to
-    });
-  };
+  }, {} as Record<string, number>);
 
   // Clear all filters
   const clearFilters = () => {
     setDateFilter({});
     setCategoryFilter(undefined);
+  };
+
+  const handleDateRangeSelect = (range: { from?: Date; to?: Date } | undefined) => {
+    if (range) {
+      setDateFilter({
+        startDate: range.from,
+        endDate: range.to
+      });
+    }
   };
 
   return (
@@ -186,7 +133,7 @@ export default function Expenses() {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">
-              <LuPlus className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Add Expense
             </Button>
           </DialogTrigger>
@@ -194,10 +141,9 @@ export default function Expenses() {
             <DialogHeader>
               <DialogTitle>Add New Expense</DialogTitle>
               <DialogDescription>
-                Record a new expense
+                Record a new expense for your business.
               </DialogDescription>
             </DialogHeader>
-
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -207,55 +153,54 @@ export default function Expenses() {
                     <FormItem>
                       <FormLabel>Expense Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Electricity Bill" {...field} />
+                        <Input placeholder="Enter expense name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount (₹)</FormLabel>
+                      <FormLabel>Amount</FormLabel>
                       <FormControl>
-                        <Input type="number" min="0.01" step="0.01" {...field} />
+                        <Input 
+                          type="number" 
+                          step="0.01" 
+                          placeholder="0.00" 
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="category"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {EXPENSE_CATEGORIES.map(category => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="utilities">Utilities</SelectItem>
+                          <SelectItem value="salaries">Salaries</SelectItem>
+                          <SelectItem value="maintenance">Maintenance</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="expenseDate"
@@ -267,19 +212,22 @@ export default function Expenses() {
                           <FormControl>
                             <Button
                               variant={"outline"}
-                              className="w-full pl-3 text-left font-normal"
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
                             >
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
                                 <span>Pick a date</span>
                               )}
-                              <LuCalendar className="ml-auto h-4 w-4 opacity-50" />
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
+                          <CalendarComponent
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
@@ -294,195 +242,167 @@ export default function Expenses() {
                     </FormItem>
                   )}
                 />
-
-                <DialogFooter>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsAddDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
                   <Button type="submit" disabled={addExpenseMutation.isPending}>
                     {addExpenseMutation.isPending ? "Adding..." : "Add Expense"}
                   </Button>
-                </DialogFooter>
+                </div>
               </form>
             </Form>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Summary and Chart */}
+      {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="md:col-span-1">
-          <CardHeader className="pb-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalExpenseAmount)}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              From {expenses?.length || 0} transactions
-            </p>
+            <div className="text-2xl font-bold">${totalExpenses.toFixed(2)}</div>
           </CardContent>
         </Card>
-        
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <LuPieChart className="mr-2 h-4 w-4" />
-              Expense Breakdown
-            </CardTitle>
-            <CardDescription>
-              Distribution by category
-            </CardDescription>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">This Month</CardTitle>
           </CardHeader>
           <CardContent>
-            {pieChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={60}
-                    fill="#8884d8"
-                    dataKey="value"
-                    labelLine={false}
-                    label={({ name, percent }) => 
-                      `${name}: ${(percent * 100).toFixed(0)}%`
-                    }
-                  >
-                    {pieChartData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={COLORS[index % COLORS.length]} 
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value) => formatCurrency(value as number)} 
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex justify-center items-center h-[200px] text-muted-foreground">
-                No expense data to display
-              </div>
-            )}
+            <div className="text-2xl font-bold">
+              ${expenses.filter(expense => {
+                const expenseDate = new Date(expense.expenseDate);
+                const now = new Date();
+                return expenseDate.getMonth() === now.getMonth() && 
+                       expenseDate.getFullYear() === now.getFullYear();
+              }).reduce((sum, expense) => sum + expense.amount, 0).toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+            <PieChart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{Object.keys(expensesByCategory).length}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="flex items-center gap-2"
-              size="sm"
-            >
-              <LuCalendar className="h-4 w-4" />
-              {dateFilter.startDate && dateFilter.endDate
-                ? `${format(dateFilter.startDate, "MMM d")} - ${format(dateFilter.endDate, "MMM d, yyyy")}`
-                : dateFilter.startDate
-                ? `From ${format(dateFilter.startDate, "MMM d, yyyy")}`
-                : dateFilter.endDate
-                ? `Until ${format(dateFilter.endDate, "MMM d, yyyy")}`
-                : "Date Range"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="range"
-              selected={{
-                from: dateFilter.startDate,
-                to: dateFilter.endDate
-              }}
-              onSelect={handleDateRangeSelect}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-
-        <Select 
-          value={categoryFilter || ""} 
-          onValueChange={(value) => setCategoryFilter(value || undefined)}
-        >
-          <SelectTrigger className="h-9 w-[180px]">
-            <SelectValue placeholder="Filter by Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
-            {EXPENSE_CATEGORIES.map(category => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {(dateFilter.startDate || dateFilter.endDate || categoryFilter) && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={clearFilters}
-          >
-            Clear Filters
-          </Button>
-        )}
-      </div>
-
-      {/* Expenses Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Expense History</CardTitle>
+          <CardTitle>Filters</CardTitle>
+          <CardDescription>Filter expenses by category and date range</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="category-filter">Category</Label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="utilities">Utilities</SelectItem>
+                  <SelectItem value="salaries">Salaries</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Date Range</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !dateFilter.startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {dateFilter.startDate ? (
+                      dateFilter.endDate ? (
+                        <>
+                          {format(dateFilter.startDate, "LLL dd, y")} -{" "}
+                          {format(dateFilter.endDate, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(dateFilter.startDate, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateFilter.startDate}
+                    selected={{
+                      from: dateFilter.startDate,
+                      to: dateFilter.endDate,
+                    }}
+                    onSelect={handleDateRangeSelect}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="flex items-end">
+              <Button variant="outline" onClick={clearFilters} className="w-full">
+                Clear Filters
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Expenses List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Expenses</CardTitle>
           <CardDescription>
-            {categoryFilter 
-              ? `Filtered by category: ${categoryFilter}`
-              : "All expense transactions"}
+            {expenses.length > 0 ? `${expenses.length} expenses found` : "No expenses found"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="flex items-center justify-center h-32">
+              <div className="text-muted-foreground">Loading expenses...</div>
             </div>
-          ) : expenses && expenses.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {expenses.map((expense: any) => (
-                  <TableRow key={expense.id}>
-                    <TableCell>
-                      {new Date(expense.expenseDate).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {expense.name}
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700">
-                        {expense.category}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right text-red-600">
-                      {formatCurrency(expense.amount)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          ) : expenses.length === 0 ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="text-muted-foreground">No expenses recorded yet</div>
+            </div>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No expenses found</p>
-              <Button
-                variant="link"
-                onClick={() => setIsAddDialogOpen(true)}
-                className="mt-2"
-              >
-                Add your first expense
-              </Button>
+            <div className="space-y-4">
+              {expenses.map((expense) => (
+                <div
+                  key={expense.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
+                  <div className="space-y-1">
+                    <p className="font-medium">{expense.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {expense.category} • {format(new Date(expense.expenseDate), "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-red-600">-${expense.amount.toFixed(2)}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
