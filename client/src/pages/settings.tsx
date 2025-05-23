@@ -153,15 +153,15 @@ export default function Settings() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="account" className="flex items-center gap-2">
-            <LuUser className="h-4 w-4" />
+            <User className="h-4 w-4" />
             Account
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
-            <LuShield className="h-4 w-4" />
+            <Shield className="h-4 w-4" />
             Security
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <LuInfo className="h-4 w-4" />
+            <Info className="h-4 w-4" />
             Notifications
           </TabsTrigger>
         </TabsList>
@@ -297,7 +297,7 @@ export default function Settings() {
           </Card>
 
           <Alert>
-            <LuAlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Security Tip</AlertTitle>
             <AlertDescription>
               Never share your password with anyone. Use a password manager to generate and store strong, unique passwords.

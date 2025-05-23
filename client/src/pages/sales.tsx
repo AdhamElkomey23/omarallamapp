@@ -142,7 +142,7 @@ export default function Sales() {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">
-              <LuPlus className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Record Sale
             </Button>
           </DialogTrigger>
