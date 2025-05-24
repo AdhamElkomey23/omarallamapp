@@ -1,0 +1,297 @@
+// Internationalization support for Arabic/English
+export const translations = {
+  en: {
+    // Navigation
+    dashboard: "Dashboard",
+    products: "Products",
+    sales: "Sales",
+    expenses: "Expenses",
+    workers: "Workers",
+    activityLogs: "Activity Logs",
+    reports: "Reports",
+    settings: "Settings",
+    
+    // App Title
+    appTitle: "Fertilizer Factory",
+    appSubtitle: "Finance Manager",
+    appDescription: "Built for mobile-first management",
+    
+    // Dashboard
+    totalRevenue: "Total Revenue",
+    totalExpenses: "Total Expenses",
+    profit: "Profit",
+    totalProducts: "Total Products",
+    unitsSold: "Units Sold",
+    salesOverview: "Sales Overview",
+    topProducts: "Top Products",
+    revenueDistribution: "Revenue distribution by product",
+    thisMonth: "This Month",
+    days7: "7 Days",
+    days30: "30 Days",
+    days90: "90 Days",
+    year: "Year",
+    
+    // Products
+    addProduct: "Add Product",
+    productName: "Product Name",
+    unitPrice: "Unit Price",
+    stockQuantity: "Stock Quantity",
+    productAdded: "Product Added",
+    productUpdated: "Product Updated",
+    editProduct: "Edit Product",
+    
+    // Sales
+    recordSale: "Record Sale",
+    totalSales: "Total Sales",
+    quantity: "Quantity",
+    totalAmount: "Total Amount",
+    saleRecorded: "Sale Recorded",
+    
+    // Expenses
+    addExpense: "Add Expense",
+    expenseName: "Expense Name",
+    amount: "Amount",
+    category: "Category",
+    expenseDate: "Expense Date",
+    expenseAdded: "Expense Added",
+    categories: "Categories",
+    
+    // Workers
+    addWorker: "Add Worker",
+    fullName: "Full Name",
+    jobRole: "Job Role",
+    department: "Department",
+    monthlySalary: "Monthly Salary",
+    hireDate: "Hire Date",
+    email: "Email",
+    phone: "Phone",
+    status: "Status",
+    active: "Active",
+    inactive: "Inactive",
+    terminated: "Terminated",
+    totalWorkers: "Total Workers",
+    activeWorkers: "Active Workers",
+    totalSalaryExpense: "Total Salary Expense",
+    departments: "Departments",
+    workerAdded: "Worker Added",
+    workerUpdated: "Worker Updated",
+    editWorker: "Edit Worker",
+    
+    // Common
+    cancel: "Cancel",
+    save: "Save",
+    edit: "Edit",
+    delete: "Delete",
+    add: "Add",
+    update: "Update",
+    loading: "Loading...",
+    error: "Error",
+    success: "Success",
+    filters: "Filters",
+    clearFilters: "Clear Filters",
+    allCategories: "All categories",
+    allProducts: "All products",
+    allDepartments: "All departments",
+    allStatuses: "All statuses",
+    search: "Search...",
+    profile: "Profile",
+    logout: "Log out",
+    optional: "Optional",
+    required: "Required",
+    perMonth: "per month",
+    monthly: "monthly",
+    
+    // Form validations
+    nameRequired: "Name is required",
+    nameMinLength: "Name must be at least 2 characters",
+    emailInvalid: "Invalid email",
+    positiveNumber: "Must be a positive number",
+    dateRequired: "Date is required",
+    roleRequired: "Role is required",
+    departmentRequired: "Department is required",
+    
+    // Departments
+    production: "Production",
+    qualityControl: "Quality Control",
+    administration: "Administration",
+    maintenance: "Maintenance",
+    logistics: "Logistics",
+    
+    // Categories
+    utilities: "Utilities",
+    salaries: "Salaries",
+    other: "Other",
+    
+    // Messages
+    noDataFound: "No data found",
+    noWorkersFound: "No workers found",
+    noSalesFound: "No sales found",
+    noExpensesFound: "No expenses found",
+    addFirstWorker: "Add Your First Worker",
+    recordFirstSale: "Record Your First Sale",
+    
+    // Notifications
+    notifications: "Notifications",
+    factoryManager: "Factory Manager",
+    version: "Version 1.0.0"
+  },
+  
+  ar: {
+    // Navigation
+    dashboard: "لوحة القيادة",
+    products: "المنتجات",
+    sales: "المبيعات",
+    expenses: "المصروفات",
+    workers: "العمال",
+    activityLogs: "سجل الأنشطة",
+    reports: "التقارير",
+    settings: "الإعدادات",
+    
+    // App Title
+    appTitle: "مصنع الأسمدة",
+    appSubtitle: "مدير المالية",
+    appDescription: "مصمم للإدارة المحمولة أولاً",
+    
+    // Dashboard
+    totalRevenue: "إجمالي الإيرادات",
+    totalExpenses: "إجمالي المصروفات",
+    profit: "الربح",
+    totalProducts: "إجمالي المنتجات",
+    unitsSold: "الوحدات المباعة",
+    salesOverview: "نظرة عامة على المبيعات",
+    topProducts: "أفضل المنتجات",
+    revenueDistribution: "توزيع الإيرادات حسب المنتج",
+    thisMonth: "هذا الشهر",
+    days7: "7 أيام",
+    days30: "30 يوم",
+    days90: "90 يوم",
+    year: "سنة",
+    
+    // Products
+    addProduct: "إضافة منتج",
+    productName: "اسم المنتج",
+    unitPrice: "سعر الوحدة",
+    stockQuantity: "كمية المخزون",
+    productAdded: "تم إضافة المنتج",
+    productUpdated: "تم تحديث المنتج",
+    editProduct: "تعديل المنتج",
+    
+    // Sales
+    recordSale: "تسجيل مبيعة",
+    totalSales: "إجمالي المبيعات",
+    quantity: "الكمية",
+    totalAmount: "المبلغ الإجمالي",
+    saleRecorded: "تم تسجيل المبيعة",
+    
+    // Expenses
+    addExpense: "إضافة مصروف",
+    expenseName: "اسم المصروف",
+    amount: "المبلغ",
+    category: "الفئة",
+    expenseDate: "تاريخ المصروف",
+    expenseAdded: "تم إضافة المصروف",
+    categories: "الفئات",
+    
+    // Workers
+    addWorker: "إضافة عامل",
+    fullName: "الاسم الكامل",
+    jobRole: "المنصب الوظيفي",
+    department: "القسم",
+    monthlySalary: "الراتب الشهري",
+    hireDate: "تاريخ التوظيف",
+    email: "البريد الإلكتروني",
+    phone: "الهاتف",
+    status: "الحالة",
+    active: "نشط",
+    inactive: "غير نشط",
+    terminated: "منتهي الخدمة",
+    totalWorkers: "إجمالي العمال",
+    activeWorkers: "العمال النشطون",
+    totalSalaryExpense: "إجمالي مصروفات الرواتب",
+    departments: "الأقسام",
+    workerAdded: "تم إضافة العامل",
+    workerUpdated: "تم تحديث بيانات العامل",
+    editWorker: "تعديل بيانات العامل",
+    
+    // Common
+    cancel: "إلغاء",
+    save: "حفظ",
+    edit: "تعديل",
+    delete: "حذف",
+    add: "إضافة",
+    update: "تحديث",
+    loading: "جاري التحميل...",
+    error: "خطأ",
+    success: "نجح",
+    filters: "المرشحات",
+    clearFilters: "مسح المرشحات",
+    allCategories: "جميع الفئات",
+    allProducts: "جميع المنتجات",
+    allDepartments: "جميع الأقسام",
+    allStatuses: "جميع الحالات",
+    search: "بحث...",
+    profile: "الملف الشخصي",
+    logout: "تسجيل الخروج",
+    optional: "اختياري",
+    required: "مطلوب",
+    perMonth: "في الشهر",
+    monthly: "شهري",
+    
+    // Form validations
+    nameRequired: "الاسم مطلوب",
+    nameMinLength: "يجب أن يكون الاسم على الأقل حرفين",
+    emailInvalid: "بريد إلكتروني غير صالح",
+    positiveNumber: "يجب أن يكون رقم موجب",
+    dateRequired: "التاريخ مطلوب",
+    roleRequired: "المنصب مطلوب",
+    departmentRequired: "القسم مطلوب",
+    
+    // Departments
+    production: "الإنتاج",
+    qualityControl: "مراقبة الجودة",
+    administration: "الإدارة",
+    maintenance: "الصيانة",
+    logistics: "اللوجستيات",
+    
+    // Categories
+    utilities: "المرافق",
+    salaries: "الرواتب",
+    other: "أخرى",
+    
+    // Messages
+    noDataFound: "لا توجد بيانات",
+    noWorkersFound: "لا يوجد عمال",
+    noSalesFound: "لا توجد مبيعات",
+    noExpensesFound: "لا توجد مصروفات",
+    addFirstWorker: "أضف أول عامل",
+    recordFirstSale: "سجل أول مبيعة",
+    
+    // Notifications
+    notifications: "الإشعارات",
+    factoryManager: "مدير المصنع",
+    version: "الإصدار 1.0.0"
+  }
+};
+
+export type Language = keyof typeof translations;
+export type TranslationKey = keyof typeof translations.en;
+
+let currentLanguage: Language = 'ar'; // Default to Arabic
+
+export const setLanguage = (lang: Language) => {
+  currentLanguage = lang;
+  // Update document direction
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+};
+
+export const getCurrentLanguage = (): Language => currentLanguage;
+
+export const t = (key: TranslationKey): string => {
+  return translations[currentLanguage][key] || translations.en[key] || key;
+};
+
+export const isRTL = (): boolean => currentLanguage === 'ar';
+
+// Initialize with Arabic
+setLanguage('ar');

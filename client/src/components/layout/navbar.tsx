@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { t } from "@/lib/i18n";
 
 export function Navbar() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -69,7 +70,7 @@ export function Navbar() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search..."
+                placeholder={t("search")}
                 className="pl-9 h-9 bg-muted/50"
               />
             </div>
@@ -82,7 +83,7 @@ export function Navbar() {
           {isMobile ? (
             <div className="text-center">
               <div className="text-sm font-semibold text-foreground">
-                Finance Manager
+                {t("appSubtitle")}
               </div>
               <div className="text-xs text-muted-foreground">
                 {formatTime(currentTime)}
@@ -92,7 +93,7 @@ export function Navbar() {
             /* Desktop: Show full info */
             <div className="text-center">
               <div className="text-sm font-semibold text-foreground">
-                Fertilizer Factory Finance Manager
+                {t("appTitle")} {t("appSubtitle")}
               </div>
               <div className="text-xs text-muted-foreground">
                 {formatDate(currentTime)} • {formatTime(currentTime)}
@@ -137,7 +138,7 @@ export function Navbar() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Factory Manager</p>
+                  <p className="text-sm font-medium leading-none">{t("factoryManager")}</p>
                   <p className="text-xs leading-none text-muted-foreground">
                     manager@fertilizer.com
                   </p>
@@ -146,16 +147,16 @@ export function Navbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+                <span>{t("profile")}</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <span>{t("settings")}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>{t("logout")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

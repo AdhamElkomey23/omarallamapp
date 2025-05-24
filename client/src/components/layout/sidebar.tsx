@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { t, isRTL } from "@/lib/i18n";
 import {
   LayoutDashboard,
   Package,
@@ -82,42 +83,42 @@ export function Sidebar() {
     {
       href: "/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
-      title: "Dashboard",
+      title: t("dashboard"),
     },
     {
       href: "/products",
       icon: <Package className="h-5 w-5" />,
-      title: "Products",
+      title: t("products"),
     },
     {
       href: "/sales",
       icon: <ShoppingCart className="h-5 w-5" />,
-      title: "Sales",
+      title: t("sales"),
     },
     {
       href: "/expenses",
       icon: <Banknote className="h-5 w-5" />,
-      title: "Expenses",
+      title: t("expenses"),
     },
     {
       href: "/workers",
       icon: <Users className="h-5 w-5" />,
-      title: "Workers",
+      title: t("workers"),
     },
     {
       href: "/activity-logs",
       icon: <ClipboardList className="h-5 w-5" />,
-      title: "Activity Logs",
+      title: t("activityLogs"),
     },
     {
       href: "/reports",
       icon: <PieChart className="h-5 w-5" />,
-      title: "Reports",
+      title: t("reports"),
     },
     {
       href: "/settings",
       icon: <Settings className="h-5 w-5" />,
-      title: "Settings",
+      title: t("settings"),
     },
   ];
 
@@ -132,8 +133,8 @@ export function Sidebar() {
             </div>
             {(!collapsed || isMobile) && (
               <div className="min-w-0">
-                <h2 className="text-lg font-bold leading-tight text-foreground">Fertilizer Factory</h2>
-                <p className="text-xs text-muted-foreground">Finance Manager</p>
+                <h2 className="text-lg font-bold leading-tight text-foreground">{t("appTitle")}</h2>
+                <p className="text-xs text-muted-foreground">{t("appSubtitle")}</p>
               </div>
             )}
           </div>
@@ -166,7 +167,7 @@ export function Sidebar() {
         </div>
         {(!collapsed || isMobile) && (
           <div className="mt-3 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
-            Version 1.0.0
+            {t("version")}
           </div>
         )}
       </div>
@@ -190,7 +191,7 @@ export function Sidebar() {
       {(!collapsed || isMobile) && (
         <div className="px-4 py-3 border-t bg-muted/30">
           <p className="text-xs text-muted-foreground text-center">
-            Built for mobile-first management
+            {t("appDescription")}
           </p>
         </div>
       )}
