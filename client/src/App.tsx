@@ -11,6 +11,7 @@ import ProductDetail from "@/pages/product-detail";
 import Sales from "@/pages/sales";
 import SaleDetail from "@/pages/sale-detail";
 import Expenses from "@/pages/expenses";
+import Workers from "@/pages/workers";
 import ActivityLogs from "@/pages/activity-logs";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
@@ -38,6 +39,7 @@ function Router() {
                 <Route path="/sales" component={Sales}/>
                 <Route path="/sales/:id" component={SaleDetail}/>
                 <Route path="/expenses" component={Expenses}/>
+                <Route path="/workers" component={Workers}/>
                 <Route path="/activity-logs" component={ActivityLogs}/>
                 <Route path="/settings" component={Settings}/>
                 <Route path="/:rest*" component={NotFound} />

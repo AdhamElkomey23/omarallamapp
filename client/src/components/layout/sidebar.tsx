@@ -11,7 +11,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  PieChart
+  PieChart,
+  Users
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -66,6 +67,11 @@ export function Sidebar() {
       href: "/expenses",
       icon: <Banknote className="h-5 w-5" />,
       title: "Expenses",
+    },
+    {
+      href: "/workers",
+      icon: <Users className="h-5 w-5" />,
+      title: "Workers",
     },
     {
       href: "/activity-logs",
