@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { apiRequest } from "@/lib/queryClient";
 import { formatCurrency } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 import { LuArrowDown, LuArrowUp, LuDollarSign, LuBadgePercent, LuBox, LuShoppingCart, LuTrendingUp } from "react-icons/lu";
 import { useState } from "react";
 
@@ -109,13 +110,13 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("dashboard")}</h1>
         <Tabs value={dateFilter} onValueChange={setDateFilter} className="w-[400px]">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="7days">7 Days</TabsTrigger>
-            <TabsTrigger value="30days">30 Days</TabsTrigger>
-            <TabsTrigger value="90days">90 Days</TabsTrigger>
-            <TabsTrigger value="year">Year</TabsTrigger>
+            <TabsTrigger value="7days">{t("days7")}</TabsTrigger>
+            <TabsTrigger value="30days">{t("days30")}</TabsTrigger>
+            <TabsTrigger value="90days">{t("days90")}</TabsTrigger>
+            <TabsTrigger value="year">{t("year")}</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
