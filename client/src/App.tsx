@@ -61,15 +61,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <div className="flex min-h-screen bg-gray-50">
-          <Sidebar />
-          <div className="flex-1">
-            <Navbar />
-            <main className="container mx-auto px-4 py-6">
-              <Router />
-            </main>
-          </div>
-        </div>
+        <Router />
       </TooltipProvider>
     </QueryClientProvider>
   );
