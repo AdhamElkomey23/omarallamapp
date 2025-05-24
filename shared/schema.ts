@@ -104,6 +104,24 @@ export type ActivityLog = {
   createdAt: Date;
 };
 
+// Workers table
+export const workers = pgTable("workers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  role: text("role").notNull(),
+  department: text("department").notNull(),
+  salary: integer("salary").notNull(),
+  hireDate: date("hire_date").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  status: text("status").notNull().default("active"), // active, inactive, terminated
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertWorkerSchema = createInsertSchema(workers).omit({ id: true, createdAt: true });
+export type InsertWorker = z.infer<typeof insertWorkerSchema>;
+export type Worker = typeof workers.$inferSelect;
+
 // Dashboard Filter Schema (for client-side only)
 export const dateRangeFilterSchema = z.object({
   startDate: z.date().optional(),

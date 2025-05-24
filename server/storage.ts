@@ -4,6 +4,7 @@ import {
   expenses,
   activityLogs,
   users,
+  workers,
   type Product, 
   type InsertProduct,
   type Sale,
@@ -14,6 +15,8 @@ import {
   type InsertActivityLog,
   type User,
   type InsertUser,
+  type Worker,
+  type InsertWorker,
   type DateRangeFilter
 } from "@shared/schema";
 
@@ -55,6 +58,14 @@ export interface IStorage {
     topExpenses: Array<{expenseName: string, amount: number, category: string}>;
     recentTransactions: Array<{id: number, type: 'sale' | 'expense', amount: number, description: string, date: Date}>;
   }>;
+  
+  // Workers
+  getAllWorkers(): Promise<Worker[]>;
+  getWorker(id: number): Promise<Worker | undefined>;
+  createWorker(worker: InsertWorker): Promise<Worker>;
+  updateWorker(id: number, worker: Partial<InsertWorker>): Promise<Worker | undefined>;
+  deleteWorker(id: number): Promise<boolean>;
+  getWorkersByDepartment(department: string): Promise<Worker[]>;
   
   // Users
   getUser(id: number): Promise<User | undefined>;
