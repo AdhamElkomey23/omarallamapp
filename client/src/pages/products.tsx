@@ -212,7 +212,7 @@ export default function Products() {
                   name="stockQuantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stock Quantity</FormLabel>
+                      <FormLabel>{t("stockQuantity")}</FormLabel>
                       <FormControl>
                         <Input type="number" min="0" {...field} />
                       </FormControl>
@@ -223,7 +223,7 @@ export default function Products() {
 
                 <DialogFooter>
                   <Button type="submit" disabled={addProductMutation.isPending}>
-                    {addProductMutation.isPending ? "Adding..." : "Add Product"}
+                    {addProductMutation.isPending ? t("adding") : t("addProduct")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -235,9 +235,9 @@ export default function Products() {
         <Dialog open={editingProduct !== null} onOpenChange={(open) => !open && setEditingProduct(null)}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Product</DialogTitle>
+              <DialogTitle>{t("editProduct")}</DialogTitle>
               <DialogDescription>
-                Update product details
+                {t("updateProductDetails")}
               </DialogDescription>
             </DialogHeader>
 
@@ -248,9 +248,9 @@ export default function Products() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
+                      <FormLabel>{t("productName")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="NPK Fertilizer" {...field} />
+                        <Input placeholder={t("npkFertilizer")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

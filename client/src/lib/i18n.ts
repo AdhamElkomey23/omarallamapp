@@ -184,7 +184,11 @@ export const translations = {
     
     // Time periods
     weekly: "Weekly",
-    yearly: "Yearly"
+    yearly: "Yearly",
+    
+    // Additional Product form fields
+    updateProductDetails: "Update product details",
+    adding: "Adding..."
   },
   
   ar: {
