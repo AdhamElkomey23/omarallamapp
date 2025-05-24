@@ -79,12 +79,14 @@ export class MemStorage implements IStorage {
   private sales: Map<number, Sale>;
   private expenses: Map<number, Expense>;
   private activityLogs: Map<number, ActivityLog>;
+  private workers: Map<number, Worker>;
   
   private userCounter: number;
   private productCounter: number;
   private saleCounter: number;
   private expenseCounter: number;
   private activityLogCounter: number;
+  private workerCounter: number;
 
   constructor() {
     // Initialize maps
@@ -93,6 +95,7 @@ export class MemStorage implements IStorage {
     this.sales = new Map();
     this.expenses = new Map();
     this.activityLogs = new Map();
+    this.workers = new Map();
     
     // Initialize counters
     this.userCounter = 1;
@@ -100,6 +103,7 @@ export class MemStorage implements IStorage {
     this.saleCounter = 1;
     this.expenseCounter = 1;
     this.activityLogCounter = 1;
+    this.workerCounter = 1;
     
     // Load seed data
     this.loadSeedData();
@@ -597,6 +601,48 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+
+  // Workers Methods
+  async getAllWorkers(): Promise<Worker[]> {
+    return Array.from(this.workers.values());
+  }
+
+  async getWorker(id: number): Promise<Worker | undefined> {
+    return this.workers.get(id);
+  }
+
+  async createWorker(insertWorker: InsertWorker): Promise<Worker> {
+    const id = this.workerCounter++;
+    const worker: Worker = { 
+      ...insertWorker, 
+      id,
+      createdAt: new Date()
+    };
+    this.workers.set(id, worker);
+    return worker;
+  }
+
+  async updateWorker(id: number, workerUpdate: Partial<InsertWorker>): Promise<Worker | undefined> {
+    const existingWorker = this.workers.get(id);
+    if (!existingWorker) {
+      return undefined;
+    }
+
+    const updatedWorker: Worker = {
+      ...existingWorker,
+      ...workerUpdate
+    };
+    this.workers.set(id, updatedWorker);
+    return updatedWorker;
+  }
+
+  async deleteWorker(id: number): Promise<boolean> {
+    return this.workers.delete(id);
+  }
+
+  async getWorkersByDepartment(department: string): Promise<Worker[]> {
+    return Array.from(this.workers.values()).filter(worker => worker.department === department);
   }
 }
 
