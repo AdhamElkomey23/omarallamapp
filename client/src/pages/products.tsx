@@ -137,7 +137,7 @@ export default function Products() {
   };
 
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
+    if (window.confirm(t("deleteConfirmation") || "Are you sure you want to delete this product?")) {
       deleteProductMutation.mutate(id);
     }
   };
@@ -161,19 +161,19 @@ export default function Products() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Products</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("products")}</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">
               <Plus className="h-4 w-4" />
-              Add Product
+              {t("addProduct")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Product</DialogTitle>
+              <DialogTitle>{t("addProduct")}</DialogTitle>
               <DialogDescription>
-                Add a new product to your inventory
+                {t("manageInventory")}
               </DialogDescription>
             </DialogHeader>
 

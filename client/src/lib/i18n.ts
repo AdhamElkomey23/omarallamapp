@@ -133,7 +133,39 @@ export const translations = {
     // Notifications
     notifications: "Notifications",
     factoryManager: "Factory Manager",
-    version: "Version 1.0.0"
+    version: "Version 1.0.0",
+    
+    // Additional translations
+    deleteConfirmation: "Are you sure you want to delete this product?",
+    noProductsFound: "No products found",
+    addFirstProduct: "Add your first product",
+    manageInventory: "Manage your product inventory",
+    inventoryValue: "Inventory Value",
+    totalStock: "Total Stock",
+    units: "units",
+    searchProducts: "Search products",
+    actions: "Actions",
+    createdAt: "Created At",
+    lastUpdated: "Last Updated",
+    fromLastMonth: "from last month",
+    margin: "margin",
+    currentWorkers: "current workers",
+    weeklyReport: "Weekly",
+    monthlyReport: "Monthly", 
+    yearlyReport: "Yearly",
+    currentValue: "Current Value",
+    change: "Change %",
+    indicator: "Indicator",
+    netProfit: "Net Profit",
+    profitMargin: "Profit Margin",
+    performanceSummary: "Performance Summary",
+    overviewFinancial: "Overview of key financial indicators",
+    monthlyTrend: "Monthly Trend for Revenue and Expenses",
+    compareRevExp: "Compare revenue and expenses over the last six months",
+    deptExpenses: "Department Expenses Distribution",
+    expensesByDept: "Expense ratio for each department in the factory",
+    productPerformance: "Product Performance",
+    salesAndRevenue: "Sales and revenue of main products"
   },
   
   ar: {
@@ -269,7 +301,39 @@ export const translations = {
     // Notifications
     notifications: "الإشعارات",
     factoryManager: "مدير المصنع",
-    version: "الإصدار 1.0.0"
+    version: "الإصدار 1.0.0",
+    
+    // Additional translations
+    deleteConfirmation: "هل أنت متأكد من حذف هذا المنتج؟",
+    noProductsFound: "لا توجد منتجات",
+    addFirstProduct: "أضف منتجك الأول",
+    manageInventory: "إدارة مخزون المنتجات",
+    inventoryValue: "قيمة المخزون",
+    totalStock: "إجمالي المخزون",
+    units: "وحدة",
+    searchProducts: "البحث في المنتجات",
+    actions: "الإجراءات",
+    createdAt: "تاريخ الإنشاء",
+    lastUpdated: "آخر تحديث",
+    fromLastMonth: "من الشهر الماضي",
+    margin: "هامش",
+    currentWorkers: "عمال حاليين",
+    weeklyReport: "أسبوعي",
+    monthlyReport: "شهري", 
+    yearlyReport: "سنوي",
+    currentValue: "القيمة الحالية",
+    change: "التغيير %",
+    indicator: "المؤشر",
+    netProfit: "صافي الربح",
+    profitMargin: "هامش الربح",
+    performanceSummary: "ملخص الأداء",
+    overviewFinancial: "نظرة عامة على المؤشرات المالية الرئيسية",
+    monthlyTrend: "الاتجاه الشهري للإيرادات والمصروفات",
+    compareRevExp: "مقارنة الإيرادات والمصروفات خلال الأشهر الستة الماضية",
+    deptExpenses: "توزيع مصروفات الأقسام",
+    expensesByDept: "نسبة المصروفات لكل قسم في المصنع",
+    productPerformance: "أداء المنتجات",
+    salesAndRevenue: "مبيعات وإيرادات المنتجات الرئيسية"
   }
 };
 
