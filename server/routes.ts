@@ -6,6 +6,7 @@ import {
   insertSaleSchema, 
   insertExpenseSchema,
   insertActivityLogSchema,
+  insertWorkerSchema,
   dateRangeFilterSchema
 } from "@shared/schema";
 import { z } from "zod";
@@ -319,6 +320,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid filter parameters", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to fetch dashboard data" });
+    }
+  });
+
+  // Workers Routes
+  apiRouter.get("/workers", async (req, res) => {
+    try {
+      const department = req.query.department as string;
+      const status = req.query.status as string;
+      
+      if (department && department !== 'all') {
+        const workers = await storage.getWorkersByDepartment(department);
+        res.json(workers);
+      } else {
+        const workers = await storage.getAllWorkers();
+        res.json(workers);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch workers" });
+    }
+  });
+
+  apiRouter.get("/workers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid worker ID" });
+      }
+
+      const worker = await storage.getWorker(id);
+      if (!worker) {
+        return res.status(404).json({ message: "Worker not found" });
+      }
+      res.json(worker);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch worker" });
+    }
+  });
+
+  apiRouter.post("/workers", async (req, res) => {
+    try {
+      // Validate request body
+      const validatedData = insertWorkerSchema.parse(req.body);
+      
+      const newWorker = await storage.createWorker(validatedData);
+      res.status(201).json(newWorker);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid worker data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create worker" });
+    }
+  });
+
+  apiRouter.put("/workers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid worker ID" });
+      }
+
+      // Validate request body
+      const validatedData = insertWorkerSchema.parse(req.body);
+      
+      const updatedWorker = await storage.updateWorker(id, validatedData);
+      if (!updatedWorker) {
+        return res.status(404).json({ message: "Worker not found" });
+      }
+      
+      res.json(updatedWorker);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid worker data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update worker" });
+    }
+  });
+
+  apiRouter.delete("/workers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid worker ID" });
+      }
+
+      const success = await storage.deleteWorker(id);
+      if (!success) {
+        return res.status(404).json({ message: "Worker not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete worker" });
     }
   });
 
