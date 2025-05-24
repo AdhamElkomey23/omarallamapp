@@ -166,7 +166,21 @@ export const translations = {
     expensesByDept: "Expense ratio for each department in the factory",
     productPerformance: "Product Performance",
     salesAndRevenue: "Sales and revenue of main products",
-    recentTransactions: "Recent Transactions"
+    recentTransactions: "Recent Transactions",
+    
+    // Months
+    january: "January",
+    february: "February", 
+    march: "March",
+    april: "April",
+    may: "May",
+    june: "June",
+    
+    // Products
+    npkFertilizer: "NPK Fertilizer",
+    ureaFertilizer: "Urea Fertilizer",
+    organicCompost: "Organic Compost",
+    phosphateFertilizer: "Phosphate Fertilizer"
   },
   
   ar: {
@@ -335,7 +349,21 @@ export const translations = {
     expensesByDept: "نسبة المصروفات لكل قسم في المصنع",
     productPerformance: "أداء المنتجات",
     salesAndRevenue: "مبيعات وإيرادات المنتجات الرئيسية",
-    recentTransactions: "المعاملات الأخيرة"
+    recentTransactions: "المعاملات الأخيرة",
+    
+    // Months
+    january: "يناير",
+    february: "فبراير", 
+    march: "مارس",
+    april: "أبريل",
+    may: "مايو",
+    june: "يونيو",
+    
+    // Products
+    npkFertilizer: "سماد NPK",
+    ureaFertilizer: "سماد اليوريا",
+    organicCompost: "الكومبوست العضوي",
+    phosphateFertilizer: "سماد الفوسفات"
   }
 };
 

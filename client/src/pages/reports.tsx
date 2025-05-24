@@ -63,12 +63,12 @@ export default function Reports() {
 
   // Monthly sales trend
   const monthlyData = [
-    { month: 'يناير', revenue: 45000, expenses: 32000 },
-    { month: 'فبراير', revenue: 52000, expenses: 38000 },
-    { month: 'مارس', revenue: 48000, expenses: 35000 },
-    { month: 'أبريل', revenue: 61000, expenses: 42000 },
-    { month: 'مايو', revenue: 58000, expenses: 39000 },
-    { month: 'يونيو', revenue: 67000, expenses: 45000 }
+    { month: t("january"), revenue: 45000, expenses: 32000 },
+    { month: t("february"), revenue: 52000, expenses: 38000 },
+    { month: t("march"), revenue: 48000, expenses: 35000 },
+    { month: t("april"), revenue: 61000, expenses: 42000 },
+    { month: t("may"), revenue: 58000, expenses: 39000 },
+    { month: t("june"), revenue: 67000, expenses: 45000 }
   ];
 
   // Department expenses
@@ -82,10 +82,10 @@ export default function Reports() {
 
   // Product performance
   const productPerformance = [
-    { name: 'NPK سماد', sales: 45, revenue: 112500 },
-    { name: 'اليوريا', sales: 35, revenue: 87500 },
-    { name: 'الكومبوست العضوي', sales: 28, revenue: 67200 },
-    { name: 'الفوسفات', sales: 22, revenue: 52800 }
+    { name: t("npkFertilizer"), sales: 45, revenue: 112500 },
+    { name: t("ureaFertilizer"), sales: 35, revenue: 87500 },
+    { name: t("organicCompost"), sales: 28, revenue: 67200 },
+    { name: t("phosphateFertilizer"), sales: 22, revenue: 52800 }
   ];
 
   return (
@@ -94,9 +94,9 @@ export default function Reports() {
         <h1 className="text-3xl font-bold tracking-tight">{t("reports")}</h1>
         <Tabs value={selectedPeriod} onValueChange={setSelectedPeriod} className="w-[400px]">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="weekly">أسبوعي</TabsTrigger>
-            <TabsTrigger value="monthly">شهري</TabsTrigger>
-            <TabsTrigger value="yearly">سنوي</TabsTrigger>
+            <TabsTrigger value="weekly">{t("weekly")}</TabsTrigger>
+            <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
+            <TabsTrigger value="yearly">{t("yearly")}</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
