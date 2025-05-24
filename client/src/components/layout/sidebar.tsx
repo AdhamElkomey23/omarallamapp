@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   LayoutDashboard,
   Package,
@@ -12,7 +13,9 @@ import {
   ChevronLeft,
   ChevronRight,
   PieChart,
-  Users
+  Users,
+  Menu,
+  X
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -21,22 +24,27 @@ interface SidebarItemProps {
   title: string;
   isActive: boolean;
   collapsed: boolean;
+  onClick?: () => void;
 }
 
-function SidebarItem({ href, icon, title, isActive, collapsed }: SidebarItemProps) {
+function SidebarItem({ href, icon, title, isActive, collapsed, onClick }: SidebarItemProps) {
   return (
     <Link href={href}>
       <Button
-        variant="ghost"
+        variant={isActive ? "default" : "ghost"}
         className={cn(
-          "w-full justify-start gap-2 px-3 py-2 h-10",
-          isActive
-            ? "bg-primary/10 text-primary hover:bg-primary/15"
-            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+          "w-full justify-start h-12 px-3",
+          collapsed ? "px-2" : "px-3",
+          isActive && "bg-primary text-primary-foreground shadow-md"
         )}
+        onClick={onClick}
       >
-        <span>{icon}</span>
-        {!collapsed && <span>{title}</span>}
+        <div className="flex items-center gap-3">
+          <div className="shrink-0">{icon}</div>
+          {!collapsed && (
+            <span className="font-medium text-sm">{title}</span>
+          )}
+        </div>
       </Button>
     </Link>
   );
@@ -45,6 +53,29 @@ function SidebarItem({ href, icon, title, isActive, collapsed }: SidebarItemProp
 export function Sidebar() {
   const [location] = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setCollapsed(false); // Always expanded on mobile when open
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    if (isMobile) {
+      setMobileOpen(false);
+    }
+  }, [location, isMobile]);
 
   // Sidebar items
   const items = [
@@ -90,63 +121,139 @@ export function Sidebar() {
     },
   ];
 
-  return (
-    <div
-      className={cn(
-        "flex flex-col h-full border-r bg-background",
-        collapsed ? "w-[70px]" : "w-[250px]"
-      )}
-    >
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full bg-background">
       {/* Logo/header */}
-      <div className="px-3 py-4 border-b">
+      <div className="px-4 py-6 border-b">
         <div className="flex items-center justify-between">
-          {!collapsed && (
-            <h2 className="text-lg font-semibold">Fertilizer Factory</h2>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center shrink-0">
+              <Package className="h-6 w-6 text-white" />
+            </div>
+            {(!collapsed || isMobile) && (
+              <div className="min-w-0">
+                <h2 className="text-lg font-bold leading-tight text-foreground">Fertilizer Factory</h2>
+                <p className="text-xs text-muted-foreground">Finance Manager</p>
+              </div>
+            )}
+          </div>
+          {!isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCollapsed(!collapsed)}
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              className="h-8 w-8 shrink-0"
+            >
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
+            </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed(!collapsed)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className={cn(
-              "h-8 w-8",
-              collapsed && "mx-auto"
-            )}
-          >
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </Button>
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close sidebar"
+              className="h-8 w-8 shrink-0 md:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
-      </div>
-
-      {/* Navigation items */}
-      <div className="flex-1 overflow-auto py-2">
-        <nav className="grid gap-1 px-2">
-          {items.map((item, index) => (
-            <SidebarItem
-              key={index}
-              href={item.href}
-              icon={item.icon}
-              title={item.title}
-              isActive={location === item.href}
-              collapsed={collapsed}
-            />
-          ))}
-        </nav>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-auto p-4 border-t text-center text-xs text-muted-foreground">
-        {!collapsed && (
-          <div>
-            <p>Fertilizer Factory Finance</p>
-            <p>v1.0.0</p>
+        {(!collapsed || isMobile) && (
+          <div className="mt-3 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
+            Version 1.0.0
           </div>
         )}
       </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
+        {items.map((item) => (
+          <SidebarItem
+            key={item.href}
+            href={item.href}
+            icon={item.icon}
+            title={item.title}
+            isActive={location === item.href || (item.href === "/dashboard" && location === "/")}
+            collapsed={collapsed && !isMobile}
+            onClick={() => isMobile && setMobileOpen(false)}
+          />
+        ))}
+      </nav>
+      
+      {/* Footer */}
+      {(!collapsed || isMobile) && (
+        <div className="px-4 py-3 border-t bg-muted/30">
+          <p className="text-xs text-muted-foreground text-center">
+            Built for mobile-first management
+          </p>
+        </div>
+      )}
     </div>
+  );
+
+  // Mobile sidebar
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile menu button */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setMobileOpen(true)}
+          className="fixed top-4 left-4 z-50 h-12 w-12 md:hidden bg-background/95 backdrop-blur border-2 shadow-lg"
+          aria-label="Open menu"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+
+        {/* Mobile sidebar overlay */}
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetContent side="left" className="p-0 w-[300px] sm:w-[350px]">
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      </>
+    );
+  }
+
+  // Desktop sidebar
+  return (
+    <div
+      className={cn(
+        "flex-shrink-0 border-r transition-all duration-300 ease-in-out bg-background",
+        collapsed ? "w-[80px]" : "w-[280px]"
+      )}
+    >
+      <SidebarContent />
+    </div>
+  );
+}
+
+// Mobile menu trigger component for navbar
+export function MobileMenuTrigger() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  
+  return (
+    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden h-10 w-10"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="p-0 w-[300px]">
+        <Sidebar />
+      </SheetContent>
+    </Sheet>
   );
 }

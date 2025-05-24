@@ -1,11 +1,7 @@
-import { useState } from "react";
-import { Link } from "wouter";
-import {
-  LuBell,
-  LuUser,
-  LuSearch,
-  LuCalendar
-} from "react-icons/lu";
+import { useState, useEffect } from "react";
+import { Bell, Search, User, LogOut, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,62 +10,152 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 export function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b">
-      <div className="container flex items-center justify-between h-16 px-4 md:px-6">
-        {/* Search */}
-        <div className="hidden md:flex w-[240px] lg:w-[280px] space-x-2">
-          <div className="relative w-full">
-            <LuSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="pl-8 bg-background"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        
+        {/* Left side - Search on desktop, spacing on mobile */}
+        <div className="flex items-center gap-4 flex-1">
+          {/* Mobile: Leave space for hamburger menu */}
+          <div className="w-16 md:w-0"></div>
+          
+          {/* Search - hidden on mobile, shown on desktop */}
+          {!isMobile && (
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="pl-9 h-9 bg-muted/50"
+              />
+            </div>
+          )}
         </div>
 
-        {/* Date display for larger screens */}
-        <div className="hidden md:flex items-center">
-          <LuCalendar className="mr-2 h-4 w-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">{currentDate}</span>
+        {/* Center - Title and time */}
+        <div className="flex items-center gap-4">
+          {/* Mobile: Show compact info */}
+          {isMobile ? (
+            <div className="text-center">
+              <div className="text-sm font-semibold text-foreground">
+                Finance Manager
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {formatTime(currentTime)}
+              </div>
+            </div>
+          ) : (
+            /* Desktop: Show full info */
+            <div className="text-center">
+              <div className="text-sm font-semibold text-foreground">
+                Fertilizer Factory Finance Manager
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {formatDate(currentTime)} • {formatTime(currentTime)}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="relative">
-            <LuBell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+        {/* Right side - Actions */}
+        <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
+          
+          {/* Mobile search button */}
+          {isMobile && (
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <Search className="h-4 w-4" />
+            </Button>
+          )}
+
+          {/* Notifications */}
+          <Button variant="ghost" size="icon" className="relative h-9 w-9">
+            <Bell className="h-4 w-4" />
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+            >
+              3
+            </Badge>
           </Button>
 
+          {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <LuUser className="h-5 w-5" />
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/avatars/01.png" alt="@user" />
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    FF
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">Factory Manager</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    manager@fertilizer.com
+                  </p>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/settings">Settings</Link>
+              <DropdownMenuItem className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/login">Logout</Link>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
