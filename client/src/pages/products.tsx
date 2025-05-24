@@ -287,7 +287,7 @@ export default function Products() {
 
                 <DialogFooter>
                   <Button type="submit" disabled={updateProductMutation.isPending}>
-                    {updateProductMutation.isPending ? "Updating..." : "Update Product"}
+                    {updateProductMutation.isPending ? t("updating") : t("update")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -300,7 +300,7 @@ export default function Products() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalProducts")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{filteredProducts.length}</div>
@@ -308,11 +308,11 @@ export default function Products() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalStock")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {filteredProducts.reduce((sum, product) => sum + product.stockQuantity, 0)} units
+              {filteredProducts.reduce((sum, product) => sum + product.stockQuantity, 0)} {t("units")}
             </div>
           </CardContent>
         </Card>

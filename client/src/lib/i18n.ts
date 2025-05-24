@@ -188,7 +188,9 @@ export const translations = {
     
     // Additional Product form fields
     updateProductDetails: "Update product details",
-    adding: "Adding..."
+    adding: "Adding...",
+    updating: "Updating...",
+    totalProducts: "Total Products"
   },
   
   ar: {
@@ -375,7 +377,13 @@ export const translations = {
     
     // Time periods
     weekly: "أسبوعي",
-    yearly: "سنوي"
+    yearly: "سنوي",
+    
+    // Additional Product form fields
+    updateProductDetails: "تحديث تفاصيل المنتج",
+    adding: "جاري الإضافة...",
+    updating: "جاري التحديث...",
+    totalProducts: "إجمالي المنتجات"
   }
 };
 
