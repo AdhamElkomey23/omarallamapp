@@ -105,28 +105,28 @@ export default function Reports() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalRevenue")}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
             <p className="text-xs text-muted-foreground">
               <TrendingUp className="inline h-3 w-3 text-green-500" />
-              +12.5% من الشهر الماضي
+              +12.5% {t("fromLastMonth")}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي المصروفات</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalExpenses")}</CardTitle>
             <TrendingDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalExpenses)}</div>
             <p className="text-xs text-muted-foreground">
               <TrendingUp className="inline h-3 w-3 text-red-500" />
-              +8.2% من الشهر الماضي
+              +8.2% {t("fromLastMonth")}
             </p>
           </CardContent>
         </Card>

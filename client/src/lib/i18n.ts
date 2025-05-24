@@ -180,7 +180,11 @@ export const translations = {
     npkFertilizer: "NPK Fertilizer",
     ureaFertilizer: "Urea Fertilizer",
     organicCompost: "Organic Compost",
-    phosphateFertilizer: "Phosphate Fertilizer"
+    phosphateFertilizer: "Phosphate Fertilizer",
+    
+    // Time periods
+    weekly: "Weekly",
+    yearly: "Yearly"
   },
   
   ar: {
@@ -363,7 +367,11 @@ export const translations = {
     npkFertilizer: "سماد NPK",
     ureaFertilizer: "سماد اليوريا",
     organicCompost: "الكومبوست العضوي",
-    phosphateFertilizer: "سماد الفوسفات"
+    phosphateFertilizer: "سماد الفوسفات",
+    
+    // Time periods
+    weekly: "أسبوعي",
+    yearly: "سنوي"
   }
 };
 

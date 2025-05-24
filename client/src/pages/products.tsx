@@ -184,9 +184,9 @@ export default function Products() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
+                      <FormLabel>{t("productName")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="NPK Fertilizer" {...field} />
+                        <Input placeholder={t("npkFertilizer")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -198,7 +198,7 @@ export default function Products() {
                   name="unitPrice"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Unit Price (₹)</FormLabel>
+                      <FormLabel>{t("unitPrice")}</FormLabel>
                       <FormControl>
                         <Input type="number" min="0" step="0.01" {...field} />
                       </FormControl>
