@@ -16,6 +16,7 @@ import ActivityLogs from "@/pages/activity-logs";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
+import Reports from "@/pages/reports";
 
 function Router() {
   const [location] = useLocation();
@@ -42,6 +43,7 @@ function Router() {
                   <Route path="/expenses" component={Expenses}/>
                   <Route path="/workers" component={Workers}/>
                   <Route path="/activity-logs" component={ActivityLogs}/>
+                  <Route path="/reports" component={Reports}/>
                   <Route path="/settings" component={Settings}/>
                   <Route path="/:rest*" component={NotFound} />
                 </Switch>

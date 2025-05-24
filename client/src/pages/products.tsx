@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { t } from "@/lib/i18n";
 import { formatCurrency } from "@/lib/utils";
 import {
   Table,

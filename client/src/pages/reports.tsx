@@ -1,0 +1,279 @@
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
+} from "recharts";
+import { apiRequest } from "@/lib/queryClient";
+import { formatCurrency } from "@/lib/utils";
+import { t } from "@/lib/i18n";
+import { TrendingUp, TrendingDown, DollarSign, Users, Package, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A569BD'];
+
+export default function Reports() {
+  const [selectedPeriod, setSelectedPeriod] = useState("monthly");
+
+  const { data: salesData, isLoading: salesLoading } = useQuery({
+    queryKey: ['/api/sales'],
+    queryFn: () => apiRequest('/api/sales')
+  });
+
+  const { data: expensesData, isLoading: expensesLoading } = useQuery({
+    queryKey: ['/api/expenses'],
+    queryFn: () => apiRequest('/api/expenses')
+  });
+
+  const { data: workersData, isLoading: workersLoading } = useQuery({
+    queryKey: ['/api/workers'],
+    queryFn: () => apiRequest('/api/workers')
+  });
+
+  const { data: productsData, isLoading: productsLoading } = useQuery({
+    queryKey: ['/api/products'],
+    queryFn: () => apiRequest('/api/products')
+  });
+
+  if (salesLoading || expensesLoading || workersLoading || productsLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Calculate report data
+  const totalRevenue = salesData?.reduce((sum: number, sale: any) => sum + sale.totalAmount, 0) || 0;
+  const totalExpenses = expensesData?.reduce((sum: number, expense: any) => sum + expense.amount, 0) || 0;
+  const profit = totalRevenue - totalExpenses;
+  const profitMargin = totalRevenue > 0 ? (profit / totalRevenue) * 100 : 0;
+
+  // Monthly sales trend
+  const monthlyData = [
+    { month: 'يناير', revenue: 45000, expenses: 32000 },
+    { month: 'فبراير', revenue: 52000, expenses: 38000 },
+    { month: 'مارس', revenue: 48000, expenses: 35000 },
+    { month: 'أبريل', revenue: 61000, expenses: 42000 },
+    { month: 'مايو', revenue: 58000, expenses: 39000 },
+    { month: 'يونيو', revenue: 67000, expenses: 45000 }
+  ];
+
+  // Department expenses
+  const departmentExpenses = [
+    { name: t("production"), value: 45000, color: '#0088FE' },
+    { name: t("qualityControl"), value: 23000, color: '#00C49F' },
+    { name: t("administration"), value: 18000, color: '#FFBB28' },
+    { name: t("maintenance"), value: 15000, color: '#FF8042' },
+    { name: t("logistics"), value: 12000, color: '#A569BD' }
+  ];
+
+  // Product performance
+  const productPerformance = [
+    { name: 'NPK سماد', sales: 45, revenue: 112500 },
+    { name: 'اليوريا', sales: 35, revenue: 87500 },
+    { name: 'الكومبوست العضوي', sales: 28, revenue: 67200 },
+    { name: 'الفوسفات', sales: 22, revenue: 52800 }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">{t("reports")}</h1>
+        <Tabs value={selectedPeriod} onValueChange={setSelectedPeriod} className="w-[400px]">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="weekly">أسبوعي</TabsTrigger>
+            <TabsTrigger value="monthly">شهري</TabsTrigger>
+            <TabsTrigger value="yearly">سنوي</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
+            <p className="text-xs text-muted-foreground">
+              <TrendingUp className="inline h-3 w-3 text-green-500" />
+              +12.5% من الشهر الماضي
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">إجمالي المصروفات</CardTitle>
+            <TrendingDown className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(totalExpenses)}</div>
+            <p className="text-xs text-muted-foreground">
+              <TrendingUp className="inline h-3 w-3 text-red-500" />
+              +8.2% من الشهر الماضي
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">صافي الربح</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(profit)}</div>
+            <p className="text-xs text-muted-foreground">
+              هامش ربح {profitMargin.toFixed(1)}%
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">إجمالي العمال</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{workersData?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              عمال نشطون حالياً
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>الاتجاه الشهري للإيرادات والمصروفات</CardTitle>
+            <CardDescription>مقارنة الإيرادات والمصروفات خلال الأشهر الستة الماضية</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    formatCurrency(value as number),
+                    name === 'revenue' ? 'الإيرادات' : 'المصروفات'
+                  ]}
+                />
+                <Legend 
+                  formatter={(value) => value === 'revenue' ? 'الإيرادات' : 'المصروفات'}
+                />
+                <Bar dataKey="revenue" fill="#0088FE" />
+                <Bar dataKey="expenses" fill="#FF8042" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>توزيع المصروفات حسب القسم</CardTitle>
+            <CardDescription>نسبة المصروفات لكل قسم في المصنع</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={departmentExpenses}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
+                >
+                  {departmentExpenses.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => formatCurrency(value as number)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>أداء المنتجات</CardTitle>
+            <CardDescription>مبيعات وإيرادات المنتجات الرئيسية</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={productPerformance} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={100} />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    name === 'sales' ? `${value} وحدة` : formatCurrency(value as number),
+                    name === 'sales' ? 'المبيعات' : 'الإيرادات'
+                  ]}
+                />
+                <Bar dataKey="revenue" fill="#00C49F" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Summary Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>ملخص الأداء المالي</CardTitle>
+          <CardDescription>نظرة عامة على المؤشرات المالية الرئيسية</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="font-medium">المؤشر</div>
+              <div className="font-medium">القيمة الحالية</div>
+              <div className="font-medium">التغيير %</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm border-t pt-2">
+              <div>إجمالي الإيرادات</div>
+              <div>{formatCurrency(totalRevenue)}</div>
+              <div className="text-green-600">+12.5%</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div>إجمالي المصروفات</div>
+              <div>{formatCurrency(totalExpenses)}</div>
+              <div className="text-red-600">+8.2%</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div>صافي الربح</div>
+              <div>{formatCurrency(profit)}</div>
+              <div className="text-green-600">+18.7%</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div>هامش الربح</div>
+              <div>{profitMargin.toFixed(1)}%</div>
+              <div className="text-green-600">+4.2%</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
