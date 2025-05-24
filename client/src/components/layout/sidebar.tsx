@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { t, isRTL } from "@/lib/i18n";
+import { t, isRTL, getCurrentLanguage, addLanguageChangeListener } from "@/lib/i18n";
 import {
   LayoutDashboard,
   Package,
@@ -56,6 +56,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
 
   // Check if mobile
   useEffect(() => {
@@ -77,6 +78,14 @@ export function Sidebar() {
       setMobileOpen(false);
     }
   }, [location, isMobile]);
+
+  // Listen for language changes
+  useEffect(() => {
+    const unsubscribe = addLanguageChangeListener(() => {
+      setCurrentLang(getCurrentLanguage());
+    });
+    return unsubscribe;
+  }, []);
 
   // Sidebar items
   const items = [

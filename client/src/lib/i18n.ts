@@ -277,12 +277,17 @@ export type Language = keyof typeof translations;
 export type TranslationKey = keyof typeof translations.en;
 
 let currentLanguage: Language = 'ar'; // Default to Arabic
+let languageChangeListeners: (() => void)[] = [];
 
 export const setLanguage = (lang: Language) => {
   currentLanguage = lang;
   // Update document direction
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.lang = lang;
+  // Save to localStorage
+  localStorage.setItem('language', lang);
+  // Notify listeners
+  languageChangeListeners.forEach(listener => listener());
 };
 
 export const getCurrentLanguage = (): Language => currentLanguage;
@@ -293,5 +298,21 @@ export const t = (key: TranslationKey): string => {
 
 export const isRTL = (): boolean => currentLanguage === 'ar';
 
-// Initialize with Arabic
-setLanguage('ar');
+export const toggleLanguage = () => {
+  setLanguage(currentLanguage === 'ar' ? 'en' : 'ar');
+};
+
+export const addLanguageChangeListener = (listener: () => void) => {
+  languageChangeListeners.push(listener);
+  return () => {
+    languageChangeListeners = languageChangeListeners.filter(l => l !== listener);
+  };
+};
+
+// Initialize with saved language or Arabic
+const savedLanguage = localStorage.getItem('language') as Language;
+if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en')) {
+  setLanguage(savedLanguage);
+} else {
+  setLanguage('ar');
+}

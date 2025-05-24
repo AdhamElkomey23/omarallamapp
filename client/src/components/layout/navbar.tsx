@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Search, User, LogOut, Settings } from "lucide-react";
+import { Bell, Search, User, LogOut, Settings, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { t } from "@/lib/i18n";
+import { t, getCurrentLanguage, toggleLanguage, addLanguageChangeListener } from "@/lib/i18n";
 
 export function Navbar() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isMobile, setIsMobile] = useState(false);
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
 
   // Update time every minute
   useEffect(() => {
@@ -36,6 +37,14 @@ export function Navbar() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Listen for language changes
+  useEffect(() => {
+    const unsubscribe = addLanguageChangeListener(() => {
+      setCurrentLang(getCurrentLanguage());
+    });
+    return unsubscribe;
   }, []);
 
   const formatTime = (date: Date) => {
@@ -111,6 +120,20 @@ export function Navbar() {
               <Search className="h-4 w-4" />
             </Button>
           )}
+
+          {/* Language toggle button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleLanguage}
+            className="h-9 px-3 bg-background/50 backdrop-blur border-2 hover:bg-accent transition-all"
+            title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+          >
+            <Globe className="h-4 w-4 mr-2" />
+            <span className="font-medium">
+              {currentLang === 'ar' ? 'EN' : 'ع'}
+            </span>
+          </Button>
 
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative h-9 w-9">
