@@ -125,31 +125,31 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalRevenue")}</CardTitle>
             <LuDollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(data.totalIncome)}</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              +20.1% {t("fromLastMonth")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalExpenses")}</CardTitle>
             <LuShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(data.totalExpenses)}</div>
             <p className="text-xs text-muted-foreground">
-              +5.2% from last month
+              +5.2% {t("fromLastMonth")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Profit</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("profit")}</CardTitle>
             <LuTrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -161,20 +161,20 @@ export default function Dashboard() {
                 <LuArrowDown className="mr-1 h-3 w-3 text-red-500" />
               )}
               <span className={`text-xs ${profitIncreased ? 'text-green-500' : 'text-red-500'}`}>
-                {profitPercentage.toFixed(1)}% of revenue
+                {profitPercentage.toFixed(1)}% {t("margin")}
               </span>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalProducts")}</CardTitle>
             <LuBox className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.topSellingProducts.length}</div>
             <p className="text-xs text-muted-foreground">
-              {data.topSellingProducts.reduce((sum, product) => sum + product.totalSold, 0)} units sold
+              {data.topSellingProducts.reduce((sum, product) => sum + product.totalSold, 0)} {t("unitsSold")}
             </p>
           </CardContent>
         </Card>
@@ -184,7 +184,7 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Sales Overview</CardTitle>
+            <CardTitle>{t("salesOverview")}</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={350}>
@@ -201,7 +201,7 @@ export default function Dashboard() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip 
-                  formatter={(value) => [formatCurrency(value as number), "Sales"]}
+                  formatter={(value) => [formatCurrency(value as number), t("sales")]}
                 />
                 <Line 
                   type="monotone" 
@@ -215,9 +215,9 @@ export default function Dashboard() {
         </Card>
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Top Products</CardTitle>
+            <CardTitle>{t("topProducts")}</CardTitle>
             <CardDescription>
-              Revenue distribution by product
+              {t("revenueDistribution")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -277,9 +277,9 @@ export default function Dashboard() {
       {/* Recent transactions */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>{t("recentTransactions")}</CardTitle>
           <CardDescription>
-            Last {dateFilter === "7days" ? "7" : dateFilter === "30days" ? "30" : dateFilter === "90days" ? "90" : "365"} days of activity
+            آخر {dateFilter === "7days" ? "7" : dateFilter === "30days" ? "30" : dateFilter === "90days" ? "90" : "365"} أيام من النشاط
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -296,7 +296,7 @@ export default function Dashboard() {
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium leading-none">{transaction.description}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(transaction.date).toLocaleDateString()}
+                      {new Date(transaction.date).toLocaleDateString('ar-SA')}
                     </p>
                   </div>
                   <div className={transaction.type === 'sale' ? 'text-green-500' : 'text-red-500'}>
@@ -306,7 +306,7 @@ export default function Dashboard() {
               ))
             ) : (
               <div className="text-center py-4">
-                <p className="text-muted-foreground">No recent transactions found.</p>
+                <p className="text-muted-foreground">{t("noDataFound")}</p>
               </div>
             )}
           </div>

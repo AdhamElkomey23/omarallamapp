@@ -165,7 +165,8 @@ export const translations = {
     deptExpenses: "Department Expenses Distribution",
     expensesByDept: "Expense ratio for each department in the factory",
     productPerformance: "Product Performance",
-    salesAndRevenue: "Sales and revenue of main products"
+    salesAndRevenue: "Sales and revenue of main products",
+    recentTransactions: "Recent Transactions"
   },
   
   ar: {
@@ -333,7 +334,8 @@ export const translations = {
     deptExpenses: "توزيع مصروفات الأقسام",
     expensesByDept: "نسبة المصروفات لكل قسم في المصنع",
     productPerformance: "أداء المنتجات",
-    salesAndRevenue: "مبيعات وإيرادات المنتجات الرئيسية"
+    salesAndRevenue: "مبيعات وإيرادات المنتجات الرئيسية",
+    recentTransactions: "المعاملات الأخيرة"
   }
 };
 
