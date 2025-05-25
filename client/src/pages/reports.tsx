@@ -133,26 +133,26 @@ export default function Reports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">صافي الربح</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("netProfit")}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(profit)}</div>
             <p className="text-xs text-muted-foreground">
-              هامش ربح {profitMargin.toFixed(1)}%
+              {t("profitMargin")} {profitMargin.toFixed(1)}%
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي العمال</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalWorkers")}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{workersData?.length || 0}</div>
             <p className="text-xs text-muted-foreground">
-              عمال نشطون حالياً
+              {t("activeWorkers")}
             </p>
           </CardContent>
         </Card>
@@ -162,8 +162,8 @@ export default function Reports() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>الاتجاه الشهري للإيرادات والمصروفات</CardTitle>
-            <CardDescription>مقارنة الإيرادات والمصروفات خلال الأشهر الستة الماضية</CardDescription>
+            <CardTitle>{t("monthlyRevenueExpensesTrend")}</CardTitle>
+            <CardDescription>{t("revenueExpensesComparison")}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -174,11 +174,11 @@ export default function Reports() {
                 <Tooltip 
                   formatter={(value, name) => [
                     formatCurrency(value as number),
-                    name === 'revenue' ? 'الإيرادات' : 'المصروفات'
+                    name === 'revenue' ? t("revenue") : t("expenses")
                   ]}
                 />
                 <Legend 
-                  formatter={(value) => value === 'revenue' ? 'الإيرادات' : 'المصروفات'}
+                  formatter={(value) => value === 'revenue' ? t("revenue") : t("expenses")}
                 />
                 <Bar dataKey="revenue" fill="#0088FE" />
                 <Bar dataKey="expenses" fill="#FF8042" />
@@ -189,8 +189,8 @@ export default function Reports() {
 
         <Card>
           <CardHeader>
-            <CardTitle>توزيع المصروفات حسب القسم</CardTitle>
-            <CardDescription>نسبة المصروفات لكل قسم في المصنع</CardDescription>
+            <CardTitle>{t("expenseDistributionByDepartment")}</CardTitle>
+            <CardDescription>{t("departmentExpensePercentage")}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -216,8 +216,8 @@ export default function Reports() {
 
         <Card>
           <CardHeader>
-            <CardTitle>أداء المنتجات</CardTitle>
-            <CardDescription>مبيعات وإيرادات المنتجات الرئيسية</CardDescription>
+            <CardTitle>{t("productPerformance")}</CardTitle>
+            <CardDescription>{t("mainProductsSalesRevenue")}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
