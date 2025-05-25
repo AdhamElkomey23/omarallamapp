@@ -227,8 +227,8 @@ export default function Reports() {
                 <YAxis dataKey="name" type="category" width={100} />
                 <Tooltip 
                   formatter={(value, name) => [
-                    name === 'sales' ? `${value} وحدة` : formatCurrency(value as number),
-                    name === 'sales' ? 'المبيعات' : 'الإيرادات'
+                    name === 'sales' ? `${value} ${t("units")}` : formatCurrency(value as number),
+                    name === 'sales' ? t("sales") : t("revenue")
                   ]}
                 />
                 <Bar dataKey="revenue" fill="#00C49F" />
@@ -241,33 +241,33 @@ export default function Reports() {
       {/* Summary Table */}
       <Card>
         <CardHeader>
-          <CardTitle>ملخص الأداء المالي</CardTitle>
-          <CardDescription>نظرة عامة على المؤشرات المالية الرئيسية</CardDescription>
+          <CardTitle>{t("financialPerformanceSummary")}</CardTitle>
+          <CardDescription>{t("keyFinancialIndicatorsOverview")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div className="font-medium">المؤشر</div>
-              <div className="font-medium">القيمة الحالية</div>
-              <div className="font-medium">التغيير %</div>
+              <div className="font-medium">{t("indicator")}</div>
+              <div className="font-medium">{t("currentValue")}</div>
+              <div className="font-medium">{t("changePercent")}</div>
             </div>
             <div className="grid grid-cols-3 gap-4 text-sm border-t pt-2">
-              <div>إجمالي الإيرادات</div>
+              <div>{t("totalRevenue")}</div>
               <div>{formatCurrency(totalRevenue)}</div>
               <div className="text-green-600">+12.5%</div>
             </div>
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div>إجمالي المصروفات</div>
+              <div>{t("totalExpenses")}</div>
               <div>{formatCurrency(totalExpenses)}</div>
               <div className="text-red-600">+8.2%</div>
             </div>
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div>صافي الربح</div>
+              <div>{t("netProfit")}</div>
               <div>{formatCurrency(profit)}</div>
               <div className="text-green-600">+18.7%</div>
             </div>
             <div className="grid grid-cols-3 gap-4 text-sm">
-              <div>هامش الربح</div>
+              <div>{t("profitMargin")}</div>
               <div>{profitMargin.toFixed(1)}%</div>
               <div className="text-green-600">+4.2%</div>
             </div>

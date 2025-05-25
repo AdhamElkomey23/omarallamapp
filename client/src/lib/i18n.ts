@@ -191,7 +191,25 @@ export const translations = {
     adding: "Adding...",
     updating: "Updating...",
     totalProducts: "Total Products",
-    lastDaysActivity: "Last {{days}} days of activity"
+    lastDaysActivity: "Last {{days}} days of activity",
+    
+    // Reports page translations
+    netProfit: "Net Profit",
+    profitMargin: "Profit margin",
+    totalWorkers: "Total Workers", 
+    activeWorkers: "Active workers currently",
+    monthlyRevenueExpensesTrend: "Monthly Revenue and Expenses Trend",
+    revenueExpensesComparison: "Comparison of revenue and expenses over the past six months",
+    revenue: "Revenue",
+    expenseDistributionByDepartment: "Expense Distribution by Department",
+    departmentExpensePercentage: "Percentage of expenses for each department in the factory",
+    productPerformance: "Product Performance",
+    mainProductsSalesRevenue: "Sales and revenue of main products",
+    financialPerformanceSummary: "Financial Performance Summary",
+    keyFinancialIndicatorsOverview: "Overview of key financial indicators",
+    indicator: "Indicator",
+    currentValue: "Current Value",
+    changePercent: "Change %"
   },
   
   ar: {
@@ -385,7 +403,25 @@ export const translations = {
     adding: "جاري الإضافة...",
     updating: "جاري التحديث...",
     totalProducts: "إجمالي المنتجات",
-    lastDaysActivity: "آخر {{days}} أيام من النشاط"
+    lastDaysActivity: "آخر {{days}} أيام من النشاط",
+    
+    // Reports page translations
+    netProfit: "صافي الربح",
+    profitMargin: "هامش ربح",
+    totalWorkers: "إجمالي العمال", 
+    activeWorkers: "عمال نشطون حالياً",
+    monthlyRevenueExpensesTrend: "الاتجاه الشهري للإيرادات والمصروفات",
+    revenueExpensesComparison: "مقارنة الإيرادات والمصروفات خلال الأشهر الستة الماضية",
+    revenue: "الإيرادات",
+    expenseDistributionByDepartment: "توزيع المصروفات حسب القسم",
+    departmentExpensePercentage: "نسبة المصروفات لكل قسم في المصنع",
+    productPerformance: "أداء المنتجات",
+    mainProductsSalesRevenue: "مبيعات وإيرادات المنتجات الرئيسية",
+    financialPerformanceSummary: "ملخص الأداء المالي",
+    keyFinancialIndicatorsOverview: "نظرة عامة على المؤشرات المالية الرئيسية",
+    indicator: "المؤشر",
+    currentValue: "القيمة الحالية",
+    changePercent: "التغيير %"
   }
 };
 
