@@ -190,7 +190,8 @@ export const translations = {
     updateProductDetails: "Update product details",
     adding: "Adding...",
     updating: "Updating...",
-    totalProducts: "Total Products"
+    totalProducts: "Total Products",
+    lastDaysActivity: "Last {{days}} days of activity"
   },
   
   ar: {
@@ -383,7 +384,8 @@ export const translations = {
     updateProductDetails: "تحديث تفاصيل المنتج",
     adding: "جاري الإضافة...",
     updating: "جاري التحديث...",
-    totalProducts: "إجمالي المنتجات"
+    totalProducts: "إجمالي المنتجات",
+    lastDaysActivity: "آخر {{days}} أيام من النشاط"
   }
 };
 

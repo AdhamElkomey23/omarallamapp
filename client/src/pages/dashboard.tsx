@@ -279,7 +279,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle>{t("recentTransactions")}</CardTitle>
           <CardDescription>
-            آخر {dateFilter === "7days" ? "7" : dateFilter === "30days" ? "30" : dateFilter === "90days" ? "90" : "365"} أيام من النشاط
+            Last {dateFilter === "7days" ? "7" : dateFilter === "30days" ? "30" : dateFilter === "90days" ? "90" : "365"} days of activity
           </CardDescription>
         </CardHeader>
         <CardContent>
