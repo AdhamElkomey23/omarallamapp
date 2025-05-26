@@ -16,7 +16,8 @@ import {
   PieChart,
   Users,
   Menu,
-  X
+  X,
+  Warehouse
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -113,6 +114,11 @@ export function Sidebar() {
       href: "/workers",
       icon: <Users className="h-5 w-5" />,
       title: t("workers"),
+    },
+    {
+      href: "/storage",
+      icon: <Warehouse className="h-5 w-5" />,
+      title: t("storage"),
     },
     {
       href: "/activity-logs",

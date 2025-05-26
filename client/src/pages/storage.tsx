@@ -28,8 +28,9 @@ export default function Storage() {
 
   const addItemMutation = useMutation({
     mutationFn: (values: StorageItemFormValues) =>
-      apiRequest("/api/storage", {
+      fetch("/api/storage", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       }),
     onSuccess: () => {
@@ -40,8 +41,9 @@ export default function Storage() {
 
   const updateItemMutation = useMutation({
     mutationFn: ({ id, ...values }: StorageItemFormValues & { id: number }) =>
-      apiRequest(`/api/storage/${id}`, {
+      fetch(`/api/storage/${id}`, {
         method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       }),
     onSuccess: () => {
@@ -52,7 +54,7 @@ export default function Storage() {
 
   const deleteItemMutation = useMutation({
     mutationFn: (id: number) =>
-      apiRequest(`/api/storage/${id}`, {
+      fetch(`/api/storage/${id}`, {
         method: "DELETE",
       }),
     onSuccess: () => {
