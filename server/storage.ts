@@ -90,6 +90,7 @@ export class MemStorage implements IStorage {
   private expenses: Map<number, Expense>;
   private activityLogs: Map<number, ActivityLog>;
   private workers: Map<number, Worker>;
+  private storageItems: Map<number, StorageItem>;
   
   private userCounter: number;
   private productCounter: number;
@@ -97,6 +98,7 @@ export class MemStorage implements IStorage {
   private expenseCounter: number;
   private activityLogCounter: number;
   private workerCounter: number;
+  private storageItemCounter: number;
 
   constructor() {
     // Initialize maps
@@ -106,6 +108,7 @@ export class MemStorage implements IStorage {
     this.expenses = new Map();
     this.activityLogs = new Map();
     this.workers = new Map();
+    this.storageItems = new Map();
     
     // Initialize counters
     this.userCounter = 1;
@@ -114,6 +117,7 @@ export class MemStorage implements IStorage {
     this.expenseCounter = 1;
     this.activityLogCounter = 1;
     this.workerCounter = 1;
+    this.storageItemCounter = 1;
     
     // Load seed data
     this.loadSeedData();
@@ -216,6 +220,28 @@ export class MemStorage implements IStorage {
         createdAt: new Date()
       };
       this.activityLogs.set(newLog.id, newLog);
+    });
+
+    // Sample storage items
+    const sampleStorageItems = [
+      { itemName: 'Ammonium Nitrate', quantityInTons: 150, purchasePricePerTon: 350 },
+      { itemName: 'Potassium Chloride', quantityInTons: 120, purchasePricePerTon: 420 },
+      { itemName: 'Phosphoric Acid', quantityInTons: 80, purchasePricePerTon: 650 },
+      { itemName: 'Urea', quantityInTons: 200, purchasePricePerTon: 300 },
+      { itemName: 'Sulfuric Acid', quantityInTons: 95, purchasePricePerTon: 280 },
+      { itemName: 'Limestone', quantityInTons: 300, purchasePricePerTon: 45 },
+      { itemName: 'Potassium Sulfate', quantityInTons: 60, purchasePricePerTon: 580 }
+    ];
+    
+    sampleStorageItems.forEach(item => {
+      const newItem: StorageItem = {
+        id: this.storageItemCounter++,
+        itemName: item.itemName,
+        quantityInTons: item.quantityInTons,
+        purchasePricePerTon: item.purchasePricePerTon,
+        createdAt: new Date()
+      };
+      this.storageItems.set(newItem.id, newItem);
     });
   }
 
@@ -653,6 +679,44 @@ export class MemStorage implements IStorage {
 
   async getWorkersByDepartment(department: string): Promise<Worker[]> {
     return Array.from(this.workers.values()).filter(worker => worker.department === department);
+  }
+
+  // Storage Items Methods
+  async getAllStorageItems(): Promise<StorageItem[]> {
+    return Array.from(this.storageItems.values());
+  }
+
+  async getStorageItem(id: number): Promise<StorageItem | undefined> {
+    return this.storageItems.get(id);
+  }
+
+  async createStorageItem(insertItem: InsertStorageItem): Promise<StorageItem> {
+    const id = this.storageItemCounter++;
+    const storageItem: StorageItem = { 
+      ...insertItem, 
+      id,
+      createdAt: new Date()
+    };
+    this.storageItems.set(id, storageItem);
+    return storageItem;
+  }
+
+  async updateStorageItem(id: number, itemUpdate: Partial<InsertStorageItem>): Promise<StorageItem | undefined> {
+    const existingItem = this.storageItems.get(id);
+    if (!existingItem) {
+      return undefined;
+    }
+
+    const updatedItem: StorageItem = {
+      ...existingItem,
+      ...itemUpdate
+    };
+    this.storageItems.set(id, updatedItem);
+    return updatedItem;
+  }
+
+  async deleteStorageItem(id: number): Promise<boolean> {
+    return this.storageItems.delete(id);
   }
 }
 
