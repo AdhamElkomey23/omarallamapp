@@ -2,6 +2,7 @@
 export const translations = {
   en: {
     // Navigation
+    home: "Home",
     dashboard: "Dashboard",
     products: "Products",
     sales: "Sales",
@@ -258,6 +259,7 @@ export const translations = {
   
   ar: {
     // Navigation
+    home: "الرئيسية",
     dashboard: "لوحة القيادة",
     products: "المنتجات",
     sales: "المبيعات",

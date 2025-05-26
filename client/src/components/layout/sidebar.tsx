@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { t, isRTL, getCurrentLanguage, addLanguageChangeListener } from "@/lib/i18n";
 import {
+  Home,
   LayoutDashboard,
   Package,
   ShoppingCart,
@@ -90,6 +91,11 @@ export function Sidebar() {
 
   // Sidebar items
   const items = [
+    {
+      href: "/",
+      icon: <Home className="h-5 w-5" />,
+      title: t("home"),
+    },
     {
       href: "/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
