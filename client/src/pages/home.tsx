@@ -44,7 +44,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/products">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-800">
+                <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-green-800">
                   <Package className="h-5 w-5 mr-2" />
                   {t('products')}
                 </Button>
