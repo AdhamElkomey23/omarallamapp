@@ -235,7 +235,25 @@ export const translations = {
     no: "No",
     totalStorageValue: "Total Storage Value",
     totalItems: "Total Items",
-    averagePricePerTon: "Average Price per Ton"
+    averagePricePerTon: "Average Price per Ton",
+    
+    // Home page translations
+    quickOverview: "Quick Overview",
+    mainFeatures: "Main Features",
+    manageYourProducts: "Manage your fertilizer products and inventory",
+    viewProducts: "View Products",
+    trackYourSales: "Track and analyze your sales performance",
+    viewSales: "View Sales",
+    manageYourTeam: "Manage your workers and team members",
+    viewWorkers: "View Workers",
+    manageInventory: "Manage storage items and inventory",
+    viewStorage: "View Storage",
+    trackExpenses: "Track and categorize your expenses",
+    viewExpenses: "View Expenses",
+    viewReports: "View detailed reports and analytics",
+    getStarted: "Ready to get started?",
+    startManaging: "Start managing your fertilizer factory operations efficiently",
+    goToDashboard: "Go to Dashboard"
   },
   
   ar: {
@@ -473,7 +491,25 @@ export const translations = {
     no: "لا",
     totalStorageValue: "قيمة المخزون الإجمالية",
     totalItems: "إجمالي العناصر",
-    averagePricePerTon: "متوسط السعر للطن"
+    averagePricePerTon: "متوسط السعر للطن",
+    
+    // Home page translations
+    quickOverview: "نظرة سريعة",
+    mainFeatures: "الميزات الرئيسية",
+    manageYourProducts: "إدارة منتجات الأسمدة والمخزون",
+    viewProducts: "عرض المنتجات",
+    trackYourSales: "تتبع وتحليل أداء المبيعات",
+    viewSales: "عرض المبيعات",
+    manageYourTeam: "إدارة العمال وأعضاء الفريق",
+    viewWorkers: "عرض العمال",
+    manageInventory: "إدارة عناصر التخزين والمخزون",
+    viewStorage: "عرض المخزون",
+    trackExpenses: "تتبع وتصنيف المصروفات",
+    viewExpenses: "عرض المصروفات",
+    viewReports: "عرض التقارير التفصيلية والتحليلات",
+    getStarted: "مستعد للبدء؟",
+    startManaging: "ابدأ في إدارة عمليات مصنع الأسمدة بكفاءة",
+    goToDashboard: "انتقل إلى لوحة القيادة"
   }
 };
 

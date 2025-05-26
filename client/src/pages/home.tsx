@@ -1,309 +1,260 @@
-import { useState } from 'react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { CategoryCard } from '@/components/category-card';
-import { ProductCard } from '@/components/product-card';
-import { ArtisanCard } from '@/components/artisan-card';
-import { TestimonialCard } from '@/components/testimonial-card';
-import { ProductFilters } from '@/components/product-filters';
-import { useFilter } from '@/hooks/use-filter';
-import { useToast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
-import { Category, Product, Artisan, Review } from '@shared/schema';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/utils';
+import { t, isRTL } from '@/lib/i18n';
+import { 
+  Factory, 
+  TrendingUp, 
+  Package, 
+  ShoppingCart, 
+  Users, 
+  Warehouse,
+  BarChart3,
+  ArrowRight,
+  Banknote,
+  Target
+} from 'lucide-react';
 
 export default function Home() {
-  const { toast } = useToast();
-  const { appliedFilters } = useFilter();
-  const [email, setEmail] = useState('');
-
-  // Fetch categories
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
-    queryKey: ['/api/categories'],
+  // Fetch dashboard data for overview
+  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+    queryKey: ['/api/dashboard'],
   });
-
-  // Fetch featured products with filters
-  const { 
-    data: products = [], 
-    isLoading: productsLoading 
-  } = useQuery<Product[]>({
-    queryKey: ['/api/products/featured', appliedFilters],
-  });
-
-  // Fetch artisans
-  const { 
-    data: artisans = [], 
-    isLoading: artisansLoading 
-  } = useQuery<Artisan[]>({
-    queryKey: ['/api/artisans/featured'],
-  });
-
-  // Fetch testimonials
-  const { 
-    data: testimonials = [], 
-    isLoading: testimonialsLoading 
-  } = useQuery<Review[]>({
-    queryKey: ['/api/reviews/featured'],
-  });
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes('@')) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    toast({
-      title: "Thank you for subscribing!",
-      description: "You've been added to our newsletter."
-    });
-    setEmail('');
-  };
 
   return (
-    <div>
+    <div className="space-y-8" dir={isRTL() ? 'rtl' : 'ltr'}>
       {/* Hero Section */}
-      <section className="relative">
-        <div className="relative h-[500px] md:h-[600px] w-full overflow-hidden">
-          <img 
-            src="https://pixabay.com/get/g07d8d65a863488ad1814b6e221cbd13df944fcef45df256593a661acfba385b7e4912d5c659ea57d8c0e66b721e582f53751e6d6dfdae6d5d77e8f40f8e66f12_1280.jpg" 
-            alt="Artisan crafting handmade pottery" 
-            className="w-full h-full object-cover" 
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="container mx-auto px-4 text-center text-white">
-              <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-4">Handcrafted with Love</h1>
-              <p className="text-lg md:text-xl font-light max-w-2xl mx-auto mb-8">Discover unique handmade products created by talented artisans in your community</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="#featured-products">
-                  <Button className="bg-primary hover:bg-primary-dark text-white font-accent font-medium px-8 py-3 rounded-md transition-all">
-                    Shop Now
-                  </Button>
-                </Link>
-                <Link href="#artisans">
-                  <Button variant="outline" className="bg-transparent hover:bg-white/20 border-2 border-white text-white font-accent font-medium px-8 py-3 rounded-md transition-all">
-                    Meet Our Artisans
-                  </Button>
-                </Link>
-              </div>
+      <section className="relative bg-gradient-to-br from-green-600 to-green-800 text-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <Factory className="h-16 w-16 mx-auto mb-6 text-green-200" />
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              {t('appTitle')}
+            </h1>
+            <p className="text-xl md:text-2xl text-green-100 mb-8 max-w-2xl mx-auto">
+              {t('appDescription')}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/dashboard">
+                <Button size="lg" className="bg-white text-green-800 hover:bg-green-50">
+                  <BarChart3 className="h-5 w-5 mr-2" />
+                  {t('dashboard')}
+                </Button>
+              </Link>
+              <Link href="/products">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-800">
+                  <Package className="h-5 w-5 mr-2" />
+                  {t('products')}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-16 bg-neutral">
+      {/* Quick Stats Overview */}
+      <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl font-bold text-center mb-12">Shop by Category</h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categoriesLoading ? (
-              // Loading skeleton
-              [...Array(6)].map((_, i) => (
+          <h2 className="text-3xl font-bold text-center mb-8">{t('quickOverview')}</h2>
+          {dashboardLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map(i => (
                 <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 rounded-lg aspect-square mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+                  <div className="bg-gray-200 dark:bg-gray-700 rounded-lg h-32"></div>
                 </div>
-              ))
-            ) : (
-              categories.map((category) => (
-                <CategoryCard key={category.id} category={category} />
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('totalIncome')}</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {formatCurrency(dashboardData?.totalIncome || 0)}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('totalExpenses')}</CardTitle>
+                  <Banknote className="h-4 w-4 text-red-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-red-600">
+                    {formatCurrency(dashboardData?.totalExpenses || 0)}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('netProfit')}</CardTitle>
+                  <Target className="h-4 w-4 text-blue-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {formatCurrency(dashboardData?.profit || 0)}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{t('totalProducts')}</CardTitle>
+                  <Package className="h-4 w-4 text-purple-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {dashboardData?.topSellingProducts?.length || 0}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Featured Products with Filters */}
-      <section id="featured-products" className="py-16 bg-white">
+      {/* Main Features Section */}
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl font-bold text-center mb-4">Featured Products</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Discover our collection of handcrafted items, each made with passion and attention to detail
-          </p>
-          
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters sidebar */}
-            <div className="w-full lg:w-1/4">
-              <ProductFilters 
-                categories={categories} 
-                artisans={artisans}
-              />
-            </div>
-            
-            {/* Products grid */}
-            <div className="w-full lg:w-3/4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {productsLoading ? (
-                  // Loading skeleton
-                  [...Array(6)].map((_, i) => (
-                    <div key={i} className="animate-pulse bg-white border border-gray-200 rounded-lg p-4">
-                      <div className="bg-gray-200 aspect-square rounded-lg mb-4"></div>
-                      <div className="h-5 bg-gray-200 rounded mb-2 w-3/4"></div>
-                      <div className="h-4 bg-gray-200 rounded mb-3 w-1/2"></div>
-                      <div className="h-4 bg-gray-200 rounded mb-4 w-1/3"></div>
-                      <div className="h-10 bg-gray-200 rounded"></div>
-                    </div>
-                  ))
-                ) : products.length > 0 ? (
-                  products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))
-                ) : (
-                  <div className="col-span-3 py-8 text-center">
-                    <p className="text-gray-500">No products found matching your filters.</p>
-                    <Button 
-                      onClick={() => window.location.reload()}
-                      variant="outline"
-                      className="mt-4"
-                    >
-                      Reset Filters
-                    </Button>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mt-10 flex justify-center">
-                <Link href="/categories">
-                  <Button className="bg-secondary hover:bg-secondary-dark text-primary font-medium px-6 py-3 rounded-md transition-all">
-                    Load More Products
+          <h2 className="text-3xl font-bold text-center mb-12">{t('mainFeatures')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Products Management */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <Package className="h-12 w-12 text-green-600 mb-4" />
+                <CardTitle>{t('products')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('manageYourProducts')}
+                </p>
+                <Link href="/products">
+                  <Button className="w-full">
+                    {t('viewProducts')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              </CardContent>
+            </Card>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-neutral">
-        <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl font-bold text-center mb-4">Customer Testimonials</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Don't just take our word for it. Hear what our happy customers have to say about our artisanal products.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonialsLoading ? (
-              // Loading skeleton
-              [...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-white p-6 rounded-lg">
-                  <div className="h-4 bg-gray-200 rounded mb-4 w-1/3"></div>
-                  <div className="h-20 bg-gray-200 rounded mb-4"></div>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full mr-3"></div>
-                    <div>
-                      <div className="h-4 bg-gray-200 rounded mb-2 w-24"></div>
-                      <div className="h-3 bg-gray-200 rounded w-20"></div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              testimonials.map((testimonial) => (
-                <TestimonialCard key={testimonial.id} review={testimonial} />
-              ))
-            )}
-          </div>
-          
-          <div className="mt-10">
-            <h3 className="font-heading text-2xl font-bold text-center mb-6">Share Your Experience</h3>
-            <Link href="/reviews/new">
-              <Button className="block mx-auto bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition-all">
-                Write a Review
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Artisans Section */}
-      <section id="artisans" className="py-16 bg-secondary bg-opacity-30">
-        <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl font-bold text-center mb-4">Meet Our Artisans</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Each product in our marketplace is crafted by skilled artisans who pour their heart and expertise into their creations.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {artisansLoading ? (
-              // Loading skeleton
-              [...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-white rounded-lg overflow-hidden shadow-md">
-                  <div className="aspect-video bg-gray-200"></div>
-                  <div className="p-6">
-                    <div className="h-6 bg-gray-200 rounded mb-2 w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-3 w-1/2"></div>
-                    <div className="h-16 bg-gray-200 rounded mb-4"></div>
-                    <div className="flex space-x-2 mb-4">
-                      <div className="h-6 bg-gray-200 rounded w-16"></div>
-                      <div className="h-6 bg-gray-200 rounded w-16"></div>
-                    </div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              artisans.map((artisan) => (
-                <ArtisanCard key={artisan.id} artisan={artisan} />
-              ))
-            )}
-          </div>
-          
-          <div className="mt-10 text-center">
-            <Link href="/artisans">
-              <Button className="bg-accent hover:bg-accent-dark text-white font-medium px-6 py-3 rounded-md transition-all inline-flex items-center">
-                Meet All Our Artisans <i className="ri-arrow-right-line ml-2"></i>
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA / Newsletter Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="bg-primary rounded-xl p-8 lg:p-12 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10"></div>
-            
-            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between">
-              <div className="mb-8 lg:mb-0 text-center lg:text-left">
-                <h2 className="font-heading text-white text-3xl md:text-4xl font-bold mb-3">
-                  Join our artisan community
-                </h2>
-                <p className="text-white text-opacity-90 max-w-xl">
-                  Sign up to receive updates on new arrivals, special offers and other discount information.
+            {/* Sales Tracking */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <ShoppingCart className="h-12 w-12 text-blue-600 mb-4" />
+                <CardTitle>{t('sales')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('trackYourSales')}
                 </p>
-              </div>
-              
-              <div className="w-full lg:w-auto">
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-                  <Input
-                    type="email"
-                    placeholder="Your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full sm:w-72 px-4 py-3 rounded-md border-0 focus:outline-none focus:ring-2 focus:ring-white"
-                    required
-                  />
-                  <Button 
-                    type="submit"
-                    className="bg-white text-primary hover:bg-neutral hover:text-primary-dark font-accent font-medium px-6 py-3 rounded-md transition-all"
-                  >
-                    Subscribe
+                <Link href="/sales">
+                  <Button className="w-full">
+                    {t('viewSales')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
-                </form>
-                <p className="text-white text-opacity-80 text-sm mt-2">
-                  We respect your privacy. Unsubscribe at any time.
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Workers Management */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <Users className="h-12 w-12 text-purple-600 mb-4" />
+                <CardTitle>{t('workers')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('manageYourTeam')}
                 </p>
-              </div>
-            </div>
+                <Link href="/workers">
+                  <Button className="w-full">
+                    {t('viewWorkers')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Storage Management */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <Warehouse className="h-12 w-12 text-orange-600 mb-4" />
+                <CardTitle>{t('storage')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('manageInventory')}
+                </p>
+                <Link href="/storage">
+                  <Button className="w-full">
+                    {t('viewStorage')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Expenses Tracking */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <Banknote className="h-12 w-12 text-red-600 mb-4" />
+                <CardTitle>{t('expenses')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('trackExpenses')}
+                </p>
+                <Link href="/expenses">
+                  <Button className="w-full">
+                    {t('viewExpenses')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Reports & Analytics */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <BarChart3 className="h-12 w-12 text-indigo-600 mb-4" />
+                <CardTitle>{t('reports')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {t('viewReports')}
+                </p>
+                <Link href="/reports">
+                  <Button className="w-full">
+                    {t('viewReports')}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 bg-green-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">{t('getStarted')}</h2>
+          <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+            {t('startManaging')}
+          </p>
+          <Link href="/dashboard">
+            <Button size="lg" className="bg-white text-green-800 hover:bg-green-50">
+              <BarChart3 className="h-5 w-5 mr-2" />
+              {t('goToDashboard')}
+            </Button>
+          </Link>
         </div>
       </section>
     </div>
