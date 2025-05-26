@@ -131,3 +131,16 @@ export const dateRangeFilterSchema = z.object({
 });
 
 export type DateRangeFilter = z.infer<typeof dateRangeFilterSchema>;
+
+// Storage Items Table
+export const storageItems = pgTable("storage_items", {
+  id: serial("id").primaryKey(),
+  itemName: text("item_name").notNull(),
+  quantityInTons: doublePrecision("quantity_in_tons").notNull(),
+  purchasePricePerTon: doublePrecision("purchase_price_per_ton").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertStorageItemSchema = createInsertSchema(storageItems).omit({ id: true, createdAt: true });
+export type InsertStorageItem = z.infer<typeof insertStorageItemSchema>;
+export type StorageItem = typeof storageItems.$inferSelect;

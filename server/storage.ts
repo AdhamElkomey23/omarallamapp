@@ -5,6 +5,7 @@ import {
   activityLogs,
   users,
   workers,
+  storageItems,
   type Product, 
   type InsertProduct,
   type Sale,
@@ -17,6 +18,8 @@ import {
   type InsertUser,
   type Worker,
   type InsertWorker,
+  type StorageItem,
+  type InsertStorageItem,
   type DateRangeFilter
 } from "@shared/schema";
 
@@ -66,6 +69,13 @@ export interface IStorage {
   updateWorker(id: number, worker: Partial<InsertWorker>): Promise<Worker | undefined>;
   deleteWorker(id: number): Promise<boolean>;
   getWorkersByDepartment(department: string): Promise<Worker[]>;
+  
+  // Storage Items
+  getAllStorageItems(): Promise<StorageItem[]>;
+  getStorageItem(id: number): Promise<StorageItem | undefined>;
+  createStorageItem(item: InsertStorageItem): Promise<StorageItem>;
+  updateStorageItem(id: number, item: Partial<InsertStorageItem>): Promise<StorageItem | undefined>;
+  deleteStorageItem(id: number): Promise<boolean>;
   
   // Users
   getUser(id: number): Promise<User | undefined>;
