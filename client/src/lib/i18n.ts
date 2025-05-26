@@ -209,7 +209,33 @@ export const translations = {
     keyFinancialIndicatorsOverview: "Overview of key financial indicators",
     indicator: "Indicator",
     currentValue: "Current Value",
-    changePercent: "Change %"
+    changePercent: "Change %",
+    
+    // Storage page translations
+    storage: "Storage",
+    storageManagement: "Storage Management",
+    addNewItem: "Add New Item",
+    itemName: "Item Name",
+    quantityInTons: "Quantity (Tons)",
+    purchasePricePerTon: "Purchase Price per Ton",
+    totalCost: "Total Cost",
+    actions: "Actions",
+    edit: "Edit",
+    delete: "Delete",
+    addItem: "Add Item",
+    editItem: "Edit Item",
+    itemNamePlaceholder: "Enter item name",
+    quantityPlaceholder: "Enter quantity in tons",
+    pricePlaceholder: "Enter price per ton",
+    save: "Save",
+    cancel: "Cancel",
+    confirmDelete: "Are you sure you want to delete this item?",
+    deleteConfirmation: "Delete Confirmation",
+    yes: "Yes",
+    no: "No",
+    totalStorageValue: "Total Storage Value",
+    totalItems: "Total Items",
+    averagePricePerTon: "Average Price per Ton"
   },
   
   ar: {
@@ -421,7 +447,33 @@ export const translations = {
     keyFinancialIndicatorsOverview: "نظرة عامة على المؤشرات المالية الرئيسية",
     indicator: "المؤشر",
     currentValue: "القيمة الحالية",
-    changePercent: "التغيير %"
+    changePercent: "التغيير %",
+    
+    // Storage page translations
+    storage: "المخزون",
+    storageManagement: "إدارة المخزون",
+    addNewItem: "إضافة عنصر جديد",
+    itemName: "اسم العنصر",
+    quantityInTons: "الكمية (طن)",
+    purchasePricePerTon: "سعر الشراء للطن",
+    totalCost: "التكلفة الإجمالية",
+    actions: "الإجراءات",
+    edit: "تعديل",
+    delete: "حذف",
+    addItem: "إضافة عنصر",
+    editItem: "تعديل العنصر",
+    itemNamePlaceholder: "أدخل اسم العنصر",
+    quantityPlaceholder: "أدخل الكمية بالطن",
+    pricePlaceholder: "أدخل سعر الطن",
+    save: "حفظ",
+    cancel: "إلغاء",
+    confirmDelete: "هل أنت متأكد من حذف هذا العنصر؟",
+    deleteConfirmation: "تأكيد الحذف",
+    yes: "نعم",
+    no: "لا",
+    totalStorageValue: "قيمة المخزون الإجمالية",
+    totalItems: "إجمالي العناصر",
+    averagePricePerTon: "متوسط السعر للطن"
   }
 };
 

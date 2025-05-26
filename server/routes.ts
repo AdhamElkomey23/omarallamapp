@@ -7,6 +7,7 @@ import {
   insertExpenseSchema,
   insertActivityLogSchema,
   insertWorkerSchema,
+  insertStorageItemSchema,
   dateRangeFilterSchema
 } from "@shared/schema";
 import { z } from "zod";
@@ -412,6 +413,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).end();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete worker" });
+    }
+  });
+
+  // Storage Items Routes
+  apiRouter.get("/storage", async (req, res) => {
+    try {
+      const items = await storage.getAllStorageItems();
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch storage items" });
+    }
+  });
+
+  apiRouter.get("/storage/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid storage item ID" });
+      }
+
+      const item = await storage.getStorageItem(id);
+      if (!item) {
+        return res.status(404).json({ message: "Storage item not found" });
+      }
+      res.json(item);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch storage item" });
+    }
+  });
+
+  apiRouter.post("/storage", async (req, res) => {
+    try {
+      const validatedData = insertStorageItemSchema.parse(req.body);
+      const newItem = await storage.createStorageItem(validatedData);
+      res.status(201).json(newItem);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid storage item data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create storage item" });
+    }
+  });
+
+  apiRouter.put("/storage/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid storage item ID" });
+      }
+
+      const validatedData = insertStorageItemSchema.partial().parse(req.body);
+      const updatedItem = await storage.updateStorageItem(id, validatedData);
+      
+      if (!updatedItem) {
+        return res.status(404).json({ message: "Storage item not found" });
+      }
+      
+      res.json(updatedItem);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid storage item data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update storage item" });
+    }
+  });
+
+  apiRouter.delete("/storage/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid storage item ID" });
+      }
+
+      const success = await storage.deleteStorageItem(id);
+      if (!success) {
+        return res.status(404).json({ message: "Storage item not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete storage item" });
     }
   });
 
