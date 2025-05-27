@@ -162,13 +162,24 @@ export class MemStorage implements IStorage {
       { productId: 4, quantity: 8, totalAmount: 17600, saleDate: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000) }
     ];
     
-    sampleSales.forEach(sale => {
+    const clients = [
+      { name: "Green Valley Farms", contact: "+20 100 123 4567" },
+      { name: "Nile Delta Agriculture Co.", contact: "+20 101 234 5678" },
+      { name: "Cairo Agricultural Supplies", contact: "+20 102 345 6789" },
+      { name: "Alexandria Fertilizer Trading", contact: "+20 103 456 7890" },
+      { name: "Upper Egypt Farm Supply", contact: "+20 104 567 8901" }
+    ];
+
+    sampleSales.forEach((sale, index) => {
+      const client = clients[index % clients.length];
       const newSale: Sale = {
         id: this.saleCounter++,
         productId: sale.productId,
         quantity: sale.quantity,
         totalAmount: sale.totalAmount,
         saleDate: sale.saleDate,
+        clientName: client.name,
+        clientContact: client.contact,
         createdAt: new Date()
       };
       this.sales.set(newSale.id, newSale);
@@ -222,7 +233,17 @@ export class MemStorage implements IStorage {
       this.activityLogs.set(newLog.id, newLog);
     });
 
-    // Sample storage items
+    // Sample storage items with dealer information
+    const dealers = [
+      { name: "Global Chemical Industries", contact: "+20 120 555 0001" },
+      { name: "Nile Valley Chemicals Ltd.", contact: "+20 122 555 0002" },
+      { name: "Egyptian Raw Materials Co.", contact: "+20 121 555 0003" },
+      { name: "Mediterranean Chemical Supply", contact: "+20 123 555 0004" },
+      { name: "Cairo Chemical Trading", contact: "+20 124 555 0005" },
+      { name: "Delta Mining & Chemicals", contact: "+20 125 555 0006" },
+      { name: "Suez Industrial Supplies", contact: "+20 126 555 0007" }
+    ];
+
     const sampleStorageItems = [
       { itemName: 'Ammonium Nitrate', quantityInTons: 150, purchasePricePerTon: 350 },
       { itemName: 'Potassium Chloride', quantityInTons: 120, purchasePricePerTon: 420 },
@@ -233,7 +254,8 @@ export class MemStorage implements IStorage {
       { itemName: 'Potassium Sulfate', quantityInTons: 60, purchasePricePerTon: 580 }
     ];
     
-    sampleStorageItems.forEach(item => {
+    sampleStorageItems.forEach((item, index) => {
+      const dealer = dealers[index % dealers.length];
       const newItem: StorageItem = {
         id: this.storageItemCounter++,
         itemName: item.itemName,

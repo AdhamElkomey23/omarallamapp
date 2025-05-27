@@ -37,6 +37,8 @@ export const sales = pgTable("sales", {
   quantity: integer("quantity").notNull(),
   totalAmount: doublePrecision("total_amount").notNull(),
   saleDate: date("sale_date").notNull(),
+  clientName: text("client_name").notNull(),
+  clientContact: text("client_contact"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -49,6 +51,8 @@ export type Sale = {
   quantity: number;
   totalAmount: number;
   saleDate: Date;
+  clientName: string;
+  clientContact: string | null;
   createdAt: Date;
 };
 
@@ -138,6 +142,8 @@ export const storageItems = pgTable("storage_items", {
   itemName: text("item_name").notNull(),
   quantityInTons: doublePrecision("quantity_in_tons").notNull(),
   purchasePricePerTon: doublePrecision("purchase_price_per_ton").notNull(),
+  dealerName: text("dealer_name").notNull(),
+  dealerContact: text("dealer_contact"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
