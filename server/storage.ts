@@ -261,6 +261,8 @@ export class MemStorage implements IStorage {
         itemName: item.itemName,
         quantityInTons: item.quantityInTons,
         purchasePricePerTon: item.purchasePricePerTon,
+        dealerName: dealer.name,
+        dealerContact: dealer.contact,
         createdAt: new Date()
       };
       this.storageItems.set(newItem.id, newItem);
