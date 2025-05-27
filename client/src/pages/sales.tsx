@@ -93,6 +93,8 @@ export default function Sales() {
       quantity: 1,
       totalAmount: 0,
       saleDate: new Date(),
+      clientName: "",
+      clientContact: "",
     },
   });
 
@@ -186,6 +188,38 @@ export default function Sales() {
                           placeholder="0.00" 
                           {...field}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="clientName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. Green Valley Farms" 
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="clientContact"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client Contact (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. +20 100 123 4567" 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -307,6 +341,9 @@ export default function Sales() {
                       <p className="font-medium">{sale.productName}</p>
                       <p className="text-sm text-muted-foreground">
                         Quantity: {sale.quantity} • {format(new Date(sale.saleDate), "MMM dd, yyyy")}
+                      </p>
+                      <p className="text-sm text-blue-600 font-medium">
+                        Client: {sale.clientName}
                       </p>
                     </div>
                     <div className="text-right">

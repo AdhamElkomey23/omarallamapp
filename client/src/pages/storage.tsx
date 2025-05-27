@@ -193,6 +193,38 @@ export default function Storage() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="dealerName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dealer Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. Global Chemical Industries" 
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dealerContact"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dealer Contact (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g. +20 120 555 0001" 
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex justify-end space-x-2">
                   <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                     {t('cancel')}
@@ -252,6 +284,7 @@ export default function Storage() {
                 <TableHead>{t('itemName')}</TableHead>
                 <TableHead>{t('quantityInTons')}</TableHead>
                 <TableHead>{t('purchasePricePerTon')}</TableHead>
+                <TableHead>Dealer</TableHead>
                 <TableHead>{t('totalCost')}</TableHead>
                 <TableHead>{t('actions')}</TableHead>
               </TableRow>
@@ -262,6 +295,14 @@ export default function Storage() {
                   <TableCell className="font-medium">{item.itemName}</TableCell>
                   <TableCell>{item.quantityInTons.toLocaleString()}</TableCell>
                   <TableCell>{formatCurrency(item.purchasePricePerTon)}</TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      <div className="font-medium text-blue-600">{item.dealerName}</div>
+                      {item.dealerContact && (
+                        <div className="text-muted-foreground">{item.dealerContact}</div>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>{formatCurrency(item.quantityInTons * item.purchasePricePerTon)}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
