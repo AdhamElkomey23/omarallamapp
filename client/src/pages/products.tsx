@@ -67,9 +67,13 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
   const [editingProduct, setEditingProduct] = useState<number | null>(null);
 
-  const { data: products, isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery({
     queryKey: ['/api/products'],
-    queryFn: () => apiRequest('/api/products')
+    queryFn: async () => {
+      const response = await fetch('/api/products');
+      if (!response.ok) throw new Error('Failed to fetch products');
+      return response.json();
+    }
   });
 
   const addProductMutation = useMutation({
