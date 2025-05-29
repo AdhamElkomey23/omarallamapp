@@ -95,22 +95,41 @@ export default function Products() {
   });
 
   const updateProductMutation = useMutation({
-    mutationFn: ({ id, values }: { id: number, values: ProductFormValues }) => apiRequest(`/api/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(values)
-    }),
+    mutationFn: ({ id, values }: { id: number, values: ProductFormValues }) => 
+      fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to update product');
+        return res.json();
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setEditingProduct(null);
+      alert("Product updated successfully!");
+    },
+    onError: (error) => {
+      console.error("Failed to update product:", error);
+      alert("Failed to update product. Please try again.");
     }
   });
 
   const deleteProductMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/products/${id}`, {
-      method: 'DELETE'
-    }),
+    mutationFn: (id: number) => 
+      fetch(`/api/products/${id}`, {
+        method: 'DELETE'
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to delete product');
+        return res;
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      alert("Product deleted successfully!");
+    },
+    onError: (error) => {
+      console.error("Failed to delete product:", error);
+      alert("Failed to delete product. Please try again.");
     }
   });
 
