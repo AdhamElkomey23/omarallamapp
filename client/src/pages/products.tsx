@@ -73,13 +73,24 @@ export default function Products() {
   });
 
   const addProductMutation = useMutation({
-    mutationFn: (values: ProductFormValues) => apiRequest('/api/products', {
-      method: 'POST',
-      body: JSON.stringify(values)
-    }),
+    mutationFn: (values: ProductFormValues) => 
+      fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to add product');
+        return res.json();
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setIsAddDialogOpen(false);
+      form.reset();
+      alert("Product added successfully!");
+    },
+    onError: (error) => {
+      console.error("Failed to add product:", error);
+      alert("Failed to add product. Please try again.");
     }
   });
 
@@ -137,7 +148,8 @@ export default function Products() {
   };
 
   const handleDelete = (id: number) => {
-    if (window.confirm(t("deleteConfirmation") || "Are you sure you want to delete this product?")) {
+    const confirmed = window.confirm("Are you sure you want to delete this product? This action cannot be undone.");
+    if (confirmed) {
       deleteProductMutation.mutate(id);
     }
   };
