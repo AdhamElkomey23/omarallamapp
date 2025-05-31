@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { Plus, Filter, TrendingUp, DollarSign } from "lucide-react";
+import { Plus, Filter, TrendingUp, DollarSign, Edit, Trash2, Download } from "lucide-react";
 import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,8 @@ type SaleFormValues = z.infer<typeof saleFormSchema>;
 
 export default function Sales() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingSale, setEditingSale] = useState<Sale | null>(null);
   const [productFilter, setProductFilter] = useState<string | undefined>(undefined);
   const { toast } = useToast();
 
@@ -117,6 +120,95 @@ export default function Sales() {
     }
   });
 
+  const deleteSaleMutation = useMutation({
+    mutationFn: async (sale: Sale) => {
+      // First add quantity back to storage
+      await fetch('/api/storage/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemName: sale.productName,
+          quantity: sale.quantity
+        }),
+      });
+
+      // Then delete the sale record
+      const response = await fetch(`/api/sales/${sale.id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete sale');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/sales'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/storage'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
+      toast({
+        title: "Sale Deleted",
+        description: "Sale has been deleted and inventory restored.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete sale. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const editSaleMutation = useMutation({
+    mutationFn: async ({ id, values, originalSale }: { id: number, values: SaleFormValues, originalSale: Sale }) => {
+      // First restore original quantity to storage
+      await fetch('/api/storage/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemName: originalSale.productName,
+          quantity: originalSale.quantity
+        }),
+      });
+
+      // Then deduct new quantity from storage
+      await fetch('/api/storage/deduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemName: values.productName,
+          quantity: values.quantity
+        }),
+      });
+
+      // Finally update the sale record
+      const response = await fetch(`/api/sales/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) throw new Error('Failed to update sale');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/sales'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/storage'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
+      setIsEditDialogOpen(false);
+      setEditingSale(null);
+      form.reset();
+      toast({
+        title: "Sale Updated",
+        description: "Sale has been updated and inventory adjusted.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update sale. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
     defaultValues: {
@@ -129,8 +221,104 @@ export default function Sales() {
     },
   });
 
+  // PDF generation function
+  const generatePDF = (saleData: Sale | Sale[]) => {
+    const isMultiple = Array.isArray(saleData);
+    const sales = isMultiple ? saleData : [saleData];
+    
+    // Create a simple HTML invoice
+    const invoiceHTML = `
+      <html>
+        <head>
+          <title>${isMultiple ? 'Sales Report' : 'Invoice'}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .invoice-details { margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            .total { font-weight: bold; margin-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Fertilizer Factory</h1>
+            <h2>${isMultiple ? 'Sales Report' : 'Invoice'}</h2>
+            <p>Date: ${format(new Date(), "MMM dd, yyyy")}</p>
+          </div>
+          
+          ${sales.map(sale => `
+            <div class="invoice-details">
+              ${!isMultiple ? `<h3>Invoice #${sale.id}</h3>` : ''}
+              <p><strong>Customer:</strong> ${sale.clientName}</p>
+              ${sale.clientContact ? `<p><strong>Contact:</strong> ${sale.clientContact}</p>` : ''}
+              <p><strong>Sale Date:</strong> ${format(new Date(sale.saleDate), "MMM dd, yyyy")}</p>
+            </div>
+            
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>${sale.productName}</td>
+                  <td>${sale.quantity}</td>
+                  <td>$${(sale.totalAmount / sale.quantity).toFixed(2)}</td>
+                  <td>$${sale.totalAmount.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+            ${!isMultiple ? '<div style="page-break-after: always;"></div>' : ''}
+          `).join('')}
+          
+          ${isMultiple ? `
+            <div class="total">
+              <h3>Total Sales: $${sales.reduce((sum, sale) => sum + sale.totalAmount, 0).toFixed(2)}</h3>
+              <p>Total Items Sold: ${sales.reduce((sum, sale) => sum + sale.quantity, 0)}</p>
+            </div>
+          ` : ''}
+        </body>
+      </html>
+    `;
+    
+    // Create a blob and download
+    const blob = new Blob([invoiceHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${isMultiple ? 'sales_report' : `invoice_${sales[0].id}`}_${format(new Date(), "yyyy-MM-dd")}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Handle edit form submission
+  const handleEdit = (sale: Sale) => {
+    setEditingSale(sale);
+    form.reset({
+      productName: sale.productName,
+      quantity: sale.quantity,
+      totalAmount: sale.totalAmount,
+      clientName: sale.clientName,
+      clientContact: sale.clientContact || '',
+      saleDate: format(new Date(sale.saleDate), "yyyy-MM-dd"),
+    });
+    setIsEditDialogOpen(true);
+  };
+
   function onSubmit(values: SaleFormValues) {
-    addSaleMutation.mutate(values);
+    if (editingSale) {
+      editSaleMutation.mutate({ id: editingSale.id, values, originalSale: editingSale });
+    } else {
+      addSaleMutation.mutate(values);
+    }
   }
 
   // Calculate summary data
@@ -362,26 +550,82 @@ export default function Sales() {
             </div>
           ) : (
             <div className="space-y-4">
-              {salesWithProducts.map((sale) => (
-                <Link key={sale.id} href={`/sale/${sale.id}`}>
-                  <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-                    <div className="space-y-1">
-                      <p className="font-medium">{sale.productName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Quantity: {sale.quantity} • {format(new Date(sale.saleDate), "MMM dd, yyyy")}
-                      </p>
-                      <p className="text-sm text-blue-600 font-medium">
-                        Client: {sale.clientName}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-green-600">${sale.totalAmount.toFixed(2)}</p>
-                      <p className="text-sm text-muted-foreground">
-                        ${(sale.totalAmount / sale.quantity).toFixed(2)} per unit
-                      </p>
-                    </div>
+              {/* Add Export All Sales button */}
+              <div className="flex justify-end mb-4">
+                <Button
+                  onClick={() => generatePDF(sales)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export All Sales
+                </Button>
+              </div>
+              
+              {sales.map((sale) => (
+                <div key={sale.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="space-y-1 flex-1">
+                    <p className="font-medium">{sale.productName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Quantity: {sale.quantity} • {format(new Date(sale.saleDate), "MMM dd, yyyy")}
+                    </p>
+                    <p className="text-sm text-blue-600 font-medium">
+                      Client: {sale.clientName}
+                    </p>
                   </div>
-                </Link>
+                  <div className="text-right mr-4">
+                    <p className="font-bold text-green-600">${sale.totalAmount.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      ${(sale.totalAmount / sale.quantity).toFixed(2)} per unit
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => generatePDF(sale)}
+                      className="p-2"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(sale)}
+                      className="p-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Sale</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this sale? This will restore {sale.quantity} units of {sale.productName} back to inventory.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteSaleMutation.mutate(sale)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete Sale
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
               ))}
             </div>
           )}
