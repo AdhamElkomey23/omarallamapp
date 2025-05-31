@@ -76,6 +76,7 @@ export interface IStorage {
   createStorageItem(item: InsertStorageItem): Promise<StorageItem>;
   updateStorageItem(id: number, item: Partial<InsertStorageItem>): Promise<StorageItem | undefined>;
   deleteStorageItem(id: number): Promise<boolean>;
+  deductStorageQuantity(itemName: string, quantity: number): Promise<boolean>;
   
   // Users
   getUser(id: number): Promise<User | undefined>;

@@ -81,10 +81,7 @@ export default function Sales() {
       const response = await fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...values,
-          productName: values.productId // Store product name instead of ID
-        }),
+        body: JSON.stringify(values),
       });
       if (!response.ok) throw new Error('Failed to add sale');
       
@@ -93,7 +90,7 @@ export default function Sales() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          itemName: values.productId,
+          itemName: values.productName,
           quantity: values.quantity
         }),
       });
@@ -123,7 +120,7 @@ export default function Sales() {
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
     defaultValues: {
-      productId: "",
+      productName: "",
       quantity: 1,
       totalAmount: 0,
       saleDate: new Date(),
@@ -140,11 +137,8 @@ export default function Sales() {
   const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
   const totalQuantity = sales.reduce((sum, sale) => sum + sale.quantity, 0);
   
-  // Get product details for sales
-  const salesWithProducts = sales.map(sale => {
-    const product = availableProducts.find(p => p.itemName === sale.productId);
-    return { ...sale, productName: product?.itemName || sale.productId || 'Unknown Product' };
-  });
+  // Sales already have productName field, no need to map
+  const salesWithProducts = sales;
 
   return (
     <div className="space-y-6">
@@ -168,20 +162,20 @@ export default function Sales() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="productId"
+                  name="productName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Product</FormLabel>
-                      <Select onValueChange={(value) => field.onChange(parseInt(value))}>
+                      <Select onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a product" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {products.map((product) => (
-                            <SelectItem key={product.id} value={product.id.toString()}>
-                              {product.name} - ${product.unitPrice.toFixed(2)}
+                          {availableProducts.map((product) => (
+                            <SelectItem key={product.itemName} value={product.itemName}>
+                              {product.itemName} (Available: {product.totalQuantity} tons)
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -324,9 +318,9 @@ export default function Sales() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All products</SelectItem>
-                  {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id.toString()}>
-                      {product.name}
+                  {availableProducts.map((product) => (
+                    <SelectItem key={product.itemName} value={product.itemName}>
+                      {product.itemName}
                     </SelectItem>
                   ))}
                 </SelectContent>
