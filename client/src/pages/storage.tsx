@@ -81,6 +81,9 @@ export default function Storage() {
       itemName: "",
       quantityInTons: 0,
       purchasePricePerTon: 0,
+      dealerName: "",
+      dealerContact: "",
+      purchaseDate: new Date().toISOString().split('T')[0],
     },
   });
 
@@ -100,6 +103,9 @@ export default function Storage() {
       itemName: item.itemName,
       quantityInTons: item.quantityInTons,
       purchasePricePerTon: item.purchasePricePerTon,
+      dealerName: item.dealerName,
+      dealerContact: item.dealerContact || "",
+      purchaseDate: item.purchaseDate,
     });
   }
 
@@ -234,6 +240,23 @@ export default function Storage() {
                         <Input 
                           placeholder="e.g. +20 120 555 0001" 
                           {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="purchaseDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Purchase Date</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -309,6 +332,7 @@ export default function Storage() {
                     <TableRow>
                       <TableHead>Supplier Company</TableHead>
                       <TableHead>Contact</TableHead>
+                      <TableHead>Purchase Date</TableHead>
                       <TableHead>Quantity (tons)</TableHead>
                       <TableHead>Price per Ton</TableHead>
                       <TableHead>Total Cost</TableHead>
@@ -382,6 +406,52 @@ export default function Storage() {
                                         placeholder={t('pricePlaceholder')} 
                                         {...field}
                                         onChange={(e) => field.onChange(Number(e.target.value))}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={editForm.control}
+                                name="dealerName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Dealer Company</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Company name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={editForm.control}
+                                name="dealerContact"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Contact Info</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        placeholder="e.g. +20 120 555 0001" 
+                                        {...field}
+                                        value={field.value || ""}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={editForm.control}
+                                name="purchaseDate"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Purchase Date</FormLabel>
+                                    <FormControl>
+                                      <Input 
+                                        type="date"
+                                        {...field}
                                       />
                                     </FormControl>
                                     <FormMessage />
