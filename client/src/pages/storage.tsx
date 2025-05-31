@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useForm } from "react-hook-form";
@@ -149,10 +150,21 @@ export default function Storage() {
                   name="itemName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('itemName')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('itemNamePlaceholder')} {...field} />
-                      </FormControl>
+                      <FormLabel>Material Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select material type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="الجبس">Gypsum (الجبس)</SelectItem>
+                          <SelectItem value="الفلسبار">Feldspar (الفلسبار)</SelectItem>
+                          <SelectItem value="الكاولينا">Kaolin (الكاولينا)</SelectItem>
+                          <SelectItem value="التلك">Talc (التلك)</SelectItem>
+                          <SelectItem value="كاربونات الكالسيوم">Calcium Carbonate (كاربونات الكالسيوم)</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -239,72 +251,78 @@ export default function Storage() {
         </Dialog>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('totalStorageValue')}</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalStorageValue)}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('totalItems')}</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalItems}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('averagePricePerTon')}</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(averagePricePerTon)}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Storage Items Table */}
+      {/* Material Totals */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('storage')}</CardTitle>
+          <CardTitle>Material Inventory Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('itemName')}</TableHead>
-                <TableHead>{t('quantityInTons')}</TableHead>
-                <TableHead>{t('purchasePricePerTon')}</TableHead>
-                <TableHead>Dealer</TableHead>
-                <TableHead>{t('totalCost')}</TableHead>
-                <TableHead>{t('actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {storageItems.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.itemName}</TableCell>
-                  <TableCell>{item.quantityInTons.toLocaleString()}</TableCell>
-                  <TableCell>{formatCurrency(item.purchasePricePerTon)}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div className="font-medium text-blue-600">{item.dealerName}</div>
-                      {item.dealerContact && (
-                        <div className="text-muted-foreground">{item.dealerContact}</div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatCurrency(item.quantityInTons * item.purchasePricePerTon)}</TableCell>
-                  <TableCell>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {['الجبس', 'الفلسبار', 'الكاولينا', 'التلك', 'كاربونات الكالسيوم'].map((material) => {
+              const totalQuantity = storageItems
+                .filter(item => item.itemName === material)
+                .reduce((sum, item) => sum + item.quantityInTons, 0);
+              
+              return (
+                <div key={material} className="text-center p-4 border rounded-lg">
+                  <div className="text-sm font-medium text-muted-foreground mb-1">
+                    {material === 'الجبس' && 'Gypsum'}
+                    {material === 'الفلسبار' && 'Feldspar'}
+                    {material === 'الكاولينا' && 'Kaolin'}
+                    {material === 'التلك' && 'Talc'}
+                    {material === 'كاربونات الكالسيوم' && 'Calcium Carbonate'}
+                  </div>
+                  <div className="text-lg font-bold">{totalQuantity.toLocaleString()} tons</div>
+                  <div className="text-xs text-muted-foreground">{material}</div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Supplier Breakdown by Material */}
+      <div className="space-y-6">
+        {['الجبس', 'الفلسبار', 'الكاولينا', 'التلك', 'كاربونات الكالسيوم'].map((material) => {
+          const materialItems = storageItems.filter(item => item.itemName === material);
+          const materialName = {
+            'الجبس': 'Gypsum (الجبس)',
+            'الفلسبار': 'Feldspar (الفلسبار)',
+            'الكاولينا': 'Kaolin (الكاولينا)',
+            'التلك': 'Talc (التلك)',
+            'كاربونات الكالسيوم': 'Calcium Carbonate (كاربونات الكالسيوم)'
+          }[material];
+
+          if (materialItems.length === 0) return null;
+
+          return (
+            <Card key={material}>
+              <CardHeader>
+                <CardTitle className="text-lg">{materialName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Supplier Company</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Quantity (tons)</TableHead>
+                      <TableHead>Price per Ton</TableHead>
+                      <TableHead>Total Cost</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {materialItems.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium text-blue-600">{item.dealerName}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {item.dealerContact || '-'}
+                        </TableCell>
+                        <TableCell>{item.quantityInTons.toLocaleString()}</TableCell>
+                        <TableCell>{formatCurrency(item.purchasePricePerTon)}</TableCell>
+                        <TableCell>{formatCurrency(item.quantityInTons * item.purchasePricePerTon)}</TableCell>
+                        <TableCell>
                     <div className="flex space-x-2">
                       <Dialog open={editingItem?.id === item.id} onOpenChange={(open) => !open && setEditingItem(null)}>
                         <DialogTrigger asChild>
@@ -408,7 +426,10 @@ export default function Storage() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
