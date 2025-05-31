@@ -372,19 +372,24 @@ export class MemStorage implements IStorage {
     return sale;
   }
   
-  async deleteSale(id: number): Promise<boolean> {
-    const sale = this.sales.get(id);
-    if (!sale) return false;
-    
-    // Restore product stock
-    const product = this.products.get(sale.productId);
-    if (product) {
-      this.products.set(product.id, {
-        ...product,
-        stockQuantity: product.stockQuantity + sale.quantity
-      });
+  async updateSale(id: number, saleUpdate: Partial<InsertSale>): Promise<Sale | undefined> {
+    const existingSale = this.sales.get(id);
+    if (!existingSale) {
+      return undefined;
     }
-    
+
+    const updatedSale: Sale = {
+      ...existingSale,
+      ...saleUpdate,
+      saleDate: saleUpdate.saleDate ? new Date(saleUpdate.saleDate) : existingSale.saleDate,
+      clientContact: saleUpdate.clientContact !== undefined ? saleUpdate.clientContact : existingSale.clientContact
+    };
+
+    this.sales.set(id, updatedSale);
+    return updatedSale;
+  }
+
+  async deleteSale(id: number): Promise<boolean> {
     return this.sales.delete(id);
   }
 
@@ -771,6 +776,22 @@ export class MemStorage implements IStorage {
     }
     
     return remainingToDeduct === 0; // Return true if all quantity was successfully deducted
+  }
+
+  async addStorageQuantity(itemName: string, quantity: number): Promise<boolean> {
+    // Find the first storage item with this name and add quantity back
+    const items = Array.from(this.storageItems.values()).filter(item => item.itemName === itemName);
+    
+    if (items.length === 0) {
+      return false; // Item not found
+    }
+    
+    // Add quantity to the first item found
+    const item = items[0];
+    const updatedItem = { ...item, quantityInTons: item.quantityInTons + quantity };
+    this.storageItems.set(item.id, updatedItem);
+    
+    return true;
   }
 }
 
