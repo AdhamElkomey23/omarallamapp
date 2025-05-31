@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import { insertSaleSchema, type Sale, type Product } from "../../../shared/schema";
+import { insertSaleSchema, type Sale, type StorageItem } from "../../../shared/schema";
 
 // Form validation schema
 const saleFormSchema = insertSaleSchema.extend({
@@ -47,34 +47,68 @@ export default function Sales() {
     }
   });
 
-  // Fetch products for the dropdown
-  const { data: products = [] } = useQuery({
-    queryKey: ['/api/products'],
+  // Fetch storage items for the dropdown (only show items with available quantity)
+  const { data: storageItems = [] } = useQuery({
+    queryKey: ['/api/storage'],
     queryFn: async () => {
-      const response = await fetch('/api/products');
-      if (!response.ok) throw new Error('Failed to fetch products');
-      return response.json() as Promise<Product[]>;
+      const response = await fetch('/api/storage');
+      if (!response.ok) throw new Error('Failed to fetch storage items');
+      return response.json() as Promise<StorageItem[]>;
     }
   });
 
+  // Group storage items by material and calculate total available quantities
+  const availableProducts = storageItems.reduce((acc, item) => {
+    const existing = acc.find(p => p.itemName === item.itemName);
+    if (existing) {
+      existing.totalQuantity += item.quantityInTons;
+      existing.avgPrice = (existing.avgPrice + item.purchasePricePerTon) / 2;
+    } else {
+      acc.push({
+        itemName: item.itemName,
+        totalQuantity: item.quantityInTons,
+        avgPrice: item.purchasePricePerTon,
+        storageItems: [item]
+      });
+    }
+    return acc;
+  }, [] as Array<{itemName: string, totalQuantity: number, avgPrice: number, storageItems: StorageItem[]}>)
+  .filter(item => item.totalQuantity > 0);
+
   const addSaleMutation = useMutation({
     mutationFn: async (values: SaleFormValues) => {
+      // First create the sale record
       const response = await fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          productName: values.productId // Store product name instead of ID
+        }),
       });
       if (!response.ok) throw new Error('Failed to add sale');
+      
+      // Then deduct quantity from storage
+      await fetch('/api/storage/deduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemName: values.productId,
+          quantity: values.quantity
+        }),
+      });
+      
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/sales'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/storage'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
       setIsAddDialogOpen(false);
       form.reset();
       toast({
         title: "Sale Recorded",
-        description: "Your sale has been recorded successfully.",
+        description: "Your sale has been recorded successfully and inventory updated.",
       });
     },
     onError: () => {
@@ -89,7 +123,7 @@ export default function Sales() {
   const form = useForm<SaleFormValues>({
     resolver: zodResolver(saleFormSchema),
     defaultValues: {
-      productId: 0,
+      productId: "",
       quantity: 1,
       totalAmount: 0,
       saleDate: new Date(),
@@ -108,8 +142,8 @@ export default function Sales() {
   
   // Get product details for sales
   const salesWithProducts = sales.map(sale => {
-    const product = products.find(p => p.id === sale.productId);
-    return { ...sale, productName: product?.name || 'Unknown Product' };
+    const product = availableProducts.find(p => p.itemName === sale.productId);
+    return { ...sale, productName: product?.itemName || sale.productId || 'Unknown Product' };
   });
 
   return (

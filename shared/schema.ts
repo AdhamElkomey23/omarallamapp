@@ -33,7 +33,7 @@ export type Product = typeof products.$inferSelect;
 // Sales Table
 export const sales = pgTable("sales", {
   id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull(),
+  productName: text("product_name").notNull(), // Changed from productId to productName
   quantity: integer("quantity").notNull(),
   totalAmount: doublePrecision("total_amount").notNull(),
   saleDate: date("sale_date").notNull(),
@@ -47,7 +47,7 @@ export const insertSaleSchema = createInsertSchema(sales).omit({ id: true, creat
 export type InsertSale = z.infer<typeof insertSaleSchema>;
 export type Sale = {
   id: number;
-  productId: number;
+  productName: string; // Changed from productId to productName
   quantity: number;
   totalAmount: number;
   saleDate: Date;
