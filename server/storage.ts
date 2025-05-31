@@ -175,7 +175,7 @@ export class MemStorage implements IStorage {
       const client = clients[index % clients.length];
       const newSale: Sale = {
         id: this.saleCounter++,
-        productId: sale.productId,
+        productName: "Ammonium Nitrate", // Use actual storage item name
         quantity: sale.quantity,
         totalAmount: sale.totalAmount,
         saleDate: sale.saleDate,
@@ -184,15 +184,6 @@ export class MemStorage implements IStorage {
         createdAt: new Date()
       };
       this.sales.set(newSale.id, newSale);
-      
-      // Update product stock
-      const product = this.products.get(sale.productId);
-      if (product) {
-        this.products.set(product.id, {
-          ...product,
-          stockQuantity: product.stockQuantity - sale.quantity
-        });
-      }
     });
     
     // Sample expenses
