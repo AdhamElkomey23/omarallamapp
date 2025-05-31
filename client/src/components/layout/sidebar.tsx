@@ -101,11 +101,7 @@ export function Sidebar() {
       icon: <LayoutDashboard className="h-5 w-5" />,
       title: t("dashboard"),
     },
-    {
-      href: "/products",
-      icon: <Package className="h-5 w-5" />,
-      title: t("products"),
-    },
+
     {
       href: "/sales",
       icon: <ShoppingCart className="h-5 w-5" />,

@@ -7,8 +7,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
-import Products from "@/pages/products";
-import ProductDetail from "@/pages/product-detail";
+
 import Sales from "@/pages/sales";
 import SaleDetail from "@/pages/sale-detail";
 import Expenses from "@/pages/expenses";
@@ -38,8 +37,7 @@ function Router() {
                 <Switch>
                   <Route path="/" component={Home}/>
                   <Route path="/dashboard" component={Dashboard}/>
-                  <Route path="/products" component={Products}/>
-                  <Route path="/products/:id" component={ProductDetail}/>
+
                   <Route path="/sales" component={Sales}/>
                   <Route path="/sales/:id" component={SaleDetail}/>
                   <Route path="/expenses" component={Expenses}/>
