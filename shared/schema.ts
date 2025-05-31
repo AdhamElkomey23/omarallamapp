@@ -144,6 +144,7 @@ export const storageItems = pgTable("storage_items", {
   purchasePricePerTon: doublePrecision("purchase_price_per_ton").notNull(),
   dealerName: text("dealer_name").notNull(),
   dealerContact: text("dealer_contact"),
+  purchaseDate: date("purchase_date").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

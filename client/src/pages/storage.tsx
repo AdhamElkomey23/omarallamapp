@@ -69,6 +69,9 @@ export default function Storage() {
       itemName: "",
       quantityInTons: 0,
       purchasePricePerTon: 0,
+      dealerName: "",
+      dealerContact: "",
+      purchaseDate: new Date().toISOString().split('T')[0],
     },
   });
 

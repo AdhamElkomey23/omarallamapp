@@ -256,6 +256,10 @@ export class MemStorage implements IStorage {
     
     sampleStorageItems.forEach((item, index) => {
       const dealer = dealers[index % dealers.length];
+      // Generate purchase dates in the last 3 months
+      const purchaseDate = new Date();
+      purchaseDate.setDate(purchaseDate.getDate() - Math.floor(Math.random() * 90));
+      
       const newItem: StorageItem = {
         id: this.storageItemCounter++,
         itemName: item.itemName,
@@ -263,6 +267,7 @@ export class MemStorage implements IStorage {
         purchasePricePerTon: item.purchasePricePerTon,
         dealerName: dealer.name,
         dealerContact: dealer.contact,
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         createdAt: new Date()
       };
       this.storageItems.set(newItem.id, newItem);
@@ -716,8 +721,15 @@ export class MemStorage implements IStorage {
 
   async createStorageItem(insertItem: InsertStorageItem): Promise<StorageItem> {
     const id = this.storageItemCounter++;
+    
+    // Ensure purchaseDate is a Date object
+    const purchaseDate = insertItem.purchaseDate instanceof Date 
+      ? insertItem.purchaseDate 
+      : new Date(insertItem.purchaseDate);
+    
     const storageItem: StorageItem = { 
       ...insertItem, 
+      purchaseDate: purchaseDate.toISOString().split('T')[0],
       id,
       createdAt: new Date()
     };
