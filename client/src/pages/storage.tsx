@@ -346,6 +346,9 @@ export default function Storage() {
                         <TableCell className="text-sm text-muted-foreground">
                           {item.dealerContact || '-'}
                         </TableCell>
+                        <TableCell className="text-sm">
+                          {new Date(item.purchaseDate).toLocaleDateString('en-GB')}
+                        </TableCell>
                         <TableCell>{item.quantityInTons.toLocaleString()}</TableCell>
                         <TableCell>{formatCurrency(item.purchasePricePerTon)}</TableCell>
                         <TableCell>{formatCurrency(item.quantityInTons * item.purchasePricePerTon)}</TableCell>
