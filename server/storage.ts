@@ -37,6 +37,7 @@ export interface IStorage {
   getSalesByDateRange(startDate?: Date, endDate?: Date): Promise<Sale[]>;
   getSalesByProductId(productId: number): Promise<Sale[]>;
   createSale(sale: InsertSale): Promise<Sale>;
+  updateSale(id: number, sale: Partial<InsertSale>): Promise<Sale | undefined>;
   deleteSale(id: number): Promise<boolean>;
   
   // Expenses
@@ -77,6 +78,7 @@ export interface IStorage {
   updateStorageItem(id: number, item: Partial<InsertStorageItem>): Promise<StorageItem | undefined>;
   deleteStorageItem(id: number): Promise<boolean>;
   deductStorageQuantity(itemName: string, quantity: number): Promise<boolean>;
+  addStorageQuantity(itemName: string, quantity: number): Promise<boolean>;
   
   // Users
   getUser(id: number): Promise<User | undefined>;

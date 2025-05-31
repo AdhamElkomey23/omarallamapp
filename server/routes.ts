@@ -151,6 +151,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  apiRouter.patch("/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid sale ID" });
+      }
+
+      // Validate request body
+      const validatedData = insertSaleSchema.parse(req.body);
+      
+      const updatedSale = await storage.updateSale(id, validatedData);
+      if (!updatedSale) {
+        return res.status(404).json({ message: "Sale not found" });
+      }
+      
+      res.json(updatedSale);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid sale data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update sale" });
+    }
+  });
+
   apiRouter.delete("/sales/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -513,6 +537,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, message: "Inventory updated successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to update inventory" });
+    }
+  });
+
+  apiRouter.post("/storage/add", async (req, res) => {
+    try {
+      const { itemName, quantity } = req.body;
+      
+      if (!itemName || !quantity || quantity <= 0) {
+        return res.status(400).json({ message: "Invalid item name or quantity" });
+      }
+
+      const success = await storage.addStorageQuantity(itemName, quantity);
+      if (!success) {
+        return res.status(400).json({ message: "Item not found in storage" });
+      }
+      
+      res.json({ success: true, message: "Quantity added back successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to add quantity to storage" });
     }
   });
 
