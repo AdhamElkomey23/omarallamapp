@@ -755,6 +755,30 @@ export class MemStorage implements IStorage {
   async deleteStorageItem(id: number): Promise<boolean> {
     return this.storageItems.delete(id);
   }
+
+  async deductStorageQuantity(itemName: string, quantity: number): Promise<boolean> {
+    // Find storage items with this name and deduct quantity
+    const items = Array.from(this.storageItems.values()).filter(item => item.itemName === itemName);
+    let remainingToDeduct = quantity;
+    
+    for (const item of items) {
+      if (remainingToDeduct <= 0) break;
+      
+      if (item.quantityInTons >= remainingToDeduct) {
+        // This item has enough quantity to fulfill the remaining deduction
+        const updatedItem = { ...item, quantityInTons: item.quantityInTons - remainingToDeduct };
+        this.storageItems.set(item.id, updatedItem);
+        remainingToDeduct = 0;
+      } else {
+        // This item doesn't have enough, use all of it
+        remainingToDeduct -= item.quantityInTons;
+        const updatedItem = { ...item, quantityInTons: 0 };
+        this.storageItems.set(item.id, updatedItem);
+      }
+    }
+    
+    return remainingToDeduct === 0; // Return true if all quantity was successfully deducted
+  }
 }
 
 export const storage = new MemStorage();

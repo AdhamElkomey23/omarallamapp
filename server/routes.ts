@@ -497,6 +497,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  apiRouter.post("/storage/deduct", async (req, res) => {
+    try {
+      const { itemName, quantity } = req.body;
+      
+      if (!itemName || !quantity || quantity <= 0) {
+        return res.status(400).json({ message: "Invalid item name or quantity" });
+      }
+
+      const success = await storage.deductStorageQuantity(itemName, quantity);
+      if (!success) {
+        return res.status(400).json({ message: "Insufficient inventory" });
+      }
+      
+      res.json({ success: true, message: "Inventory updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update inventory" });
+    }
+  });
+
   // Authentication Routes (simple for now)
   apiRouter.post("/login", async (req, res) => {
     try {
