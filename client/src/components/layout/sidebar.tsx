@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { t, isRTL, getCurrentLanguage, addLanguageChangeListener } from "@/lib/i18n";
+import logoImage from "@assets/الواصلون (1)_1749400506920.png";
 import {
   Home,
   LayoutDashboard,
@@ -147,7 +148,7 @@ export function Sidebar() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
               <img 
-                src="/attached_assets/الواصلون (1)_1749400506920.png" 
+                src={logoImage} 
                 alt="Al-Wasiloon Logo" 
                 className="w-10 h-10 object-contain"
               />
