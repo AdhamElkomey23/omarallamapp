@@ -341,7 +341,7 @@ export default function Expenses() {
                         format(dateFilter.startDate, "LLL dd, y")
                       )
                     ) : (
-                      <span>Pick a date range</span>
+                      <span>اختر نطاق زمني</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -362,7 +362,7 @@ export default function Expenses() {
             </div>
             <div className="flex items-end">
               <Button variant="outline" onClick={clearFilters} className="w-full">
-                Clear Filters
+                مسح المرشحات
               </Button>
             </div>
           </div>
@@ -372,19 +372,19 @@ export default function Expenses() {
       {/* Expenses List */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Expenses</CardTitle>
+          <CardTitle>المصروفات الحديثة</CardTitle>
           <CardDescription>
-            {expenses.length > 0 ? `${expenses.length} expenses found` : "No expenses found"}
+            {expenses.length > 0 ? `تم العثور على ${expenses.length} مصروف` : "لم يتم العثور على مصروفات"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="text-muted-foreground">Loading expenses...</div>
+              <div className="text-muted-foreground">جارٍ تحميل المصروفات...</div>
             </div>
           ) : expenses.length === 0 ? (
             <div className="flex items-center justify-center h-32">
-              <div className="text-muted-foreground">No expenses recorded yet</div>
+              <div className="text-muted-foreground">لم يتم تسجيل أي مصروفات بعد</div>
             </div>
           ) : (
             <div className="space-y-4">
