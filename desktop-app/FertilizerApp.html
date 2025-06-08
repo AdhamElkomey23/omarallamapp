@@ -70,12 +70,22 @@
             border: none;
             background: none;
             text-align: right;
+            gap: 12px;
         }
         
         .nav-item:hover { background-color: hsl(var(--muted)); }
         .nav-item.active {
             background-color: hsl(var(--primary));
             color: hsl(var(--primary-foreground));
+        }
+        
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
         
         .hidden { display: none !important; }
@@ -188,24 +198,27 @@
         }
         
         .language-switcher {
-            position: fixed;
+            position: absolute;
             top: 1rem;
-            left: 1rem;
+            right: 1rem;
             z-index: 1000;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
             border-radius: 0.5rem;
-            padding: 0.5rem;
+            padding: 0.25rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
         }
         
         .language-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.75rem;
             border: none;
             background: none;
             cursor: pointer;
             border-radius: 0.25rem;
             font-weight: 500;
+            font-size: 0.875rem;
+            min-width: 40px;
         }
         
         .language-btn.active {
@@ -230,12 +243,78 @@
         .ltr .nav-item { text-align: left; }
         .ltr .data-table th, .ltr .data-table td { text-align: left; }
         .ltr .form-field { text-align: left; }
+        .ltr .language-switcher { left: 1rem; right: auto; }
+        
+        /* Home page styles */
+        .hero-section {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            color: hsl(var(--primary-foreground));
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: hsl(var(--primary));
+        }
+        
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            font-size: 24px;
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            color: hsl(var(--primary-foreground));
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body class="bg-gray-50/80">
     <!-- Language Switcher -->
     <div class="language-switcher">
-        <button class="language-btn active" onclick="switchLanguage('ar')" id="lang-ar">عربي</button>
+        <button class="language-btn active" onclick="switchLanguage('ar')" id="lang-ar">عر</button>
         <button class="language-btn" onclick="switchLanguage('en')" id="lang-en">EN</button>
     </div>
 
@@ -265,37 +344,41 @@
             
             <!-- Navigation -->
             <nav class="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
-                <button class="nav-item active" onclick="showPage('dashboard')">
-                    <i class="fas fa-chart-line w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="dashboard">لوحة التحكم</span>
+                <button class="nav-item active" onclick="showPage('home')">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text font-medium text-sm" data-key="home">الرئيسية</span>
+                </button>
+                <button class="nav-item" onclick="showPage('dashboard')">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text font-medium text-sm" data-key="dashboard">لوحة التحكم</span>
                 </button>
                 <button class="nav-item" onclick="showPage('sales')">
-                    <i class="fas fa-shopping-cart w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="sales">المبيعات</span>
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="nav-text font-medium text-sm" data-key="sales">المبيعات</span>
                 </button>
                 <button class="nav-item" onclick="showPage('expenses')">
-                    <i class="fas fa-money-bill w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="expenses">المصروفات</span>
+                    <i class="fas fa-money-bill"></i>
+                    <span class="nav-text font-medium text-sm" data-key="expenses">المصروفات</span>
                 </button>
                 <button class="nav-item" onclick="showPage('workers')">
-                    <i class="fas fa-users w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="workers">العمال</span>
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text font-medium text-sm" data-key="workers">العمال</span>
                 </button>
                 <button class="nav-item" onclick="showPage('storage')">
-                    <i class="fas fa-warehouse w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="storage">المخزون</span>
+                    <i class="fas fa-warehouse"></i>
+                    <span class="nav-text font-medium text-sm" data-key="storage">المخزون</span>
                 </button>
                 <button class="nav-item" onclick="showPage('activity-logs')">
-                    <i class="fas fa-clipboard-list w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="activityLogs">سجل الأنشطة</span>
+                    <i class="fas fa-clipboard-list"></i>
+                    <span class="nav-text font-medium text-sm" data-key="activityLogs">سجل الأنشطة</span>
                 </button>
                 <button class="nav-item" onclick="showPage('reports')">
-                    <i class="fas fa-chart-pie w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="reports">التقارير</span>
+                    <i class="fas fa-chart-pie"></i>
+                    <span class="nav-text font-medium text-sm" data-key="reports">التقارير</span>
                 </button>
                 <button class="nav-item" onclick="showPage('settings')">
-                    <i class="fas fa-cog w-5 h-5 shrink-0"></i>
-                    <span class="nav-text font-medium text-sm mr-3" data-key="settings">الإعدادات</span>
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text font-medium text-sm" data-key="settings">الإعدادات</span>
                 </button>
             </nav>
             
@@ -313,7 +396,7 @@
         <!-- Top Bar -->
         <header class="bg-card border-b border-border px-6 py-4">
             <div class="flex items-center justify-between">
-                <h1 id="page-title" class="text-2xl font-bold" data-key="dashboard">لوحة التحكم</h1>
+                <h1 id="page-title" class="text-2xl font-bold" data-key="home">الرئيسية</h1>
                 <div class="flex items-center gap-4">
                     <div class="bg-muted/50 px-3 py-2 rounded-lg text-sm">
                         <span class="text-muted-foreground" data-key="lastUpdated">آخر تحديث:</span>
@@ -326,8 +409,112 @@
         <!-- Page Content -->
         <main class="container mx-auto px-6 py-6 max-w-7xl">
             
+            <!-- Home Page -->
+            <div id="home-page" class="page-content space-y-6">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1 class="text-4xl font-bold mb-4" data-key="welcomeTitle">مرحباً بك في نظام إدارة مصنع الأسمدة</h1>
+                    <p class="text-xl opacity-90 mb-6" data-key="welcomeSubtitle">شركة الواصلون للتعدين والصناعات الكيميائية</p>
+                    <p class="text-lg opacity-80" data-key="welcomeDescription">نظام شامل لإدارة جميع جوانب مصنع الأسمدة بكفاءة وسهولة</p>
+                </div>
+
+                <!-- Quick Stats Overview -->
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <span class="stat-number" id="home-total-revenue">169,100</span>
+                        <span class="stat-label" data-key="totalRevenue">إجمالي الإيرادات (ج.م)</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="home-total-products">4</span>
+                        <span class="stat-label" data-key="totalProducts">إجمالي المنتجات</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="home-total-workers">4</span>
+                        <span class="stat-label" data-key="totalWorkers">إجمالي العمال</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="home-profit">49,100</span>
+                        <span class="stat-label" data-key="profit">صافي الربح (ج.م)</span>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="feature-card" onclick="showPage('dashboard')">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="dashboard">لوحة التحكم</h3>
+                        <p class="text-muted-foreground" data-key="dashboardDesc">مراقبة الأداء المالي والإحصائيات المتقدمة</p>
+                    </div>
+
+                    <div class="feature-card" onclick="showPage('sales')">
+                        <div class="feature-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="sales">إدارة المبيعات</h3>
+                        <p class="text-muted-foreground" data-key="salesDesc">تتبع المبيعات وإدارة العملاء</p>
+                    </div>
+
+                    <div class="feature-card" onclick="showPage('expenses')">
+                        <div class="feature-icon">
+                            <i class="fas fa-money-bill"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="expenses">إدارة المصروفات</h3>
+                        <p class="text-muted-foreground" data-key="expensesDesc">تتبع وتصنيف جميع المصروفات</p>
+                    </div>
+
+                    <div class="feature-card" onclick="showPage('workers')">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="workers">إدارة العمال</h3>
+                        <p class="text-muted-foreground" data-key="workersDesc">إدارة بيانات العمال والرواتب</p>
+                    </div>
+
+                    <div class="feature-card" onclick="showPage('storage')">
+                        <div class="feature-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="storage">إدارة المخزون</h3>
+                        <p class="text-muted-foreground" data-key="storageDesc">تتبع المواد الخام والمنتجات</p>
+                    </div>
+
+                    <div class="feature-card" onclick="showPage('reports')">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2" data-key="reports">التقارير</h3>
+                        <p class="text-muted-foreground" data-key="reportsDesc">إنشاء تقارير مفصلة وتحليلات</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <h3 class="text-lg font-semibold mb-4" data-key="quickActions">إجراءات سريعة</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="showPage('sales')" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            <span data-key="addSale">إضافة بيع جديد</span>
+                        </button>
+                        <button onclick="showPage('expenses')" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            <span data-key="addExpense">إضافة مصروف</span>
+                        </button>
+                        <button onclick="showPage('workers')" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            <span data-key="addWorker">إضافة عامل</span>
+                        </button>
+                        <button onclick="showPage('storage')" class="btn btn-primary">
+                            <i class="fas fa-box"></i>
+                            <span data-key="addItem">إضافة مادة للمخزون</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Dashboard Page -->
-            <div id="dashboard-page" class="page-content space-y-6">
+            <div id="dashboard-page" class="page-content space-y-6 hidden">
                 <!-- Date Filter Tabs -->
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <h1 class="text-3xl font-bold tracking-tight" data-key="dashboard">لوحة التحكم</h1>
@@ -346,7 +533,7 @@
                             <h3 class="text-sm font-medium" data-key="totalRevenue">إجمالي الإيرادات</h3>
                             <i class="fas fa-dollar-sign text-muted-foreground"></i>
                         </div>
-                        <div class="text-2xl font-bold" id="total-revenue">169,100 جنيه</div>
+                        <div class="text-2xl font-bold" id="total-revenue">169,100 ج.م</div>
                         <p class="text-xs text-muted-foreground">
                             +20.1% <span data-key="fromLastMonth">من الشهر الماضي</span>
                         </p>
@@ -356,7 +543,7 @@
                             <h3 class="text-sm font-medium" data-key="totalExpenses">إجمالي المصروفات</h3>
                             <i class="fas fa-shopping-cart text-muted-foreground"></i>
                         </div>
-                        <div class="text-2xl font-bold" id="total-expenses">120,000 جنيه</div>
+                        <div class="text-2xl font-bold" id="total-expenses">120,000 ج.م</div>
                         <p class="text-xs text-muted-foreground">
                             +5.2% <span data-key="fromLastMonth">من الشهر الماضي</span>
                         </p>
@@ -366,7 +553,7 @@
                             <h3 class="text-sm font-medium" data-key="profit">صافي الربح</h3>
                             <i class="fas fa-trending-up text-muted-foreground"></i>
                         </div>
-                        <div class="text-2xl font-bold text-green-600" id="profit">49,100 جنيه</div>
+                        <div class="text-2xl font-bold text-green-600" id="profit">49,100 ج.م</div>
                         <div class="flex items-center pt-1">
                             <i class="fas fa-arrow-up text-green-500 text-xs"></i>
                             <span class="text-xs text-green-500 mr-1">29.1% <span data-key="margin">هامش</span></span>
@@ -442,7 +629,7 @@
                             <input type="number" id="sale-quantity" placeholder="50">
                         </div>
                         <div class="form-field">
-                            <label data-key="totalAmount">المبلغ الإجمالي (جنيه)</label>
+                            <label data-key="totalAmount">المبلغ الإجمالي (ج.م)</label>
                             <input type="number" id="sale-amount" placeholder="25000">
                         </div>
                         <div class="form-field">
@@ -499,7 +686,7 @@
                             <input type="text" id="expense-name" placeholder="مثال: كهرباء ومياه">
                         </div>
                         <div class="form-field">
-                            <label data-key="amount">المبلغ (جنيه)</label>
+                            <label data-key="amount">المبلغ (ج.م)</label>
                             <input type="number" id="expense-amount" placeholder="5000">
                         </div>
                         <div class="form-field">
@@ -573,7 +760,7 @@
                             </select>
                         </div>
                         <div class="form-field">
-                            <label data-key="monthlySalary">الراتب الشهري (جنيه)</label>
+                            <label data-key="monthlySalary">الراتب الشهري (ج.م)</label>
                             <input type="number" id="worker-salary" placeholder="3000">
                         </div>
                         <div class="form-field">
@@ -626,7 +813,7 @@
                             <input type="number" id="storage-quantity" placeholder="100">
                         </div>
                         <div class="form-field">
-                            <label data-key="purchasePricePerTon">سعر الوحدة (جنيه)</label>
+                            <label data-key="purchasePricePerTon">سعر الوحدة (ج.م)</label>
                             <input type="number" id="storage-price" placeholder="500">
                         </div>
                         <div class="form-field">
@@ -831,6 +1018,7 @@
         // Translations
         const translations = {
             ar: {
+                home: "الرئيسية",
                 dashboard: "لوحة التحكم",
                 sales: "المبيعات", 
                 expenses: "المصروفات",
@@ -848,6 +1036,7 @@
                 totalExpenses: "إجمالي المصروفات", 
                 profit: "صافي الربح",
                 totalProducts: "إجمالي المنتجات",
+                totalWorkers: "إجمالي العمال",
                 fromLastMonth: "من الشهر الماضي",
                 margin: "هامش",
                 unitsSold: "وحدة مباعة",
@@ -888,12 +1077,24 @@
                 addNewItem: "إضافة عنصر جديد",
                 itemName: "اسم المادة",
                 quantityInTons: "الكمية (طن)",
-                purchasePricePerTon: "سعر الوحدة (جنيه)",
+                purchasePricePerTon: "سعر الوحدة (ج.م)",
                 dealerName: "المورد",
                 addItem: "إضافة مادة جديدة",
-                totalCost: "القيمة الإجمالية"
+                totalCost: "القيمة الإجمالية",
+                welcomeTitle: "مرحباً بك في نظام إدارة مصنع الأسمدة",
+                welcomeSubtitle: "شركة الواصلون للتعدين والصناعات الكيميائية",
+                welcomeDescription: "نظام شامل لإدارة جميع جوانب مصنع الأسمدة بكفاءة وسهولة",
+                dashboardDesc: "مراقبة الأداء المالي والإحصائيات المتقدمة",
+                salesDesc: "تتبع المبيعات وإدارة العملاء",
+                expensesDesc: "تتبع وتصنيف جميع المصروفات",
+                workersDesc: "إدارة بيانات العمال والرواتب",
+                storageDesc: "تتبع المواد الخام والمنتجات",
+                reportsDesc: "إنشاء تقارير مفصلة وتحليلات",
+                quickActions: "إجراءات سريعة",
+                addSale: "إضافة بيع جديد"
             },
             en: {
+                home: "Home",
                 dashboard: "Dashboard",
                 sales: "Sales",
                 expenses: "Expenses", 
@@ -909,8 +1110,9 @@
                 lastUpdated: "Last Updated:",
                 totalRevenue: "Total Revenue",
                 totalExpenses: "Total Expenses",
-                profit: "Net Profit", 
+                profit: "Net Profit",
                 totalProducts: "Total Products",
+                totalWorkers: "Total Workers",
                 fromLastMonth: "from last month",
                 margin: "margin",
                 unitsSold: "units sold",
@@ -927,7 +1129,7 @@
                 product: "Product",
                 selectProduct: "Select Product",
                 quantity: "Quantity",
-                totalAmount: "Total Amount",
+                totalAmount: "Total Amount (EGP)",
                 clientName: "Client Name",
                 clientContact: "Phone Number",
                 saleDate: "Sale Date",
@@ -943,7 +1145,7 @@
                 fullName: "Worker Name",
                 jobRole: "Position",
                 department: "Department",
-                monthlySalary: "Monthly Salary",
+                monthlySalary: "Monthly Salary (EGP)",
                 hireDate: "Hire Date",
                 production: "Production",
                 maintenance: "Maintenance",
@@ -951,10 +1153,21 @@
                 addNewItem: "Add New Item",
                 itemName: "Item Name",
                 quantityInTons: "Quantity (Tons)",
-                purchasePricePerTon: "Unit Price",
+                purchasePricePerTon: "Unit Price (EGP)",
                 dealerName: "Supplier",
                 addItem: "Add New Item",
-                totalCost: "Total Value"
+                totalCost: "Total Value",
+                welcomeTitle: "Welcome to Fertilizer Factory Management System",
+                welcomeSubtitle: "Al-Wasiloon Mining and Chemical Industries Company",
+                welcomeDescription: "Comprehensive system for managing all aspects of fertilizer factory efficiently",
+                dashboardDesc: "Monitor financial performance and advanced analytics",
+                salesDesc: "Track sales and manage customers",
+                expensesDesc: "Track and categorize all expenses",
+                workersDesc: "Manage worker data and salaries",
+                storageDesc: "Track raw materials and products",
+                reportsDesc: "Generate detailed reports and analytics",
+                quickActions: "Quick Actions",
+                addSale: "Add New Sale"
             }
         };
 
@@ -1039,6 +1252,25 @@
             
             // Update all translatable elements
             updateTranslations();
+            
+            // Refresh current page to update currency display
+            const currentPage = document.querySelector('.page-content:not(.hidden)');
+            if (currentPage) {
+                const pageId = currentPage.id.replace('-page', '');
+                if (pageId === 'home') {
+                    updateHomeStats();
+                } else if (pageId === 'dashboard') {
+                    updateDashboardStats();
+                } else if (pageId === 'sales') {
+                    updateSalesTable();
+                } else if (pageId === 'expenses') {
+                    updateExpensesTable();
+                } else if (pageId === 'workers') {
+                    updateWorkersTable();
+                } else if (pageId === 'storage') {
+                    updateStorageTable();
+                }
+            }
             
             // Save language preference
             localStorage.setItem('preferredLanguage', lang);
@@ -1129,6 +1361,7 @@
             
             // Update page title
             const titles = {
+                'home': currentLanguage === 'ar' ? 'الرئيسية' : 'Home',
                 'dashboard': currentLanguage === 'ar' ? 'لوحة التحكم' : 'Dashboard',
                 'sales': currentLanguage === 'ar' ? 'المبيعات' : 'Sales',
                 'expenses': currentLanguage === 'ar' ? 'المصروفات' : 'Expenses',
@@ -1144,7 +1377,9 @@
             }
             
             // Initialize page-specific content
-            if (pageId === 'dashboard') {
+            if (pageId === 'home') {
+                initHome();
+            } else if (pageId === 'dashboard') {
                 initDashboard();
             } else if (pageId === 'sales') {
                 initSales();
@@ -1159,6 +1394,22 @@
             } else if (pageId === 'settings') {
                 initSettings();
             }
+        }
+
+        // Home page functions
+        function initHome() {
+            updateHomeStats();
+        }
+
+        function updateHomeStats() {
+            const totalIncome = appData.sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+            const totalExpenses = appData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const profit = totalIncome - totalExpenses;
+
+            document.getElementById('home-total-revenue').textContent = totalIncome.toLocaleString();
+            document.getElementById('home-total-products').textContent = appData.storage.length;
+            document.getElementById('home-total-workers').textContent = appData.workers.length;
+            document.getElementById('home-profit').textContent = profit.toLocaleString();
         }
 
         // Dashboard functions
@@ -1896,7 +2147,7 @@
 
         // Utility functions
         function formatCurrency(amount) {
-            const currency = currentLanguage === 'ar' ? 'جنيه' : 'EGP';
+            const currency = currentLanguage === 'ar' ? 'ج.م' : 'EGP';
             return `${amount.toLocaleString()} ${currency}`;
         }
 
@@ -1971,10 +2222,10 @@
                 });
             });
             
-            // Initialize and show dashboard
+            // Initialize and show home page
             updateLastUpdate();
             setInterval(updateLastUpdate, 60000); // Update every minute
-            showPage('dashboard');
+            showPage('home');
         });
     </script>
 </body>
