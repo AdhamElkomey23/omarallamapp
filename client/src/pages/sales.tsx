@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { insertSaleSchema, type Sale, type StorageItem } from "../../../shared/schema";
+import { t, isRTL } from "@/lib/i18n";
 
 // Form validation schema
 const saleFormSchema = insertSaleSchema.extend({
@@ -107,14 +108,14 @@ export default function Sales() {
       setIsAddDialogOpen(false);
       form.reset();
       toast({
-        title: "Sale Recorded",
-        description: "Your sale has been recorded successfully and inventory updated.",
+        title: "تم تسجيل البيع",
+        description: "تم تسجيل البيع بنجاح وتحديث المخزون.",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to record sale. Please try again.",
+        title: "خطأ",
+        description: "فشل في تسجيل البيع. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     }
@@ -144,14 +145,14 @@ export default function Sales() {
       queryClient.invalidateQueries({ queryKey: ['/api/storage'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
       toast({
-        title: "Sale Deleted",
-        description: "Sale has been deleted and inventory restored.",
+        title: "تم حذف البيع",
+        description: "تم حذف البيع واستعادة المخزون.",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to delete sale. Please try again.",
+        title: "خطأ",
+        description: "فشل في حذف البيع. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     }
@@ -196,14 +197,14 @@ export default function Sales() {
       setEditingSale(null);
       form.reset();
       toast({
-        title: "Sale Updated",
-        description: "Sale has been updated and inventory adjusted.",
+        title: "تم تحديث البيع",
+        description: "تم تحديث البيع وتعديل المخزون.",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update sale. Please try again.",
+        title: "خطأ",
+        description: "فشل في تحديث البيع. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     }
