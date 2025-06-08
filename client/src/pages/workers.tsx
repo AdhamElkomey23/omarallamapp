@@ -349,7 +349,7 @@ export default function Workers() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserCheck className="h-5 w-5" />
-                Daily Attendance - {format(selectedDate, 'MMMM dd, yyyy')}
+                {t('dailyAttendance')} - {format(selectedDate, 'MMMM dd, yyyy')}
               </CardTitle>
               <div className="flex items-center gap-4">
                 <Popover>
@@ -372,7 +372,7 @@ export default function Workers() {
             </CardHeader>
             <CardContent>
               {attendanceLoading ? (
-                <p>Loading attendance...</p>
+                <p>{t('loading')}</p>
               ) : (
                 <div className="space-y-4">
                   {workers.map((worker: Worker) => {
