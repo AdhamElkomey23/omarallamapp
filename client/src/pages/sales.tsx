@@ -332,12 +332,12 @@ export default function Sales() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Sales</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('sales')}</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">
               <Plus className="h-4 w-4" />
-              Record Sale
+              {t('recordSale')}
             </Button>
           </DialogTrigger>
           <DialogContent>

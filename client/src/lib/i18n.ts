@@ -50,6 +50,10 @@ export const translations = {
     clientName: "Client Name",
     clientContact: "Client Contact",
     saleDate: "Sale Date",
+    editSale: "Edit Sale",
+    deleteSale: "Delete Sale",
+    selectProduct: "Select Product",
+    availableQuantity: "Available Quantity",
     
     // Expenses
     addExpense: "Add Expense",
@@ -321,6 +325,7 @@ export const translations = {
     editProduct: "تعديل المنتج",
     
     // Sales
+    sales: "المبيعات",
     recordSale: "تسجيل مبيعة",
     totalSales: "إجمالي المبيعات",
     quantity: "الكمية",
@@ -329,6 +334,10 @@ export const translations = {
     clientName: "اسم العميل",
     clientContact: "جهة اتصال العميل",
     saleDate: "تاريخ البيع",
+    editSale: "تعديل البيع",
+    deleteSale: "حذف البيع",
+    selectProduct: "اختر منتج",
+    availableQuantity: "الكمية المتاحة",
     
     // Expenses
     addExpense: "إضافة مصروف",
