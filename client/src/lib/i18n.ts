@@ -275,7 +275,8 @@ export const translations = {
     
     // Additional missing keys
     adding: "Adding...",
-    updating: "Updating..."
+    updating: "Updating...",
+    confirmDelete: "Are you sure you want to delete this item?"
   },
   
   ar: {
