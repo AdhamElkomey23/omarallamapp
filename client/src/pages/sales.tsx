@@ -342,9 +342,9 @@ export default function Sales() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Record New Sale</DialogTitle>
+              <DialogTitle>{t('recordSale')}</DialogTitle>
               <DialogDescription>
-                Record a new sale transaction for your business.
+                سجل معاملة بيع جديدة لعملك.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -354,17 +354,17 @@ export default function Sales() {
                   name="productName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product</FormLabel>
+                      <FormLabel>{t('product')}</FormLabel>
                       <Select onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a product" />
+                            <SelectValue placeholder="اختر منتج" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {availableProducts.map((product) => (
                             <SelectItem key={product.itemName} value={product.itemName}>
-                              {product.itemName} (Available: {product.totalQuantity} tons)
+                              {product.itemName} (المتاح: {product.totalQuantity} طن)
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -378,7 +378,7 @@ export default function Sales() {
                   name="quantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Quantity</FormLabel>
+                      <FormLabel>{t('quantity')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -397,7 +397,7 @@ export default function Sales() {
                   name="totalAmount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Total Amount</FormLabel>
+                      <FormLabel>{t('totalAmount')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -416,10 +416,10 @@ export default function Sales() {
                   name="clientName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Client Name</FormLabel>
+                      <FormLabel>{t('clientName')}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="e.g. Green Valley Farms" 
+                          placeholder="مثال: مزارع الوادي الأخضر" 
                           {...field}
                         />
                       </FormControl>
@@ -432,10 +432,10 @@ export default function Sales() {
                   name="clientContact"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Client Contact (Optional)</FormLabel>
+                      <FormLabel>{t('clientContact')} (اختياري)</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="e.g. +20 100 123 4567" 
+                          placeholder="مثال: +20 100 123 4567" 
                           {...field}
                         />
                       </FormControl>

@@ -33,6 +33,7 @@ export const translations = {
     year: "Year",
     
     // Products
+    product: "Product",
     addProduct: "Add Product",
     productName: "Product Name",
     unitPrice: "Unit Price",
@@ -316,6 +317,7 @@ export const translations = {
     year: "سنة",
     
     // Products
+    product: "المنتج",
     addProduct: "إضافة منتج",
     productName: "اسم المنتج",
     unitPrice: "سعر الوحدة",
@@ -325,7 +327,6 @@ export const translations = {
     editProduct: "تعديل المنتج",
     
     // Sales
-    sales: "المبيعات",
     recordSale: "تسجيل مبيعة",
     totalSales: "إجمالي المبيعات",
     quantity: "الكمية",
