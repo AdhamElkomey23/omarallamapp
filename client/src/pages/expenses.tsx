@@ -77,14 +77,14 @@ export default function Expenses() {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
       setIsAddDialogOpen(false);
       toast({
-        title: "Expense Added",
-        description: "Your expense has been recorded successfully.",
+        title: "تم إضافة المصروف",
+        description: "تم تسجيل المصروف بنجاح.",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to add expense. Please try again.",
+        title: "خطأ",
+        description: "فشل في إضافة المصروف. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     }
@@ -129,7 +129,7 @@ export default function Expenses() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Expenses</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('expenses')}</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">

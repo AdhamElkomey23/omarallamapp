@@ -635,7 +635,7 @@ export default function Workers() {
                   name="checkInTime"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Check In Time</FormLabel>
+                      <FormLabel>{t('checkInTime')}</FormLabel>
                       <FormControl>
                         <Input type="time" {...field} />
                       </FormControl>
@@ -649,7 +649,7 @@ export default function Workers() {
                   name="checkOutTime"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Check Out Time</FormLabel>
+                      <FormLabel>{t('checkOutTime')}</FormLabel>
                       <FormControl>
                         <Input type="time" {...field} />
                       </FormControl>
@@ -665,7 +665,7 @@ export default function Workers() {
                   name="hoursWorked"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Hours Worked</FormLabel>
+                      <FormLabel>{t('hoursWorked')}</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.5" {...field} />
                       </FormControl>
@@ -679,7 +679,7 @@ export default function Workers() {
                   name="overtimeHours"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Overtime Hours</FormLabel>
+                      <FormLabel>{t('overtimeHours')}</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.5" {...field} />
                       </FormControl>
@@ -708,7 +708,7 @@ export default function Workers() {
                 className="w-full" 
                 disabled={addAttendanceMutation.isPending || updateAttendanceMutation.isPending}
               >
-                {editingAttendance ? "Update Attendance" : "Mark Attendance"}
+                {editingAttendance ? t('updateAttendance') : t('markAttendance')}
               </Button>
             </form>
           </Form>
