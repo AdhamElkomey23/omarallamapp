@@ -98,6 +98,11 @@ export default function Workers() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/workers'] });
       workerForm.reset();
+      setWorkerDialogOpen(false);
+    },
+    onError: (error: any) => {
+      console.error('Worker creation failed:', error);
+      // Handle error appropriately - could show toast notification
     }
   });
 

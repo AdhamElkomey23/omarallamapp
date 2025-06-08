@@ -386,16 +386,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   apiRouter.post("/workers", async (req, res) => {
     try {
+      console.log("Creating worker with data:", req.body);
       // Validate request body
       const validatedData = insertWorkerSchema.parse(req.body);
+      console.log("Validated data:", validatedData);
       
       const newWorker = await storage.createWorker(validatedData);
+      console.log("Created worker:", newWorker);
       res.status(201).json(newWorker);
     } catch (error) {
+      console.error("Worker creation error:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid worker data", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create worker" });
+      res.status(500).json({ message: "Failed to create worker", error: error.message });
     }
   });
 
