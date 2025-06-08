@@ -583,6 +583,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Worker Attendance Routes
+  apiRouter.get("/attendance/worker/:workerId", async (req, res) => {
+    try {
+      const workerId = parseInt(req.params.workerId);
+      if (isNaN(workerId)) {
+        return res.status(400).json({ message: "Invalid worker ID" });
+      }
+
+      const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
+      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+
+      const attendance = await storage.getWorkerAttendance(workerId, startDate, endDate);
+      res.json(attendance);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch worker attendance" });
+    }
+  });
+
+  apiRouter.get("/attendance/date/:date", async (req, res) => {
+    try {
+      const date = new Date(req.params.date);
+      if (isNaN(date.getTime())) {
+        return res.status(400).json({ message: "Invalid date format" });
+      }
+
+      const attendance = await storage.getAllAttendanceByDate(date);
+      res.json(attendance);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch attendance by date" });
+    }
+  });
+
+  apiRouter.post("/attendance", async (req, res) => {
+    try {
+      const validatedData = insertWorkerAttendanceSchema.parse(req.body);
+      const newRecord = await storage.createAttendanceRecord(validatedData);
+      res.status(201).json(newRecord);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid attendance data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create attendance record" });
+    }
+  });
+
+  apiRouter.put("/attendance/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid attendance record ID" });
+      }
+
+      const validatedData = insertWorkerAttendanceSchema.partial().parse(req.body);
+      const updatedRecord = await storage.updateAttendanceRecord(id, validatedData);
+      
+      if (!updatedRecord) {
+        return res.status(404).json({ message: "Attendance record not found" });
+      }
+      
+      res.json(updatedRecord);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid attendance data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update attendance record" });
+    }
+  });
+
+  apiRouter.delete("/attendance/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid attendance record ID" });
+      }
+
+      const success = await storage.deleteAttendanceRecord(id);
+      if (!success) {
+        return res.status(404).json({ message: "Attendance record not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete attendance record" });
+    }
+  });
+
+  apiRouter.get("/attendance/summary/:workerId/:year/:month", async (req, res) => {
+    try {
+      const workerId = parseInt(req.params.workerId);
+      const year = parseInt(req.params.year);
+      const month = parseInt(req.params.month);
+
+      if (isNaN(workerId) || isNaN(year) || isNaN(month)) {
+        return res.status(400).json({ message: "Invalid parameters" });
+      }
+
+      const summary = await storage.getWorkerMonthlySummary(workerId, year, month);
+      res.json(summary);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch monthly summary" });
+    }
+  });
+
   // Register API routes with prefix
   app.use("/api", apiRouter);
 

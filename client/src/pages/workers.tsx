@@ -58,9 +58,13 @@ export default function Workers() {
     enabled: !!selectedWorker,
   });
 
-  // Worker form
+  // Worker form with proper number coercion for salary
+  const workerFormSchema = insertWorkerSchema.extend({
+    salary: z.coerce.number().min(0, "Salary must be a positive number"),
+  });
+
   const workerForm = useForm({
-    resolver: zodResolver(insertWorkerSchema),
+    resolver: zodResolver(workerFormSchema),
     defaultValues: {
       name: "",
       role: "",
