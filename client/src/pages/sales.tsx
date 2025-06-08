@@ -559,7 +559,7 @@ export default function Sales() {
                   className="flex items-center gap-2"
                 >
                   <Download className="h-4 w-4" />
-                  Export All Sales
+                  تصدير جميع المبيعات
                 </Button>
               </div>
               
@@ -568,16 +568,16 @@ export default function Sales() {
                   <div className="space-y-1 flex-1">
                     <p className="font-medium">{sale.productName}</p>
                     <p className="text-sm text-muted-foreground">
-                      Quantity: {sale.quantity} • {format(new Date(sale.saleDate), "MMM dd, yyyy")}
+                      {t('quantity')}: {sale.quantity} • {format(new Date(sale.saleDate), "MMM dd, yyyy")}
                     </p>
                     <p className="text-sm text-blue-600 font-medium">
-                      Client: {sale.clientName}
+                      العميل: {sale.clientName}
                     </p>
                   </div>
                   <div className="text-right mr-4">
                     <p className="font-bold text-green-600">${sale.totalAmount.toFixed(2)}</p>
                     <p className="text-sm text-muted-foreground">
-                      ${(sale.totalAmount / sale.quantity).toFixed(2)} per unit
+                      ${(sale.totalAmount / sale.quantity).toFixed(2)} للوحدة
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -609,18 +609,18 @@ export default function Sales() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Sale</AlertDialogTitle>
+                          <AlertDialogTitle>حذف المبيعة</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this sale? This will restore {sale.quantity} units of {sale.productName} back to inventory.
+                            هل أنت متأكد من حذف هذه المبيعة؟ سيتم إرجاع {sale.quantity} وحدة من {sale.productName} إلى المخزون.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>إلغاء</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteSaleMutation.mutate(sale)}
                             className="bg-red-600 hover:bg-red-700"
                           >
-                            Delete Sale
+                            حذف المبيعة
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -637,9 +637,9 @@ export default function Sales() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Sale</DialogTitle>
+            <DialogTitle>تعديل المبيعة</DialogTitle>
             <DialogDescription>
-              Update the sale details. Inventory will be adjusted automatically.
+              تحديث تفاصيل المبيعة. سيتم تعديل المخزون تلقائياً.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -649,17 +649,17 @@ export default function Sales() {
                 name="productName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product</FormLabel>
+                    <FormLabel>{t('product')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a product" />
+                          <SelectValue placeholder="اختر منتج" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {availableProducts.map((product) => (
                           <SelectItem key={product.itemName} value={product.itemName}>
-                            {product.itemName} (Available: {product.totalQuantity} tons)
+                            {product.itemName} (المتاح: {product.totalQuantity} طن)
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -674,11 +674,11 @@ export default function Sales() {
                 name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantity (tons)</FormLabel>
+                    <FormLabel>{t('quantity')} (طن)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
-                        placeholder="Enter quantity" 
+                        placeholder="أدخل الكمية" 
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                       />
@@ -693,12 +693,12 @@ export default function Sales() {
                 name="totalAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Amount (EGP)</FormLabel>
+                    <FormLabel>{t('totalAmount')} (جنيه)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
                         step="0.01"
-                        placeholder="Enter total amount" 
+                        placeholder="أدخل المبلغ الإجمالي" 
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                       />
@@ -713,9 +713,9 @@ export default function Sales() {
                 name="clientName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Client Name</FormLabel>
+                    <FormLabel>{t('clientName')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter client name" {...field} />
+                      <Input placeholder="أدخل اسم العميل" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
