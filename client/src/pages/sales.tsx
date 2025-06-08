@@ -727,9 +727,9 @@ export default function Sales() {
                 name="clientContact"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Client Contact (Optional)</FormLabel>
+                    <FormLabel>{t('clientContact')} (اختياري)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter contact info" {...field} value={field.value ?? ''} />
+                      <Input placeholder="أدخل معلومات الاتصال" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -741,7 +741,7 @@ export default function Sales() {
                 name="saleDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sale Date</FormLabel>
+                    <FormLabel>{t('saleDate')}</FormLabel>
                     <FormControl>
                       <Input 
                         type="date" 
@@ -764,10 +764,10 @@ export default function Sales() {
                     form.reset();
                   }}
                 >
-                  Cancel
+                  إلغاء
                 </Button>
                 <Button type="submit" disabled={editSaleMutation.isPending}>
-                  {editSaleMutation.isPending ? "Updating..." : "Update Sale"}
+                  {editSaleMutation.isPending ? "جارٍ التحديث..." : "تحديث المبيعة"}
                 </Button>
               </div>
             </form>
