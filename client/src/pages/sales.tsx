@@ -243,7 +243,7 @@ export default function Sales() {
         </head>
         <body>
           <div class="header">
-            <h1>Fertilizer Factory</h1>
+            <h1>Al-Wasiloon for Mining and Chemical Industries</h1>
             <h2>${isMultiple ? 'Sales Report' : 'Invoice'}</h2>
             <p>Date: ${format(new Date(), "MMM dd, yyyy")}</p>
           </div>

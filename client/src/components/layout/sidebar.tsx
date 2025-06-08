@@ -145,8 +145,12 @@ export function Sidebar() {
       <div className="px-4 py-6 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center shrink-0">
-              <Package className="h-6 w-6 text-white" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+              <img 
+                src="/attached_assets/الواصلون (1)_1749400506920.png" 
+                alt="Al-Wasiloon Logo" 
+                className="w-10 h-10 object-contain"
+              />
             </div>
             {(!collapsed || isMobile) && (
               <div className="min-w-0">

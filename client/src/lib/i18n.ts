@@ -13,8 +13,8 @@ export const translations = {
     settings: "Settings",
     
     // App Title
-    appTitle: "Fertilizer Factory",
-    appSubtitle: "Finance Manager",
+    appTitle: "Al-Wasiloon",
+    appSubtitle: "Mining and Chemical Industries",
     appDescription: "Built for mobile-first management",
     
     // Dashboard
@@ -270,8 +270,8 @@ export const translations = {
     settings: "الإعدادات",
     
     // App Title
-    appTitle: "مصنع الأسمدة",
-    appSubtitle: "مدير المالية",
+    appTitle: "الواصلون",
+    appSubtitle: "للصناعات التعدينية والكيميائية",
     appDescription: "مصمم للإدارة المحمولة أولاً",
     
     // Dashboard
