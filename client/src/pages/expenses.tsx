@@ -221,7 +221,7 @@ export default function Expenses() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>اختر تاريخ</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -249,10 +249,10 @@ export default function Expenses() {
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
                   >
-                    Cancel
+                    إلغاء
                   </Button>
                   <Button type="submit" disabled={addExpenseMutation.isPending}>
-                    {addExpenseMutation.isPending ? "Adding..." : "Add Expense"}
+                    {addExpenseMutation.isPending ? "جارٍ الإضافة..." : "إضافة مصروف"}
                   </Button>
                 </div>
               </form>
@@ -265,7 +265,7 @@ export default function Expenses() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalExpenses')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalExpenses.toFixed(2)}</div>
@@ -273,7 +273,7 @@ export default function Expenses() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+            <CardTitle className="text-sm font-medium">هذا الشهر</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -288,7 +288,7 @@ export default function Expenses() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+            <CardTitle className="text-sm font-medium">الفئات</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -300,27 +300,27 @@ export default function Expenses() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter expenses by category and date range</CardDescription>
+          <CardTitle>المرشحات</CardTitle>
+          <CardDescription>رشح المصروفات حسب الفئة والفترة الزمنية</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="category-filter">Category</Label>
+              <Label htmlFor="category-filter">{t('category')}</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All categories" />
+                  <SelectValue placeholder="جميع الفئات" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="utilities">Utilities</SelectItem>
-                  <SelectItem value="salaries">Salaries</SelectItem>
-                  <SelectItem value="maintenance">Maintenance</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="utilities">المرافق</SelectItem>
+                  <SelectItem value="salaries">الرواتب</SelectItem>
+                  <SelectItem value="maintenance">الصيانة</SelectItem>
+                  <SelectItem value="other">أخرى</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Date Range</Label>
+              <Label>النطاق الزمني</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
