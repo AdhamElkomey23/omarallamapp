@@ -1,100 +1,73 @@
-# نظام إدارة مصنع الأسمدة - النسخة المحسنة
-Fertilizer Factory Management System - Enhanced Edition
+# نظام إدارة مصنع الأسمدة - النسخة المُصححة
+Fertilizer Factory Management System - Fixed Edition
 
-## التحسينات الجديدة / New Improvements:
-✅ الصفحة الرئيسية مع إحصائيات سريعة - Homepage with quick stats
-✅ موضع أفضل لزر تبديل اللغة - Better positioned language switcher  
-✅ أيقونات FontAwesome واضحة - Clear FontAwesome icons
+## الإصلاحات الجديدة / New Fixes:
+✅ الصفحة الرئيسية تطابق التطبيق الأصلي - Homepage matches original web app
+✅ ترجمة عربية كاملة للصفحة الرئيسية - Complete Arabic translation for homepage
+✅ أيقونات تعمل بشكل صحيح - Working icons using emoji fallbacks
 ✅ عملة الجنيه المصري (ج.م) - Egyptian Pound currency (EGP)
-✅ واجهة منزلية ترحيبية - Welcome home interface
-✅ إجراءات سريعة للمهام الشائعة - Quick actions for common tasks
+✅ تصميم أصيل يطابق الواجهة الأصلية - Authentic design matching original interface
+✅ موضع صحيح لزر تبديل اللغة - Properly positioned language switcher
 
 ## كيفية التشغيل / How to Launch:
 1. START.bat - تشغيل عادي / Normal launch
 2. START-SILENT.vbs - تشغيل صامت / Silent launch  
 3. FertilizerApp.html - تشغيل مباشر / Direct launch
 
-## الوظائف المحسنة / Enhanced Functions:
+## الواجهة الجديدة / New Interface:
 
-### الصفحة الرئيسية / Homepage:
-- ترحيب شخصي بالمستخدم
-- إحصائيات سريعة للأعمال
-- بطاقات تفاعلية للوصول السريع
-- إجراءات سريعة للمهام الشائعة
+### الصفحة الرئيسية الأصيلة / Authentic Homepage:
+- لافتة خضراء مع أيقونة المصنع (مطابقة للأصل)
+- عنوان "مصنع الأسمدة" 
+- وصف "مُصمم للإدارة المتنقلة أولاً"
+- أزرار للوصول السريع لللوحة والمبيعات
+- قسم "نظرة سريعة" مع الإحصائيات
+
+### الإحصائيات السريعة / Quick Stats:
+- إجمالي الدخل: 169,100 ج.م
+- إجمالي المصروفات: 120,000 ج.م  
+- صافي الربح: 49,100 ج.م
+- إجمالي المنتجات: 4
+
+### التصميم / Design:
+- ألوان مطابقة للتطبيق الأصلي
+- خط Cairo للعربية وInter للإنجليزية
+- أيقونات emoji للتوافق الكامل
+- تخطيط متجاوب
+
+## الوظائف / Functions:
 
 ### تبديل اللغة / Language Switching:
-- زر مضغوط في الزاوية العلوية اليمنى
-- تبديل فوري بين العربية والإنجليزية
-- حفظ تفضيل اللغة تلقائياً
+- زر مضغوط في الزاوية العلوية اليسرى (عر/EN)
+- تبديل فوري للواجهة والعملة
+- حفظ التفضيل تلقائياً
 
 ### العملة / Currency:
 - جنيه مصري (ج.م) في العربية
-- Egyptian Pound (EGP) in English
-- تنسيق صحيح للأرقام
+- Egyptian Pound (EGP) في الإنجليزية
+- تنسيق الأرقام بالفواصل
 
 ### الأيقونات / Icons:
-- أيقونات FontAwesome واضحة
-- تناسق في جميع أنحاء التطبيق
-- رؤية محسنة للعناصر
-
-## الوظائف المتاحة / Available Functions:
-
-### لوحة التحكم / Dashboard:
-- إحصائيات مالية شاملة مع الجنيه المصري
-- رسوم بيانية تفاعلية
-- تصفية حسب التاريخ
-
-### إدارة المبيعات / Sales Management:
-- تسجيل مبيعات بالجنيه المصري
-- تتبع المخزون تلقائياً
-- سجل كامل للعملاء
-
-### إدارة المصروفات / Expenses Management:
-- تصنيف المصروفات بالجنيه المصري
-- تتبع النفقات حسب الفئة
-- تحليل الإنفاق
-
-### إدارة العمال / Workers Management:
-- إضافة وإدارة العمال
-- رواتب بالجنيه المصري
-- تقسيم حسب الأقسام
-
-### إدارة المخزون / Storage Management:
-- تتبع المواد الخام
-- أسعار بالجنيه المصري
-- إدارة الموردين
-
-### سجل الأنشطة / Activity Logs:
-- توثيق الأنشطة اليومية
-- متابعة العمليات
-- سجل تاريخي شامل
-
-### التقارير / Reports:
-- تقارير مفصلة بالجنيه المصري
-- تحليل المصروفات
-- إحصائيات العمال
-
-### الإعدادات / Settings:
-- تبديل اللغة
-- إدارة البيانات
-- تصدير/استيراد البيانات
+- أيقونات emoji للتوافق الكامل
+- عرض صحيح في جميع المتصفحات
+- لا يتطلب اتصال إنترنت
 
 ## الاختصارات / Shortcuts:
-- تبديل اللغة: الزر العلوي الأيمن (عر/EN)
-- طي/فتح الشريط الجانبي: السهم في الأعلى
-- Language switch: Top right button (عر/EN)
-- Sidebar collapse: Arrow at top
+- تبديل اللغة: الزر العلوي الأيسر (عر/EN)
+- لوحة التحكم: الزر الأبيض في الصفحة الرئيسية
+- المبيعات: الزر الشفاف في الصفحة الرئيسية
+- طي الشريط الجانبي: السهم في الأعلى
 
 ## معلومات تقنية / Technical Info:
-- حفظ تلقائي في المتصفح
-- لا يحتاج إنترنت
-- واجهة متجاوبة
-- عملة الجنيه المصري
-- Auto-save in browser
-- Works offline  
-- Responsive interface
-- Egyptian Pound currency
+- حفظ تلقائي للتفضيلات
+- عمل بدون إنترنت
+- أيقونات emoji للتوافق
+- خطوط Google محلية
+- Auto-save preferences
+- Works offline
+- Emoji icons for compatibility  
+- Local Google Fonts
 
 شركة الواصلون للتعدين والصناعات الكيميائية
 Al-Wasiloon Mining and Chemical Industries Company
-الإصدار 2.1 - Version 2.1
+الإصدار 2.2 - Version 2.2
