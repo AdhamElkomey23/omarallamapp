@@ -159,19 +159,19 @@ export default function Storage() {
                   name="itemName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Material Type</FormLabel>
+                      <FormLabel>{t('itemName')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select material type" />
+                            <SelectValue placeholder={t('itemNamePlaceholder')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="الجبس">Gypsum (الجبس)</SelectItem>
-                          <SelectItem value="الفلسبار">Feldspar (الفلسبار)</SelectItem>
-                          <SelectItem value="الكاولينا">Kaolin (الكاولينا)</SelectItem>
-                          <SelectItem value="التلك">Talc (التلك)</SelectItem>
-                          <SelectItem value="كاربونات الكالسيوم">Calcium Carbonate (كاربونات الكالسيوم)</SelectItem>
+                          <SelectItem value="الجبس">الجبس</SelectItem>
+                          <SelectItem value="الفلسبار">الفلسبار</SelectItem>
+                          <SelectItem value="الكاولينا">الكاولينا</SelectItem>
+                          <SelectItem value="التلك">التلك</SelectItem>
+                          <SelectItem value="كاربونات الكالسيوم">كاربونات الكالسيوم</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -219,10 +219,10 @@ export default function Storage() {
                   name="dealerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Dealer Name</FormLabel>
+                      <FormLabel>{t('dealerName')}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="e.g. Global Chemical Industries" 
+                          placeholder="مثال: الصناعات الكيميائية العالمية" 
                           {...field}
                         />
                       </FormControl>
@@ -235,7 +235,7 @@ export default function Storage() {
                   name="dealerContact"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Dealer Contact (Optional)</FormLabel>
+                      <FormLabel>{t('dealerContact')} ({t('optional')})</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="e.g. +20 120 555 0001" 

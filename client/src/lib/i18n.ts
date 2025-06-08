@@ -271,7 +271,11 @@ export const translations = {
     viewReports: "View detailed reports and analytics",
     getStarted: "Ready to get started?",
     startManaging: "Start managing your fertilizer factory operations efficiently",
-    goToDashboard: "Go to Dashboard"
+    goToDashboard: "Go to Dashboard",
+    
+    // Additional missing keys
+    adding: "Adding...",
+    updating: "Updating..."
   },
   
   ar: {
@@ -545,7 +549,12 @@ export const translations = {
     viewReports: "عرض التقارير التفصيلية والتحليلات",
     getStarted: "مستعد للبدء؟",
     startManaging: "ابدأ في إدارة عمليات مصنع الأسمدة بكفاءة",
-    goToDashboard: "انتقل إلى لوحة القيادة"
+    goToDashboard: "انتقل إلى لوحة القيادة",
+    
+    // Additional missing keys
+    adding: "جاري الإضافة...",
+    updating: "جاري التحديث...",
+    confirmDelete: "هل أنت متأكد من حذف هذا العنصر؟"
   }
 };
 
