@@ -238,7 +238,7 @@ export default function Storage() {
                       <FormLabel>{t('dealerContact')} ({t('optional')})</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="e.g. +20 120 555 0001" 
+                          placeholder="مثال: +20 120 555 0001" 
                           {...field}
                           value={field.value || ""}
                         />
@@ -252,7 +252,7 @@ export default function Storage() {
                   name="purchaseDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Purchase Date</FormLabel>
+                      <FormLabel>{t('purchaseDate')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="date"
@@ -280,7 +280,7 @@ export default function Storage() {
       {/* Material Totals */}
       <Card>
         <CardHeader>
-          <CardTitle>Material Inventory Summary</CardTitle>
+          <CardTitle>ملخص مخزون المواد</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -292,13 +292,9 @@ export default function Storage() {
               return (
                 <div key={material} className="text-center p-4 border rounded-lg">
                   <div className="text-sm font-medium text-muted-foreground mb-1">
-                    {material === 'الجبس' && 'Gypsum'}
-                    {material === 'الفلسبار' && 'Feldspar'}
-                    {material === 'الكاولينا' && 'Kaolin'}
-                    {material === 'التلك' && 'Talc'}
-                    {material === 'كاربونات الكالسيوم' && 'Calcium Carbonate'}
+                    {material}
                   </div>
-                  <div className="text-lg font-bold">{totalQuantity.toLocaleString()} tons</div>
+                  <div className="text-lg font-bold">{totalQuantity.toLocaleString()} طن</div>
                   <div className="text-xs text-muted-foreground">{material}</div>
                 </div>
               );
@@ -311,13 +307,7 @@ export default function Storage() {
       <div className="space-y-6">
         {['الجبس', 'الفلسبار', 'الكاولينا', 'التلك', 'كاربونات الكالسيوم'].map((material) => {
           const materialItems = storageItems.filter(item => item.itemName === material);
-          const materialName = {
-            'الجبس': 'Gypsum (الجبس)',
-            'الفلسبار': 'Feldspar (الفلسبار)',
-            'الكاولينا': 'Kaolin (الكاولينا)',
-            'التلك': 'Talc (التلك)',
-            'كاربونات الكالسيوم': 'Calcium Carbonate (كاربونات الكالسيوم)'
-          }[material];
+          const materialName = material;
 
           if (materialItems.length === 0) return null;
 
@@ -330,13 +320,13 @@ export default function Storage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Supplier Company</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Purchase Date</TableHead>
-                      <TableHead>Quantity (tons)</TableHead>
-                      <TableHead>Price per Ton</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>شركة المورد</TableHead>
+                      <TableHead>جهة الاتصال</TableHead>
+                      <TableHead>تاريخ الشراء</TableHead>
+                      <TableHead>الكمية (طن)</TableHead>
+                      <TableHead>السعر للطن</TableHead>
+                      <TableHead>التكلفة الإجمالية</TableHead>
+                      <TableHead>الإجراءات</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -347,7 +337,7 @@ export default function Storage() {
                           {item.dealerContact || '-'}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {new Date(item.purchaseDate).toLocaleDateString('en-GB')}
+                          {new Date(item.purchaseDate).toLocaleDateString('ar-EG')}
                         </TableCell>
                         <TableCell>{item.quantityInTons.toLocaleString()}</TableCell>
                         <TableCell>{formatCurrency(item.purchasePricePerTon)}</TableCell>
