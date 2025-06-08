@@ -38,6 +38,7 @@ export default function Workers() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [attendanceDialogOpen, setAttendanceDialogOpen] = useState(false);
+  const [workerDialogOpen, setWorkerDialogOpen] = useState(false);
   const [editingAttendance, setEditingAttendance] = useState<WorkerAttendance | null>(null);
   const queryClient = useQueryClient();
 
@@ -94,7 +95,7 @@ export default function Workers() {
 
   // Add worker mutation
   const addWorkerMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/workers', 'POST', data),
+    mutationFn: (data: any) => apiRequest('POST', '/api/workers', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/workers'] });
       workerForm.reset();
@@ -108,7 +109,7 @@ export default function Workers() {
 
   // Add attendance mutation
   const addAttendanceMutation = useMutation({
-    mutationFn: (data: AttendanceFormValues) => apiRequest('/api/attendance', 'POST', data),
+    mutationFn: (data: AttendanceFormValues) => apiRequest('POST', '/api/attendance', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/date'] });
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/summary'] });
@@ -120,7 +121,7 @@ export default function Workers() {
   // Update attendance mutation
   const updateAttendanceMutation = useMutation({
     mutationFn: ({ id, data }: { id: number, data: Partial<AttendanceFormValues> }) => 
-      apiRequest(`/api/attendance/${id}`, 'PUT', data),
+      apiRequest('PUT', `/api/attendance/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/date'] });
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/summary'] });
@@ -132,7 +133,7 @@ export default function Workers() {
 
   // Delete attendance mutation
   const deleteAttendanceMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/attendance/${id}`, 'DELETE'),
+    mutationFn: (id: number) => apiRequest('DELETE', `/api/attendance/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/date'] });
       queryClient.invalidateQueries({ queryKey: ['/api/attendance/summary'] });
