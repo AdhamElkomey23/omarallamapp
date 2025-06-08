@@ -1,0 +1,18 @@
+{
+  "name": "fertilizer-factory-desktop",
+  "version": "1.0.0",
+  "description": "نظام إدارة مصنع الأسمدة",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . fertilizer-factory --platform=win32 --arch=x64 --out=dist --overwrite"
+  },
+  "author": "Al-Wasiloon for Mining and Chemical Industries",
+  "dependencies": {
+    "electron": "^28.0.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "electron-packager": "^17.1.1"
+  }
+}
