@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertExpenseSchema, type Expense, type ExpenseCategory } from "../../../shared/schema";
+import { t, isRTL } from "@/lib/i18n";
 
 // Form validation schema
 const expenseFormSchema = insertExpenseSchema.extend({
@@ -134,14 +135,14 @@ export default function Expenses() {
           <DialogTrigger asChild>
             <Button className="flex items-center gap-1">
               <Plus className="h-4 w-4" />
-              Add Expense
+              {t('addExpense')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Expense</DialogTitle>
+              <DialogTitle>{t('addExpense')}</DialogTitle>
               <DialogDescription>
-                Record a new expense for your business.
+                سجل مصروف جديد لعملك.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -151,9 +152,9 @@ export default function Expenses() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Expense Name</FormLabel>
+                      <FormLabel>{t('expenseName')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter expense name" {...field} />
+                        <Input placeholder="أدخل اسم المصروف" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -164,7 +165,7 @@ export default function Expenses() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel>{t('amount')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -183,18 +184,18 @@ export default function Expenses() {
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel>{t('category')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
+                            <SelectValue placeholder="اختر فئة" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="utilities">Utilities</SelectItem>
-                          <SelectItem value="salaries">Salaries</SelectItem>
-                          <SelectItem value="maintenance">Maintenance</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="utilities">المرافق</SelectItem>
+                          <SelectItem value="salaries">الرواتب</SelectItem>
+                          <SelectItem value="maintenance">الصيانة</SelectItem>
+                          <SelectItem value="other">أخرى</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -206,7 +207,7 @@ export default function Expenses() {
                   name="expenseDate"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Expense Date</FormLabel>
+                      <FormLabel>{t('expenseDate')}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
