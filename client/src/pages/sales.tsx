@@ -308,7 +308,7 @@ export default function Sales() {
       totalAmount: sale.totalAmount,
       clientName: sale.clientName,
       clientContact: sale.clientContact || '',
-      saleDate: format(new Date(sale.saleDate), "yyyy-MM-dd"),
+      saleDate: format(new Date(sale.saleDate), "yyyy-MM-dd") as any,
     });
     setIsEditDialogOpen(true);
   };
@@ -728,7 +728,7 @@ export default function Sales() {
                   <FormItem>
                     <FormLabel>Client Contact (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter contact info" {...field} value={field.value || ''} />
+                      <Input placeholder="Enter contact info" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -742,7 +742,11 @@ export default function Sales() {
                   <FormItem>
                     <FormLabel>Sale Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input 
+                        type="date" 
+                        {...field}
+                        value={typeof field.value === 'string' ? field.value : format(new Date(field.value), "yyyy-MM-dd")}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
