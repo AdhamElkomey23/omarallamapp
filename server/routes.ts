@@ -8,6 +8,7 @@ import {
   insertActivityLogSchema,
   insertWorkerSchema,
   insertStorageItemSchema,
+  insertWorkerAttendanceSchema,
   dateRangeFilterSchema
 } from "@shared/schema";
 import { z } from "zod";
