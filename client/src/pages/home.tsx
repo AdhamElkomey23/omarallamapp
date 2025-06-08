@@ -33,7 +33,7 @@ export default function Home() {
             <img 
               src={logoImage} 
               alt="Al-Wasiloon Logo" 
-              className="h-16 w-16 mx-auto mb-6 object-contain"
+              className="h-32 w-32 mx-auto mb-6 object-contain"
             />
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               {t('appTitle')}

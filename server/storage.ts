@@ -6,6 +6,7 @@ import {
   users,
   workers,
   storageItems,
+  workerAttendance,
   type Product, 
   type InsertProduct,
   type Sale,
@@ -20,6 +21,8 @@ import {
   type InsertWorker,
   type StorageItem,
   type InsertStorageItem,
+  type WorkerAttendance,
+  type InsertWorkerAttendance,
   type DateRangeFilter
 } from "@shared/schema";
 
@@ -84,6 +87,21 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Worker Attendance
+  getWorkerAttendance(workerId: number, startDate?: Date, endDate?: Date): Promise<WorkerAttendance[]>;
+  getAllAttendanceByDate(date: Date): Promise<WorkerAttendance[]>;
+  createAttendanceRecord(attendance: InsertWorkerAttendance): Promise<WorkerAttendance>;
+  updateAttendanceRecord(id: number, attendance: Partial<InsertWorkerAttendance>): Promise<WorkerAttendance | undefined>;
+  deleteAttendanceRecord(id: number): Promise<boolean>;
+  getWorkerMonthlySummary(workerId: number, year: number, month: number): Promise<{
+    totalDaysWorked: number;
+    totalAbsent: number;
+    totalLate: number;
+    totalHours: number;
+    totalOvertimeHours: number;
+    salaryDeductions: number;
+  }>;
 }
 
 export class MemStorage implements IStorage {
@@ -94,6 +112,7 @@ export class MemStorage implements IStorage {
   private activityLogs: Map<number, ActivityLog>;
   private workers: Map<number, Worker>;
   private storageItems: Map<number, StorageItem>;
+  private workerAttendance: Map<number, WorkerAttendance>;
   
   private userCounter: number;
   private productCounter: number;
@@ -102,6 +121,7 @@ export class MemStorage implements IStorage {
   private activityLogCounter: number;
   private workerCounter: number;
   private storageItemCounter: number;
+  private attendanceCounter: number;
 
   constructor() {
     // Initialize maps
@@ -112,6 +132,7 @@ export class MemStorage implements IStorage {
     this.activityLogs = new Map();
     this.workers = new Map();
     this.storageItems = new Map();
+    this.workerAttendance = new Map();
     
     // Initialize counters
     this.userCounter = 1;
@@ -121,6 +142,7 @@ export class MemStorage implements IStorage {
     this.activityLogCounter = 1;
     this.workerCounter = 1;
     this.storageItemCounter = 1;
+    this.attendanceCounter = 1;
     
     // Load seed data
     this.loadSeedData();
@@ -792,6 +814,113 @@ export class MemStorage implements IStorage {
     this.storageItems.set(item.id, updatedItem);
     
     return true;
+  }
+
+  // Worker Attendance Methods
+  async getWorkerAttendance(workerId: number, startDate?: Date, endDate?: Date): Promise<WorkerAttendance[]> {
+    const allAttendance = Array.from(this.workerAttendance.values());
+    let filtered = allAttendance.filter(record => record.workerId === workerId);
+    
+    if (startDate) {
+      filtered = filtered.filter(record => new Date(record.attendanceDate) >= startDate);
+    }
+    
+    if (endDate) {
+      filtered = filtered.filter(record => new Date(record.attendanceDate) <= endDate);
+    }
+    
+    return filtered.sort((a, b) => new Date(b.attendanceDate).getTime() - new Date(a.attendanceDate).getTime());
+  }
+
+  async getAllAttendanceByDate(date: Date): Promise<WorkerAttendance[]> {
+    const targetDate = date.toISOString().split('T')[0];
+    return Array.from(this.workerAttendance.values())
+      .filter(record => record.attendanceDate === targetDate)
+      .sort((a, b) => a.workerId - b.workerId);
+  }
+
+  async createAttendanceRecord(insertAttendance: InsertWorkerAttendance): Promise<WorkerAttendance> {
+    const id = this.attendanceCounter++;
+    const attendance: WorkerAttendance = {
+      ...insertAttendance,
+      id,
+      createdAt: new Date()
+    };
+    
+    this.workerAttendance.set(id, attendance);
+    return attendance;
+  }
+
+  async updateAttendanceRecord(id: number, attendanceUpdate: Partial<InsertWorkerAttendance>): Promise<WorkerAttendance | undefined> {
+    const existing = this.workerAttendance.get(id);
+    if (!existing) return undefined;
+    
+    const updated: WorkerAttendance = {
+      ...existing,
+      ...attendanceUpdate
+    };
+    
+    this.workerAttendance.set(id, updated);
+    return updated;
+  }
+
+  async deleteAttendanceRecord(id: number): Promise<boolean> {
+    return this.workerAttendance.delete(id);
+  }
+
+  async getWorkerMonthlySummary(workerId: number, year: number, month: number): Promise<{
+    totalDaysWorked: number;
+    totalAbsent: number;
+    totalLate: number;
+    totalHours: number;
+    totalOvertimeHours: number;
+    salaryDeductions: number;
+  }> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+    
+    const attendance = await this.getWorkerAttendance(workerId, startDate, endDate);
+    
+    let totalDaysWorked = 0;
+    let totalAbsent = 0;
+    let totalLate = 0;
+    let totalHours = 0;
+    let totalOvertimeHours = 0;
+    
+    attendance.forEach(record => {
+      switch (record.status) {
+        case 'present':
+          totalDaysWorked++;
+          break;
+        case 'absent':
+          totalAbsent++;
+          break;
+        case 'late':
+          totalLate++;
+          totalDaysWorked++;
+          break;
+        case 'half-day':
+          totalDaysWorked += 0.5;
+          break;
+      }
+      
+      totalHours += record.hoursWorked || 0;
+      totalOvertimeHours += record.overtimeHours || 0;
+    });
+    
+    // Calculate salary deductions (example: 1 day salary per absent day, 0.5 day for late)
+    const worker = await this.getWorker(workerId);
+    const dailySalary = worker ? worker.salary / 30 : 0;
+    const salaryDeductions = (totalAbsent * dailySalary) + (totalLate * dailySalary * 0.5);
+    
+    return {
+      totalDaysWorked,
+      totalAbsent,
+      totalLate,
+      totalHours,
+      totalOvertimeHours,
+      salaryDeductions
+    };
   }
 }
 

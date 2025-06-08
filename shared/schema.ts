@@ -151,3 +151,21 @@ export const storageItems = pgTable("storage_items", {
 export const insertStorageItemSchema = createInsertSchema(storageItems).omit({ id: true, createdAt: true });
 export type InsertStorageItem = z.infer<typeof insertStorageItemSchema>;
 export type StorageItem = typeof storageItems.$inferSelect;
+
+// Worker Attendance Table
+export const workerAttendance = pgTable("worker_attendance", {
+  id: serial("id").primaryKey(),
+  workerId: integer("worker_id").notNull(),
+  attendanceDate: date("attendance_date").notNull(),
+  checkInTime: text("check_in_time"), // Format: "HH:MM"
+  checkOutTime: text("check_out_time"), // Format: "HH:MM"
+  status: text("status").notNull(), // present, absent, late, half-day
+  hoursWorked: doublePrecision("hours_worked").default(0),
+  overtimeHours: doublePrecision("overtime_hours").default(0),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertWorkerAttendanceSchema = createInsertSchema(workerAttendance).omit({ id: true, createdAt: true });
+export type InsertWorkerAttendance = z.infer<typeof insertWorkerAttendanceSchema>;
+export type WorkerAttendance = typeof workerAttendance.$inferSelect;
