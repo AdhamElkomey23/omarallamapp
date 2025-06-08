@@ -449,10 +449,10 @@ export default function Sales() {
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
                   >
-                    Cancel
+                    إلغاء
                   </Button>
                   <Button type="submit" disabled={addSaleMutation.isPending}>
-                    {addSaleMutation.isPending ? "Recording..." : "Record Sale"}
+                    {addSaleMutation.isPending ? "جارٍ التسجيل..." : "تسجيل البيع"}
                   </Button>
                 </div>
               </form>
@@ -465,7 +465,7 @@ export default function Sales() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -474,7 +474,7 @@ export default function Sales() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalSales')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -483,7 +483,7 @@ export default function Sales() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Units Sold</CardTitle>
+            <CardTitle className="text-sm font-medium">الوحدات المباعة</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalQuantity}</div>
@@ -494,19 +494,19 @@ export default function Sales() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter sales by product</CardDescription>
+          <CardTitle>المرشحات</CardTitle>
+          <CardDescription>ترشيح المبيعات حسب المنتج</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="product-filter">Product</Label>
+              <Label htmlFor="product-filter">{t('product')}</Label>
               <Select value={productFilter} onValueChange={setProductFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All products" />
+                  <SelectValue placeholder="جميع المنتجات" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All products</SelectItem>
+                  <SelectItem value="all">جميع المنتجات</SelectItem>
                   {availableProducts.map((product) => (
                     <SelectItem key={product.itemName} value={product.itemName}>
                       {product.itemName}
@@ -522,7 +522,7 @@ export default function Sales() {
                 className="w-full"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Clear Filters
+                مسح المرشحات
               </Button>
             </div>
           </div>
@@ -532,21 +532,21 @@ export default function Sales() {
       {/* Sales List */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Sales</CardTitle>
+          <CardTitle>المبيعات الأخيرة</CardTitle>
           <CardDescription>
-            {sales.length > 0 ? `${sales.length} sales found` : "No sales found"}
+            {sales.length > 0 ? `تم العثور على ${sales.length} مبيعة` : "لم يتم العثور على مبيعات"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {salesLoading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="text-muted-foreground">Loading sales...</div>
+              <div className="text-muted-foreground">جارٍ تحميل المبيعات...</div>
             </div>
           ) : sales.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 space-y-2">
-              <div className="text-muted-foreground">No sales recorded yet</div>
+              <div className="text-muted-foreground">لم يتم تسجيل أي مبيعات بعد</div>
               <Button onClick={() => setIsAddDialogOpen(true)} variant="outline">
-                Record Your First Sale
+                سجل أول عملية بيع
               </Button>
             </div>
           ) : (
