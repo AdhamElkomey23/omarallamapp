@@ -750,46 +750,432 @@
                 </div>
             </div>
 
-            <!-- Other pages content can be added here -->
+            <!-- Expenses Page -->
             <div id="expenses-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="expenses">Expenses</h1>
-                    <p style="color: #6b7280;">Expense management functionality will be added here.</p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="addExpense">Add New Expense</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label data-key="expenseName">Expense Name</label>
+                                <input type="text" id="expense-name" placeholder="Enter expense description">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="amount">Amount (EGP)</label>
+                                <input type="number" id="expense-amount" placeholder="0.00">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="category">Category</label>
+                                <select id="expense-category">
+                                    <option value="materials">Raw Materials</option>
+                                    <option value="labor">Labor Costs</option>
+                                    <option value="utilities">Utilities</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="transportation">Transportation</option>
+                                    <option value="administrative">Administrative</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label data-key="expenseDate">Expense Date</label>
+                                <input type="date" id="expense-date">
+                            </div>
+                        </div>
+                        <button onclick="addExpense()" class="btn btn-primary">
+                            <span>💸</span>
+                            <span data-key="addExpense">Add Expense</span>
+                        </button>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Expense History</h3>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-key="expenseName">Expense Name</th>
+                                        <th data-key="amount">Amount</th>
+                                        <th data-key="category">Category</th>
+                                        <th data-key="expenseDate">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-table-body">
+                                    <!-- Expenses will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Workers Page -->
             <div id="workers-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="workers">Workers</h1>
-                    <p style="color: #6b7280;">Worker management functionality will be added here.</p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="addWorker">Add New Worker</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label data-key="workerName">Worker Name</label>
+                                <input type="text" id="worker-name" placeholder="Enter worker name">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="position">Position</label>
+                                <select id="worker-position">
+                                    <option value="operator">Machine Operator</option>
+                                    <option value="supervisor">Supervisor</option>
+                                    <option value="technician">Technician</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="cleaner">Cleaner</option>
+                                    <option value="security">Security</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label data-key="salary">Monthly Salary (EGP)</label>
+                                <input type="number" id="worker-salary" placeholder="0.00">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="phone">Phone Number</label>
+                                <input type="tel" id="worker-phone" placeholder="01xxxxxxxxx">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="hireDate">Hire Date</label>
+                                <input type="date" id="worker-hire-date">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="department">Department</label>
+                                <select id="worker-department">
+                                    <option value="production">Production</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="quality">Quality Control</option>
+                                    <option value="logistics">Logistics</option>
+                                    <option value="administration">Administration</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="addWorker()" class="btn btn-primary">
+                            <span>👥</span>
+                            <span data-key="addWorker">Add Worker</span>
+                        </button>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Workers List</h3>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-key="workerName">Name</th>
+                                        <th data-key="position">Position</th>
+                                        <th data-key="salary">Salary</th>
+                                        <th data-key="phone">Phone</th>
+                                        <th data-key="department">Department</th>
+                                        <th data-key="hireDate">Hire Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="workers-table-body">
+                                    <!-- Workers will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Storage Page -->
             <div id="storage-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="storage">Storage</h1>
-                    <p style="color: #6b7280;">Storage management functionality will be added here.</p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="addStorageItem">Add Storage Item</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label data-key="itemName">Item Name</label>
+                                <input type="text" id="storage-item-name" placeholder="Enter item name">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="itemType">Item Type</label>
+                                <select id="storage-item-type">
+                                    <option value="raw_material">Raw Material</option>
+                                    <option value="finished_product">Finished Product</option>
+                                    <option value="packaging">Packaging</option>
+                                    <option value="equipment">Equipment</option>
+                                    <option value="chemical">Chemical</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label data-key="quantity">Quantity</label>
+                                <input type="number" id="storage-quantity" placeholder="0">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="unit">Unit</label>
+                                <select id="storage-unit">
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="ton">Ton</option>
+                                    <option value="liter">Liter</option>
+                                    <option value="bag">Bag</option>
+                                    <option value="piece">Piece</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label data-key="location">Storage Location</label>
+                                <input type="text" id="storage-location" placeholder="Warehouse section">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="minStock">Minimum Stock Level</label>
+                                <input type="number" id="storage-min-stock" placeholder="0">
+                            </div>
+                        </div>
+                        <button onclick="addStorageItem()" class="btn btn-primary">
+                            <span>📦</span>
+                            <span data-key="addStorageItem">Add Item</span>
+                        </button>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Storage Inventory</h3>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-key="itemName">Item Name</th>
+                                        <th data-key="itemType">Type</th>
+                                        <th data-key="quantity">Quantity</th>
+                                        <th data-key="unit">Unit</th>
+                                        <th data-key="location">Location</th>
+                                        <th data-key="status">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="storage-table-body">
+                                    <!-- Storage items will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Activity Logs Page -->
             <div id="activity-logs-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="activityLogs">Activity Logs</h1>
-                    <p style="color: #6b7280;">Activity logging functionality will be added here.</p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 24px;">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="addActivity">Add Activity Log</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label data-key="activityTitle">Activity Title</label>
+                                <input type="text" id="activity-title" placeholder="Enter activity title">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="activityType">Activity Type</label>
+                                <select id="activity-type">
+                                    <option value="production">Production</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="quality_check">Quality Check</option>
+                                    <option value="delivery">Delivery</option>
+                                    <option value="meeting">Meeting</option>
+                                    <option value="training">Training</option>
+                                    <option value="incident">Incident</option>
+                                </select>
+                            </div>
+                            <div class="form-field" style="grid-column: 1 / -1;">
+                                <label data-key="description">Description</label>
+                                <textarea id="activity-description" placeholder="Enter detailed description" rows="3"></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label data-key="activityDate">Activity Date</label>
+                                <input type="datetime-local" id="activity-date">
+                            </div>
+                            <div class="form-field">
+                                <label data-key="responsiblePerson">Responsible Person</label>
+                                <input type="text" id="activity-person" placeholder="Enter person name">
+                            </div>
+                        </div>
+                        <button onclick="addActivity()" class="btn btn-primary">
+                            <span>📋</span>
+                            <span data-key="addActivity">Add Activity</span>
+                        </button>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Activity History</h3>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-key="activityTitle">Title</th>
+                                        <th data-key="activityType">Type</th>
+                                        <th data-key="description">Description</th>
+                                        <th data-key="responsiblePerson">Responsible</th>
+                                        <th data-key="activityDate">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activities-table-body">
+                                    <!-- Activities will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Reports Page -->
             <div id="reports-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="reports">Reports</h1>
-                    <p style="color: #6b7280;">Reporting functionality will be added here.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="financialSummary">Financial Summary</h3>
+                            <div style="display: grid; gap: 12px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span data-key="totalRevenue">Total Revenue:</span>
+                                    <span style="font-weight: 600; color: #22c55e;" id="report-revenue">EGP 169,100.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span data-key="totalExpenses">Total Expenses:</span>
+                                    <span style="font-weight: 600; color: #ef4444;" id="report-expenses">EGP 120,000.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                    <span data-key="netProfit">Net Profit:</span>
+                                    <span style="font-weight: 700; color: #22c55e;" id="report-profit">EGP 49,100.00</span>
+                                </div>
+                            </div>
+                            <button onclick="generateFinancialReport()" class="btn btn-primary" style="width: 100%; margin-top: 16px;">
+                                <span>📊</span>
+                                <span data-key="generateReport">Generate Report</span>
+                            </button>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="inventoryReport">Inventory Report</h3>
+                            <div style="display: grid; gap: 12px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span data-key="totalProducts">Total Products:</span>
+                                    <span style="font-weight: 600;" id="report-products">4</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span data-key="lowStockItems">Low Stock Items:</span>
+                                    <span style="font-weight: 600; color: #f59e0b;" id="report-low-stock">2</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span data-key="totalValue">Total Inventory Value:</span>
+                                    <span style="font-weight: 600;" id="report-inventory-value">EGP 345,750.00</span>
+                                </div>
+                            </div>
+                            <button onclick="generateInventoryReport()" class="btn btn-primary" style="width: 100%; margin-top: 16px;">
+                                <span>📦</span>
+                                <span data-key="generateReport">Generate Report</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Monthly Performance Chart</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Settings Page -->
             <div id="settings-page" class="page-content hidden">
                 <div style="padding: 24px;">
                     <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px;" data-key="settings">Settings</h1>
-                    <p style="color: #6b7280;">Settings functionality will be added here.</p>
+                    
+                    <div style="display: grid; gap: 24px;">
+                        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="companySettings">Company Settings</h3>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label data-key="companyName">Company Name</label>
+                                    <input type="text" id="company-name" value="Al-Wasiloon for Mining and Chemical Industries" placeholder="Enter company name">
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="companyAddress">Company Address</label>
+                                    <input type="text" id="company-address" placeholder="Enter company address">
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="companyPhone">Company Phone</label>
+                                    <input type="tel" id="company-phone" placeholder="Enter phone number">
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="companyEmail">Company Email</label>
+                                    <input type="email" id="company-email" placeholder="Enter email address">
+                                </div>
+                            </div>
+                            <button onclick="saveCompanySettings()" class="btn btn-primary">
+                                <span>💾</span>
+                                <span data-key="saveSettings">Save Settings</span>
+                            </button>
+                        </div>
+
+                        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="systemSettings">System Settings</h3>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label data-key="currency">Default Currency</label>
+                                    <select id="system-currency">
+                                        <option value="EGP" selected>Egyptian Pound (EGP)</option>
+                                        <option value="USD">US Dollar (USD)</option>
+                                        <option value="EUR">Euro (EUR)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="dateFormat">Date Format</label>
+                                    <select id="date-format">
+                                        <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="timeFormat">Time Format</label>
+                                    <select id="time-format">
+                                        <option value="24h" selected>24 Hour</option>
+                                        <option value="12h">12 Hour</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label data-key="fiscalYearStart">Fiscal Year Start</label>
+                                    <select id="fiscal-year">
+                                        <option value="january" selected>January</option>
+                                        <option value="july">July</option>
+                                        <option value="april">April</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="saveSystemSettings()" class="btn btn-primary">
+                                <span>⚙️</span>
+                                <span data-key="saveSettings">Save Settings</span>
+                            </button>
+                        </div>
+
+                        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;" data-key="dataManagement">Data Management</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                                <button onclick="exportData()" class="btn btn-primary">
+                                    <span>📤</span>
+                                    <span data-key="exportData">Export Data</span>
+                                </button>
+                                <button onclick="backupData()" class="btn btn-primary">
+                                    <span>💾</span>
+                                    <span data-key="backupData">Backup Data</span>
+                                </button>
+                                <button onclick="clearAllData()" class="btn" style="background-color: #ef4444; color: white;">
+                                    <span>🗑️</span>
+                                    <span data-key="clearData">Clear All Data</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -902,7 +1288,50 @@
                 { id: 2, productName: "Urea 46%", quantity: 15, amount: 27000, clientName: "Nile Agriculture", saleDate: "2024-12-02" },
                 { id: 3, productName: "Phosphate Rock", quantity: 10, amount: 9000, clientName: "Modern Farming Co.", saleDate: "2024-12-03" },
                 { id: 4, productName: "Potassium Chloride", quantity: 8, amount: 9600, clientName: "New Land Projects", saleDate: "2024-12-04" }
-            ]
+            ],
+            expenses: [
+                { id: 1, name: "Raw Materials Purchase", amount: 45000, category: "materials", expenseDate: "2024-12-01" },
+                { id: 2, name: "Workers Salaries", amount: 35000, category: "labor", expenseDate: "2024-12-01" },
+                { id: 3, name: "Electricity Bill", amount: 12000, category: "utilities", expenseDate: "2024-12-02" },
+                { id: 4, name: "Equipment Maintenance", amount: 8000, category: "maintenance", expenseDate: "2024-12-03" },
+                { id: 5, name: "Transportation Costs", amount: 15000, category: "transportation", expenseDate: "2024-12-04" },
+                { id: 6, name: "Office Supplies", amount: 5000, category: "administrative", expenseDate: "2024-12-05" }
+            ],
+            workers: [
+                { id: 1, name: "Ahmed Mohamed", position: "supervisor", salary: 8000, phone: "01123456789", department: "production", hireDate: "2023-01-15" },
+                { id: 2, name: "Fatima Hassan", position: "operator", salary: 5500, phone: "01234567890", department: "production", hireDate: "2023-03-20" },
+                { id: 3, name: "Omar Ali", position: "technician", salary: 6500, phone: "01345678901", department: "maintenance", hireDate: "2023-02-10" },
+                { id: 4, name: "Mona Ibrahim", position: "manager", salary: 12000, phone: "01456789012", department: "administration", hireDate: "2022-11-05" },
+                { id: 5, name: "Khalid Mahmoud", position: "driver", salary: 4500, phone: "01567890123", department: "logistics", hireDate: "2023-04-18" }
+            ],
+            storageItems: [
+                { id: 1, name: "Nitrogen Compound", type: "raw_material", quantity: 500, unit: "kg", location: "Warehouse A-1", minStock: 100 },
+                { id: 2, name: "Phosphate Powder", type: "raw_material", quantity: 750, unit: "kg", location: "Warehouse A-2", minStock: 150 },
+                { id: 3, name: "Potassium Salt", type: "raw_material", quantity: 300, unit: "kg", location: "Warehouse A-3", minStock: 200 },
+                { id: 4, name: "NPK Fertilizer Bags", type: "finished_product", quantity: 200, unit: "bag", location: "Warehouse B-1", minStock: 50 },
+                { id: 5, name: "Plastic Packaging", type: "packaging", quantity: 1000, unit: "piece", location: "Warehouse C-1", minStock: 200 }
+            ],
+            activities: [
+                { id: 1, title: "Daily Production Report", type: "production", description: "Completed daily fertilizer production of 2.5 tons", person: "Ahmed Mohamed", activityDate: "2024-12-09T08:00" },
+                { id: 2, title: "Equipment Maintenance", type: "maintenance", description: "Routine maintenance on mixing equipment completed successfully", person: "Omar Ali", activityDate: "2024-12-08T14:30" },
+                { id: 3, title: "Quality Control Check", type: "quality_check", description: "All products passed quality standards inspection", person: "Fatima Hassan", activityDate: "2024-12-08T10:15" },
+                { id: 4, title: "Delivery Coordination", type: "delivery", description: "Coordinated delivery of 50 bags to Green Valley Farms", person: "Khalid Mahmoud", activityDate: "2024-12-07T16:20" },
+                { id: 5, title: "Safety Training", type: "training", description: "Conducted safety training session for all production staff", person: "Mona Ibrahim", activityDate: "2024-12-06T09:00" }
+            ],
+            settings: {
+                company: {
+                    name: "Al-Wasiloon for Mining and Chemical Industries",
+                    address: "Industrial Zone, Cairo, Egypt",
+                    phone: "+20 2 1234 5678",
+                    email: "info@alwasiloon.com"
+                },
+                system: {
+                    currency: "EGP",
+                    dateFormat: "DD/MM/YYYY",
+                    timeFormat: "24h",
+                    fiscalYear: "january"
+                }
+            }
         };
 
         let currentLanguage = 'ar';
@@ -1026,6 +1455,18 @@
                 initProducts();
             } else if (pageId === 'sales') {
                 initSales();
+            } else if (pageId === 'expenses') {
+                initExpenses();
+            } else if (pageId === 'workers') {
+                initWorkers();
+            } else if (pageId === 'storage') {
+                initStorage();
+            } else if (pageId === 'activity-logs') {
+                initActivityLogs();
+            } else if (pageId === 'reports') {
+                initReports();
+            } else if (pageId === 'settings') {
+                initSettings();
             }
         }
 
@@ -1215,6 +1656,444 @@
             const timeElement = document.getElementById('current-time');
             if (timeElement) {
                 timeElement.textContent = timeString;
+            }
+        }
+
+        // Expenses functions
+        function initExpenses() {
+            updateExpensesTable();
+            setCurrentDate('expense-date');
+        }
+
+        function updateExpensesTable() {
+            const tbody = document.getElementById('expenses-table-body');
+            if (!tbody) return;
+            
+            const currency = currentLanguage === 'ar' ? 'ج.م' : 'EGP';
+            tbody.innerHTML = appData.expenses.map(expense => `
+                <tr>
+                    <td>${expense.name}</td>
+                    <td>${currency} ${expense.amount.toLocaleString()}</td>
+                    <td>${getCategoryName(expense.category)}</td>
+                    <td>${new Date(expense.expenseDate).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function addExpense() {
+            const name = document.getElementById('expense-name')?.value;
+            const amount = parseFloat(document.getElementById('expense-amount')?.value);
+            const category = document.getElementById('expense-category')?.value;
+            const expenseDate = document.getElementById('expense-date')?.value;
+            
+            if (!name || !amount || !category || !expenseDate) {
+                alert(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+            
+            appData.expenses.push({
+                id: appData.expenses.length + 1,
+                name, amount, category, expenseDate
+            });
+            
+            updateExpensesTable();
+            saveData();
+            
+            document.getElementById('expense-name').value = '';
+            document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-category').selectedIndex = 0;
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إضافة المصروف بنجاح' : 'Expense added successfully');
+        }
+
+        // Workers functions
+        function initWorkers() {
+            updateWorkersTable();
+            setCurrentDate('worker-hire-date');
+        }
+
+        function updateWorkersTable() {
+            const tbody = document.getElementById('workers-table-body');
+            if (!tbody) return;
+            
+            const currency = currentLanguage === 'ar' ? 'ج.م' : 'EGP';
+            tbody.innerHTML = appData.workers.map(worker => `
+                <tr>
+                    <td>${worker.name}</td>
+                    <td>${getPositionName(worker.position)}</td>
+                    <td>${currency} ${worker.salary.toLocaleString()}</td>
+                    <td>${worker.phone}</td>
+                    <td>${getDepartmentName(worker.department)}</td>
+                    <td>${new Date(worker.hireDate).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function addWorker() {
+            const name = document.getElementById('worker-name')?.value;
+            const position = document.getElementById('worker-position')?.value;
+            const salary = parseFloat(document.getElementById('worker-salary')?.value);
+            const phone = document.getElementById('worker-phone')?.value;
+            const department = document.getElementById('worker-department')?.value;
+            const hireDate = document.getElementById('worker-hire-date')?.value;
+            
+            if (!name || !position || !salary || !phone || !department || !hireDate) {
+                alert(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+            
+            appData.workers.push({
+                id: appData.workers.length + 1,
+                name, position, salary, phone, department, hireDate
+            });
+            
+            updateWorkersTable();
+            saveData();
+            
+            document.getElementById('worker-name').value = '';
+            document.getElementById('worker-salary').value = '';
+            document.getElementById('worker-phone').value = '';
+            document.getElementById('worker-position').selectedIndex = 0;
+            document.getElementById('worker-department').selectedIndex = 0;
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إضافة العامل بنجاح' : 'Worker added successfully');
+        }
+
+        // Storage functions
+        function initStorage() {
+            updateStorageTable();
+        }
+
+        function updateStorageTable() {
+            const tbody = document.getElementById('storage-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.storageItems.map(item => {
+                const status = item.quantity <= item.minStock ? 
+                    (currentLanguage === 'ar' ? 'مخزون منخفض' : 'Low Stock') : 
+                    (currentLanguage === 'ar' ? 'متوفر' : 'Available');
+                const statusColor = item.quantity <= item.minStock ? '#ef4444' : '#22c55e';
+                
+                return `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${getItemTypeName(item.type)}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.location}</td>
+                        <td style="color: ${statusColor}; font-weight: 600;">${status}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function addStorageItem() {
+            const name = document.getElementById('storage-item-name')?.value;
+            const type = document.getElementById('storage-item-type')?.value;
+            const quantity = parseInt(document.getElementById('storage-quantity')?.value);
+            const unit = document.getElementById('storage-unit')?.value;
+            const location = document.getElementById('storage-location')?.value;
+            const minStock = parseInt(document.getElementById('storage-min-stock')?.value);
+            
+            if (!name || !type || !quantity || !unit || !location || minStock === undefined) {
+                alert(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+            
+            appData.storageItems.push({
+                id: appData.storageItems.length + 1,
+                name, type, quantity, unit, location, minStock
+            });
+            
+            updateStorageTable();
+            saveData();
+            
+            document.getElementById('storage-item-name').value = '';
+            document.getElementById('storage-quantity').value = '';
+            document.getElementById('storage-location').value = '';
+            document.getElementById('storage-min-stock').value = '';
+            document.getElementById('storage-item-type').selectedIndex = 0;
+            document.getElementById('storage-unit').selectedIndex = 0;
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إضافة عنصر المخزون بنجاح' : 'Storage item added successfully');
+        }
+
+        // Activity Logs functions
+        function initActivityLogs() {
+            updateActivitiesTable();
+            setCurrentDateTime('activity-date');
+        }
+
+        function updateActivitiesTable() {
+            const tbody = document.getElementById('activities-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.activities.map(activity => `
+                <tr>
+                    <td>${activity.title}</td>
+                    <td>${getActivityTypeName(activity.type)}</td>
+                    <td>${activity.description}</td>
+                    <td>${activity.person}</td>
+                    <td>${new Date(activity.activityDate).toLocaleDateString()} ${new Date(activity.activityDate).toLocaleTimeString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function addActivity() {
+            const title = document.getElementById('activity-title')?.value;
+            const type = document.getElementById('activity-type')?.value;
+            const description = document.getElementById('activity-description')?.value;
+            const person = document.getElementById('activity-person')?.value;
+            const activityDate = document.getElementById('activity-date')?.value;
+            
+            if (!title || !type || !description || !person || !activityDate) {
+                alert(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+            
+            appData.activities.push({
+                id: appData.activities.length + 1,
+                title, type, description, person, activityDate
+            });
+            
+            updateActivitiesTable();
+            saveData();
+            
+            document.getElementById('activity-title').value = '';
+            document.getElementById('activity-description').value = '';
+            document.getElementById('activity-person').value = '';
+            document.getElementById('activity-type').selectedIndex = 0;
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إضافة النشاط بنجاح' : 'Activity added successfully');
+        }
+
+        // Reports functions
+        function initReports() {
+            updateReportsData();
+            setTimeout(initPerformanceChart, 100);
+        }
+
+        function updateReportsData() {
+            const currency = currentLanguage === 'ar' ? 'ج.م' : 'EGP';
+            
+            const totalRevenue = appData.sales.reduce((sum, sale) => sum + sale.amount, 0);
+            const totalExpenses = appData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const netProfit = totalRevenue - totalExpenses;
+            const totalProducts = appData.products.length;
+            const lowStockItems = appData.storageItems.filter(item => item.quantity <= item.minStock).length;
+            const totalInventoryValue = appData.products.reduce((sum, product) => sum + (product.price * product.stock), 0);
+            
+            document.getElementById('report-revenue').textContent = `${currency} ${totalRevenue.toLocaleString()}.00`;
+            document.getElementById('report-expenses').textContent = `${currency} ${totalExpenses.toLocaleString()}.00`;
+            document.getElementById('report-profit').textContent = `${currency} ${netProfit.toLocaleString()}.00`;
+            document.getElementById('report-products').textContent = totalProducts;
+            document.getElementById('report-low-stock').textContent = lowStockItems;
+            document.getElementById('report-inventory-value').textContent = `${currency} ${totalInventoryValue.toLocaleString()}.00`;
+        }
+
+        function initPerformanceChart() {
+            const canvas = document.getElementById('performanceChart');
+            if (canvas && canvas.getContext) {
+                new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [28000, 32000, 25000, 42000, 38000, 45000],
+                            backgroundColor: '#22c55e',
+                            borderRadius: 8
+                        }, {
+                            label: 'Expenses',
+                            data: [18000, 22000, 20000, 28000, 25000, 30000],
+                            backgroundColor: '#ef4444',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: true } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        }
+
+        function generateFinancialReport() {
+            const reportData = {
+                date: new Date().toLocaleDateString(),
+                totalRevenue: appData.sales.reduce((sum, sale) => sum + sale.amount, 0),
+                totalExpenses: appData.expenses.reduce((sum, expense) => sum + expense.amount, 0),
+                sales: appData.sales,
+                expenses: appData.expenses
+            };
+            
+            const reportJson = JSON.stringify(reportData, null, 2);
+            const blob = new Blob([reportJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-report-${new Date().getTime()}.json`;
+            a.click();
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إنشاء التقرير المالي' : 'Financial report generated');
+        }
+
+        function generateInventoryReport() {
+            const reportData = {
+                date: new Date().toLocaleDateString(),
+                products: appData.products,
+                storageItems: appData.storageItems,
+                totalValue: appData.products.reduce((sum, product) => sum + (product.price * product.stock), 0)
+            };
+            
+            const reportJson = JSON.stringify(reportData, null, 2);
+            const blob = new Blob([reportJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inventory-report-${new Date().getTime()}.json`;
+            a.click();
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إنشاء تقرير المخزون' : 'Inventory report generated');
+        }
+
+        // Settings functions
+        function initSettings() {
+            loadSettingsData();
+        }
+
+        function loadSettingsData() {
+            if (appData.settings) {
+                document.getElementById('company-name').value = appData.settings.company.name || '';
+                document.getElementById('company-address').value = appData.settings.company.address || '';
+                document.getElementById('company-phone').value = appData.settings.company.phone || '';
+                document.getElementById('company-email').value = appData.settings.company.email || '';
+                
+                document.getElementById('system-currency').value = appData.settings.system.currency || 'EGP';
+                document.getElementById('date-format').value = appData.settings.system.dateFormat || 'DD/MM/YYYY';
+                document.getElementById('time-format').value = appData.settings.system.timeFormat || '24h';
+                document.getElementById('fiscal-year').value = appData.settings.system.fiscalYear || 'january';
+            }
+        }
+
+        function saveCompanySettings() {
+            appData.settings.company = {
+                name: document.getElementById('company-name').value,
+                address: document.getElementById('company-address').value,
+                phone: document.getElementById('company-phone').value,
+                email: document.getElementById('company-email').value
+            };
+            
+            saveData();
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم حفظ إعدادات الشركة' : 'Company settings saved');
+        }
+
+        function saveSystemSettings() {
+            appData.settings.system = {
+                currency: document.getElementById('system-currency').value,
+                dateFormat: document.getElementById('date-format').value,
+                timeFormat: document.getElementById('time-format').value,
+                fiscalYear: document.getElementById('fiscal-year').value
+            };
+            
+            saveData();
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم حفظ إعدادات النظام' : 'System settings saved');
+        }
+
+        function exportData() {
+            const dataJson = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fertilizer-factory-backup-${new Date().getTime()}.json`;
+            a.click();
+            
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم تصدير البيانات' : 'Data exported successfully');
+        }
+
+        function backupData() {
+            localStorage.setItem(`fertilizerFactoryBackup_${new Date().getTime()}`, JSON.stringify(appData));
+            showSuccessMessage(currentLanguage === 'ar' ? 'تم إنشاء نسخة احتياطية' : 'Backup created successfully');
+        }
+
+        function clearAllData() {
+            if (confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من حذف جميع البيانات؟' : 'Are you sure you want to clear all data?')) {
+                localStorage.removeItem('fertilizerFactoryData');
+                location.reload();
+            }
+        }
+
+        // Helper functions
+        function getCategoryName(category) {
+            const categories = {
+                materials: currentLanguage === 'ar' ? 'مواد خام' : 'Raw Materials',
+                labor: currentLanguage === 'ar' ? 'تكاليف العمالة' : 'Labor Costs',
+                utilities: currentLanguage === 'ar' ? 'المرافق' : 'Utilities',
+                maintenance: currentLanguage === 'ar' ? 'الصيانة' : 'Maintenance',
+                transportation: currentLanguage === 'ar' ? 'النقل' : 'Transportation',
+                administrative: currentLanguage === 'ar' ? 'إدارية' : 'Administrative',
+                other: currentLanguage === 'ar' ? 'أخرى' : 'Other'
+            };
+            return categories[category] || category;
+        }
+
+        function getPositionName(position) {
+            const positions = {
+                operator: currentLanguage === 'ar' ? 'مشغل آلة' : 'Machine Operator',
+                supervisor: currentLanguage === 'ar' ? 'مشرف' : 'Supervisor',
+                technician: currentLanguage === 'ar' ? 'فني' : 'Technician',
+                manager: currentLanguage === 'ar' ? 'مدير' : 'Manager',
+                driver: currentLanguage === 'ar' ? 'سائق' : 'Driver',
+                cleaner: currentLanguage === 'ar' ? 'عامل نظافة' : 'Cleaner',
+                security: currentLanguage === 'ar' ? 'أمن' : 'Security'
+            };
+            return positions[position] || position;
+        }
+
+        function getDepartmentName(department) {
+            const departments = {
+                production: currentLanguage === 'ar' ? 'الإنتاج' : 'Production',
+                maintenance: currentLanguage === 'ar' ? 'الصيانة' : 'Maintenance',
+                quality: currentLanguage === 'ar' ? 'مراقبة الجودة' : 'Quality Control',
+                logistics: currentLanguage === 'ar' ? 'اللوجستيات' : 'Logistics',
+                administration: currentLanguage === 'ar' ? 'الإدارة' : 'Administration'
+            };
+            return departments[department] || department;
+        }
+
+        function getItemTypeName(type) {
+            const types = {
+                raw_material: currentLanguage === 'ar' ? 'مادة خام' : 'Raw Material',
+                finished_product: currentLanguage === 'ar' ? 'منتج نهائي' : 'Finished Product',
+                packaging: currentLanguage === 'ar' ? 'تغليف' : 'Packaging',
+                equipment: currentLanguage === 'ar' ? 'معدات' : 'Equipment',
+                chemical: currentLanguage === 'ar' ? 'مادة كيميائية' : 'Chemical'
+            };
+            return types[type] || type;
+        }
+
+        function getActivityTypeName(type) {
+            const types = {
+                production: currentLanguage === 'ar' ? 'إنتاج' : 'Production',
+                maintenance: currentLanguage === 'ar' ? 'صيانة' : 'Maintenance',
+                quality_check: currentLanguage === 'ar' ? 'فحص جودة' : 'Quality Check',
+                delivery: currentLanguage === 'ar' ? 'توصيل' : 'Delivery',
+                meeting: currentLanguage === 'ar' ? 'اجتماع' : 'Meeting',
+                training: currentLanguage === 'ar' ? 'تدريب' : 'Training',
+                incident: currentLanguage === 'ar' ? 'حادث' : 'Incident'
+            };
+            return types[type] || type;
+        }
+
+        function setCurrentDateTime(fieldId) {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = localDateTime;
             }
         }
 
