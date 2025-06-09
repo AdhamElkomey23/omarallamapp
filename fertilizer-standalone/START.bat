@@ -10,40 +10,54 @@ echo.
 
 REM Get the directory where the batch file is located
 set "APP_DIR=%~dp0"
-
-REM Start the local HTTP server using Python
-echo Starting local server...
 cd /d "%APP_DIR%"
 
-REM Try Python 3 first, then Python 2
-python -m http.server 8080 >nul 2>&1
-if errorlevel 1 (
-    python -m SimpleHTTPServer 8080 >nul 2>&1
-    if errorlevel 1 (
-        echo Error: Python is not installed or not in PATH
-        echo Please install Python from https://python.org
-        pause
-        exit /b 1
-    )
-) &
+REM Try Node.js first (most reliable)
+echo Checking for Node.js...
+node --version >nul 2>&1
+if not errorlevel 1 (
+    echo Starting Node.js server...
+    node server.js
+    goto :end
+)
 
-REM Wait a moment for server to start
-timeout /t 3 /nobreak >nul
+REM Try Python 3 as fallback
+echo Node.js not found, trying Python...
+python --version >nul 2>&1
+if not errorlevel 1 (
+    echo Starting Python server...
+    python -m http.server 8080
+    goto :end
+)
 
-REM Open the application in default browser
-echo Opening application in browser...
-start http://localhost:8080
+REM Try Python 2 as final fallback  
+python2 --version >nul 2>&1
+if not errorlevel 1 (
+    echo Starting Python 2 server...
+    python2 -m SimpleHTTPServer 8080
+    goto :end
+)
 
+REM If nothing works, show instructions
 echo.
 echo ================================================
-echo  Application is now running!
-echo  
-echo  URL: http://localhost:8080
-echo  
-echo  Press CTRL+C to stop the server
-echo  Or simply close this window
+echo  ERROR: No suitable server found
 echo ================================================
 echo.
+echo Please install one of the following:
+echo.
+echo 1. Node.js (Recommended)
+echo    Download from: https://nodejs.org
+echo.
+echo 2. Python 3
+echo    Download from: https://python.org  
+echo.
+echo After installation, restart this application.
+echo.
+pause
+exit /b 1
 
-REM Keep the window open
+:end
+echo.
+echo Application stopped.
 pause

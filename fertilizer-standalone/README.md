@@ -7,22 +7,29 @@ This is a complete standalone version of the Al-Wasiloon Fertilizer Factory Mana
 ## System Requirements
 
 - Windows 7/8/10/11
-- Python (automatically available on most Windows systems)
 - Any modern web browser (Chrome, Firefox, Edge, Safari)
+- No external software installation required
 
 ## Installation & Usage
 
-### Quick Start (Recommended)
+### Option 1: Zero-Dependency Portable Version (Recommended)
 
 1. **Extract all files** to any folder on your computer
-2. **Double-click `START-SILENT.vbs`** for silent startup
-   - This starts the application without showing terminal windows
-   - Opens automatically in your default browser
+2. **Double-click `START-PORTABLE.html`** 
+   - Opens directly in your browser
+   - No server setup required
+   - Completely self-contained
 
-### Alternative Start Methods
+### Option 2: Server-Based Version
 
-- **`START.bat`** - Shows terminal window with status information
-- Both methods work identically, choose based on your preference
+1. **Double-click `START-SILENT.vbs`** for silent startup
+   - Automatically detects and uses Node.js or Python
+   - Opens in browser at http://localhost:8080
+   - Shows no terminal windows
+
+2. **Alternative: `START.bat`** 
+   - Shows terminal window with status information
+   - Same functionality as silent version
 
 ## Features
 
@@ -49,12 +56,20 @@ This is a complete standalone version of the Al-Wasiloon Fertilizer Factory Mana
 
 ```
 fertilizer-standalone/
-├── index.html          # Main application interface
-├── app.js             # Complete application logic
-├── START.bat          # Windows batch launcher (with terminal)
-├── START-SILENT.vbs   # Silent VBS launcher (no terminal)
-└── README.md          # This documentation
+├── START-PORTABLE.html    # Portable single-file version (RECOMMENDED)
+├── index.html            # Main application interface  
+├── app.js               # Complete application logic
+├── server.js            # Node.js server (if available)
+├── START.bat            # Windows batch launcher (with terminal)
+├── START-SILENT.vbs     # Silent VBS launcher (no terminal)
+└── README.md            # This documentation
 ```
+
+## Which Version to Use?
+
+- **START-PORTABLE.html**: Best choice - works everywhere, no dependencies
+- **START-SILENT.vbs**: If you prefer server-based hosting (requires Node.js/Python)
+- **START.bat**: Same as above but shows technical details
 
 ## Data Storage
 
