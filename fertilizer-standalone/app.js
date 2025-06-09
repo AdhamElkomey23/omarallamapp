@@ -252,6 +252,7 @@ let appData = JSON.parse(localStorage.getItem('al-wasiloon-fertilizer-data')) ||
 let currentLanguage = 'ar';
 let editingId = null;
 let charts = {};
+let deferredPrompt;
 
 // Translation system
 const translations = {

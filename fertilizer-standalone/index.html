@@ -2,8 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Al-Wasiloon Fertilizer Factory Management</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Al-Wasiloon Factory">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Al-Wasiloon Factory">
+    <meta name="description" content="Al-Wasiloon Fertilizer Factory Management System">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#16a34a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -658,27 +668,506 @@
             margin-bottom: 16px;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Mobile Sidebar Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            display: none;
+            background: linear-gradient(135deg, var(--success-600), var(--success-500));
+            color: white;
+            padding: 12px 16px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            min-height: 60px;
+        }
+
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-logo-icon {
+            font-size: 24px;
+        }
+
+        .mobile-logo-text h1 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .mobile-logo-text p {
+            font-size: 11px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .mobile-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-lang-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Bottom Navigation for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 8px 0;
+            justify-content: space-around;
+            z-index: 50;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: var(--gray-500);
+            transition: color 0.2s ease;
+            font-size: 11px;
+            min-width: 60px;
+            cursor: pointer;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--success-600);
+        }
+
+        .bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* PWA Install Button */
+        .pwa-install {
+            position: fixed;
+            bottom: 100px;
+            right: 16px;
+            background: var(--success-600);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+            z-index: 60;
+            display: none;
+        }
+
+        .rtl .pwa-install {
+            left: 16px;
+            right: auto;
+        }
+
+        /* Toast Notifications for Mobile */
+        .toast-mobile {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            background: var(--success-600);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+            z-index: 300;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast-mobile.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
             .sidebar {
-                width: 240px;
+                width: 260px;
             }
             
             .main-content {
-                margin-right: 240px;
+                margin-right: 260px;
             }
             
             .ltr .main-content {
-                margin-left: 240px;
+                margin-left: 260px;
                 margin-right: 0;
             }
-            
+
             .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+        }
+
+        @media (max-width: 768px) {
+            /* Hide desktop sidebar and header */
+            .sidebar {
+                position: fixed;
+                right: -100%;
+                z-index: 200;
+                transition: right 0.3s ease;
+                width: 280px;
+            }
+
+            .ltr .sidebar {
+                left: -100%;
+                right: auto;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                right: 0;
+            }
+
+            .ltr .sidebar.open {
+                left: 0;
+            }
+
+            .header {
+                display: none;
+            }
+
+            /* Show mobile header */
+            .mobile-header {
+                display: flex;
+            }
+
+            /* Adjust main content */
+            .main-content {
+                margin-right: 0;
+                margin-left: 0;
+                padding-bottom: 80px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            /* Show bottom navigation */
+            .bottom-nav {
+                display: flex;
+            }
+
+            /* Mobile-optimized components */
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+                margin-bottom: 20px;
+            }
+
             .hero-title {
-                font-size: 32px;
+                font-size: 28px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 16px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .form-field input,
+            .form-field select,
+            .form-field textarea {
+                padding: 14px 16px;
+                font-size: 16px;
+                border-radius: 12px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 16px;
+                border-radius: 12px;
+                min-height: 52px;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .btn-danger,
+            .btn-warning {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                margin: 20px;
+                max-height: calc(100vh - 40px);
+            }
+
+            .chart-container {
+                padding: 16px;
+            }
+
+            /* Quick access grid for mobile */
+            .quick-access-mobile {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .quick-access-btn {
+                flex-direction: column;
+                text-align: center;
+                padding: 16px;
+                gap: 8px;
+            }
+
+            .quick-access-icon {
+                font-size: 24px;
+                width: 48px;
+                height: 48px;
+                margin: 0 auto;
+            }
+
+            .quick-access-text {
+                text-align: center;
+            }
+
+            .quick-access-title {
+                font-size: 14px;
+            }
+
+            .quick-access-subtitle {
+                font-size: 12px;
+            }
+
+            /* Language switcher mobile positioning */
+            .language-switcher {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-header {
+                padding: 8px 12px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .hero-section {
+                padding: 30px 16px;
+            }
+
+            .hero-title {
+                font-size: 24px;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+                text-align: center;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .table-container {
+                margin: -4px;
+                padding: 4px;
+            }
+
+            .data-table {
+                min-width: 500px;
+            }
+
+            .modal-content {
+                margin: 10px;
+                border-radius: 20px 20px 0 0;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                max-height: 80vh;
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .modal:not(.hidden) .modal-content {
+                transform: translateY(0);
+            }
+
+            .quick-access-mobile {
+                grid-template-columns: 1fr;
+            }
+
+            .bottom-nav {
+                padding: 6px 0;
+            }
+
+            .bottom-nav-item {
+                padding: 6px 8px;
+                font-size: 10px;
+            }
+
+            .bottom-nav-icon {
+                font-size: 18px;
+            }
+        }
+
+        /* Safe areas for devices with notches */
+        @supports (padding: max(0px)) {
+            .mobile-header {
+                padding-top: max(12px, env(safe-area-inset-top));
+            }
+            
+            .bottom-nav {
+                padding-bottom: max(8px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Table responsive wrapper */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                border-radius: 12px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+        }
+
+        /* Hide certain elements on mobile */
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none !important;
             }
         }
 
@@ -881,6 +1370,28 @@
         <button class="language-btn active" onclick="switchLanguage('ar')" id="lang-ar">عر</button>
         <button class="language-btn" onclick="switchLanguage('en')" id="lang-en">EN</button>
     </div>
+
+    <!-- Mobile Header (hidden on desktop) -->
+    <header class="mobile-header">
+        <div class="mobile-header-left">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="mobile-logo">
+                <div class="mobile-logo-icon">🏭</div>
+                <div class="mobile-logo-text">
+                    <h1 data-key="companyName">مصنع الواصلون</h1>
+                    <p data-key="managementSystem">نظام الإدارة</p>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-header-right">
+            <button class="mobile-lang-toggle" onclick="switchLanguage('auto')">
+                <span id="mobile-lang-text">EN</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
     <div class="container">
         <!-- Sidebar -->
@@ -1660,7 +2171,36 @@
                 </div>
             </main>
         </div>
+
+        <!-- Bottom Navigation (mobile only) -->
+        <nav class="bottom-nav">
+            <a class="bottom-nav-item active" onclick="showPage('home')">
+                <div class="bottom-nav-icon">🏠</div>
+                <span data-key="home">الرئيسية</span>
+            </a>
+            <a class="bottom-nav-item" onclick="showPage('sales')">
+                <div class="bottom-nav-icon">🛒</div>
+                <span data-key="sales">المبيعات</span>
+            </a>
+            <a class="bottom-nav-item" onclick="showPage('storage')">
+                <div class="bottom-nav-icon">📦</div>
+                <span data-key="storage">المخزون</span>
+            </a>
+            <a class="bottom-nav-item" onclick="showPage('reports')">
+                <div class="bottom-nav-icon">📈</div>
+                <span data-key="reports">التقارير</span>
+            </a>
+        </nav>
     </div>
+
+    <!-- PWA Install Button -->
+    <button class="pwa-install" id="pwa-install-btn" onclick="installPWA()">
+        <span>📱</span>
+        <span data-key="installApp">تثبيت التطبيق</span>
+    </button>
+
+    <!-- Toast Messages (mobile) -->
+    <div class="toast-mobile" id="toast-mobile"></div>
 
     <!-- Edit Sale Modal -->
     <div id="edit-sale-modal" class="modal hidden">
