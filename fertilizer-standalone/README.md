@@ -60,18 +60,18 @@ fertilizer-standalone/
 
 ## Data Storage
 
-- All data stored locally in the application folder
+- All data stored in browser localStorage
 - Data persists between sessions
-- Automatic backup to `factory_data.json`
+- Automatic save after each operation
 - Safe and secure - data never leaves your computer
 
 ## Technical Details
 
-- **Format**: Windows HTA (HTML Application)
+- **Format**: Standard HTML/CSS/JavaScript
 - **Charts**: Chart.js for financial visualizations
 - **Fonts**: Google Fonts (Cairo for Arabic, Inter for English)
-- **Storage**: Local file system with JSON format
-- **Compatibility**: All Windows versions with Internet Explorer engine
+- **Storage**: Browser localStorage with JSON format
+- **Compatibility**: All modern browsers and Internet Explorer
 
 ## Usage Tips
 
