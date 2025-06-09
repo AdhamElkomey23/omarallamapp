@@ -43,17 +43,19 @@ Complete standalone version of the Al-Wasiloon Factory Management System that ru
 
 ```
 fertilizer-standalone/
-├── Al-Wasiloon-Factory-Management.hta    # Main application (HTA format)
+├── Al-Wasiloon-Factory-Management.html   # Main application (HTML format)
+├── app.js                                # Application JavaScript code
 ├── START-APP.bat                         # Application launcher (RECOMMENDED)
 └── README.md                            # This documentation
 ```
 
 ## How It Works
 
-- **Al-Wasiloon-Factory-Management.hta** - Self-contained Windows HTML Application
-- **START-APP.bat** - Simple launcher that starts the application
-- All data stored in local files alongside the application
-- No internet connection required after initial setup
+- **Al-Wasiloon-Factory-Management.html** - Self-contained HTML Application
+- **app.js** - Complete JavaScript functionality with IE-compatible syntax
+- **START-APP.bat** - Simple launcher that opens application in default browser
+- All data stored in browser localStorage for persistence
+- No internet connection required after initial setup (fonts may load online)
 - Complete offline functionality
 
 ## Data Storage

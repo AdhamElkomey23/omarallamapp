@@ -9,8 +9,8 @@ echo  Starting Desktop Application...
 echo ================================================
 echo.
 
-REM Check if HTA file exists
-if not exist "Al-Wasiloon-Factory-Management.hta" (
+REM Check if HTML file exists
+if not exist "Al-Wasiloon-Factory-Management.html" (
     echo Error: Application file not found!
     echo Please ensure all files are extracted properly.
     pause
@@ -20,8 +20,8 @@ if not exist "Al-Wasiloon-Factory-Management.hta" (
 echo Starting Al-Wasiloon Factory Management System...
 echo.
 
-REM Launch the HTA application
-start "" "Al-Wasiloon-Factory-Management.hta"
+REM Launch the HTML application
+start "" "Al-Wasiloon-Factory-Management.html"
 
 echo Application launched successfully!
 echo.
