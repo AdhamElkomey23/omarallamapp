@@ -1,2 +1,3 @@
 @echo off
+echo Starting Fertilizer Factory Management System...
 start "" "FertilizerApp.html"

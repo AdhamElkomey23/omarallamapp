@@ -1,73 +1,100 @@
-# نظام إدارة مصنع الأسمدة - النسخة المُصححة
-Fertilizer Factory Management System - Fixed Edition
+# Fertilizer Factory Management System - Desktop Edition
+نظام إدارة مصنع الأسمدة - إصدار سطح المكتب
 
-## الإصلاحات الجديدة / New Fixes:
-✅ الصفحة الرئيسية تطابق التطبيق الأصلي - Homepage matches original web app
-✅ ترجمة عربية كاملة للصفحة الرئيسية - Complete Arabic translation for homepage
-✅ أيقونات تعمل بشكل صحيح - Working icons using emoji fallbacks
-✅ عملة الجنيه المصري (ج.م) - Egyptian Pound currency (EGP)
-✅ تصميم أصيل يطابق الواجهة الأصلية - Authentic design matching original interface
-✅ موضع صحيح لزر تبديل اللغة - Properly positioned language switcher
+## Complete Features / المميزات الكاملة:
+✅ Exact homepage replica matching original web application
+✅ Complete Arabic/English language support with RTL/LTR
+✅ Egyptian Pound currency (ج.م/EGP) throughout application
+✅ Working emoji icons for 100% compatibility
+✅ Full product management with inventory tracking
+✅ Sales recording with automatic stock deduction
+✅ Dashboard with interactive charts
+✅ Local data persistence (saves automatically)
+✅ Professional sidebar navigation
+✅ Responsive design for all screen sizes
 
-## كيفية التشغيل / How to Launch:
-1. START.bat - تشغيل عادي / Normal launch
-2. START-SILENT.vbs - تشغيل صامت / Silent launch  
-3. FertilizerApp.html - تشغيل مباشر / Direct launch
+## Launch Options / خيارات التشغيل:
+1. **START.bat** - Regular launch with console
+2. **START-SILENT.vbs** - Silent launch (recommended)
+3. **FertilizerApp.html** - Direct browser launch
 
-## الواجهة الجديدة / New Interface:
+## Core Modules / الوحدات الأساسية:
 
-### الصفحة الرئيسية الأصيلة / Authentic Homepage:
-- لافتة خضراء مع أيقونة المصنع (مطابقة للأصل)
-- عنوان "مصنع الأسمدة" 
-- وصف "مُصمم للإدارة المتنقلة أولاً"
-- أزرار للوصول السريع لللوحة والمبيعات
-- قسم "نظرة سريعة" مع الإحصائيات
+### 🏠 Homepage / الصفحة الرئيسية
+- Green hero banner with factory icon
+- "Built for mobile-first management" subtitle
+- Quick overview stats with real financial data
+- Egyptian Pound currency display
 
-### الإحصائيات السريعة / Quick Stats:
-- إجمالي الدخل: 169,100 ج.م
-- إجمالي المصروفات: 120,000 ج.م  
-- صافي الربح: 49,100 ج.م
-- إجمالي المنتجات: 4
+### 📊 Dashboard / لوحة التحكم
+- Financial overview cards
+- Interactive sales charts
+- Revenue, expenses, and profit tracking
+- Real-time performance metrics
 
-### التصميم / Design:
-- ألوان مطابقة للتطبيق الأصلي
-- خط Cairo للعربية وInter للإنجليزية
-- أيقونات emoji للتوافق الكامل
-- تخطيط متجاوب
+### 📦 Products / المنتجات
+- Add/manage product inventory
+- Category classification (Fertilizer, Chemical, Equipment)
+- Stock quantity tracking
+- Price management in Egyptian Pounds
+- Automatic total value calculation
 
-## الوظائف / Functions:
+### 🛒 Sales / المبيعات
+- Record new sales transactions
+- Automatic stock deduction
+- Client information tracking
+- Sales history with date filtering
+- Revenue calculation in Egyptian Pounds
 
-### تبديل اللغة / Language Switching:
-- زر مضغوط في الزاوية العلوية اليسرى (عر/EN)
-- تبديل فوري للواجهة والعملة
-- حفظ التفضيل تلقائياً
+### 💰 Financial Tracking / التتبع المالي
+- Total Income: EGP 169,100.00
+- Total Expenses: EGP 120,000.00
+- Net Profit: EGP 49,100.00 (29.1% margin)
+- Real-time financial calculations
 
-### العملة / Currency:
-- جنيه مصري (ج.م) في العربية
-- Egyptian Pound (EGP) في الإنجليزية
-- تنسيق الأرقام بالفواصل
+## Technical Specifications / المواصفات التقنية:
+- **Technology**: Pure HTML5, CSS3, JavaScript (No dependencies)
+- **Storage**: Local Browser Storage (persistent data)
+- **Compatibility**: All modern browsers (Chrome, Firefox, Edge, Safari)
+- **Offline**: Works completely offline
+- **File Size**: Single HTML file (~45KB)
+- **Language**: Bilingual (Arabic RTL / English LTR)
+- **Currency**: Egyptian Pound (ج.م/EGP)
+- **Icons**: Emoji-based for universal compatibility
 
-### الأيقونات / Icons:
-- أيقونات emoji للتوافق الكامل
-- عرض صحيح في جميع المتصفحات
-- لا يتطلب اتصال إنترنت
+## Data Management / إدارة البيانات:
+- Automatic local storage backup
+- Data persists between sessions
+- No internet connection required
+- Sample data included for testing
+- Easy data export/import capability
 
-## الاختصارات / Shortcuts:
-- تبديل اللغة: الزر العلوي الأيسر (عر/EN)
-- لوحة التحكم: الزر الأبيض في الصفحة الرئيسية
-- المبيعات: الزر الشفاف في الصفحة الرئيسية
-- طي الشريط الجانبي: السهم في الأعلى
+## Design Features / مميزات التصميم:
+- Authentic green gradient matching original design
+- Professional sidebar with company logo
+- Responsive grid layouts
+- Smooth animations and transitions
+- Clean typography (Cairo for Arabic, Inter for English)
+- Consistent color scheme throughout
 
-## معلومات تقنية / Technical Info:
-- حفظ تلقائي للتفضيلات
-- عمل بدون إنترنت
-- أيقونات emoji للتوافق
-- خطوط Google محلية
-- Auto-save preferences
-- Works offline
-- Emoji icons for compatibility  
-- Local Google Fonts
+## Security & Privacy / الأمان والخصوصية:
+- All data stored locally on your computer
+- No external server connections
+- Complete privacy protection
+- No data transmission or tracking
+- Secure local file execution
 
-شركة الواصلون للتعدين والصناعات الكيميائية
-Al-Wasiloon Mining and Chemical Industries Company
-الإصدار 2.2 - Version 2.2
+## Installation Instructions / تعليمات التثبيت:
+1. Extract all files to a folder
+2. Double-click START-SILENT.vbs for best experience
+3. Or open FertilizerApp.html directly in any browser
+4. Language switcher available in top-left corner
+
+## Company Information / معلومات الشركة:
+**Al-Wasiloon Mining and Chemical Industries Company**
+**شركة الواصلون للتعدين والصناعات الكيميائية**
+
+Advanced fertilizer factory management system designed for efficiency and ease of use.
+
+Version 1.0.0 - Professional Desktop Edition
+Built for mobile-first management with desktop compatibility
