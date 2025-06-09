@@ -2,34 +2,21 @@
 
 ## Standalone Desktop Application
 
-This is a complete standalone version of the Al-Wasiloon Fertilizer Factory Management System that runs locally on your laptop without requiring internet connection or browser hosting.
+Complete standalone version of the Al-Wasiloon Factory Management System that runs locally without requiring internet connection, server installation, or external dependencies.
 
 ## System Requirements
 
 - Windows 7/8/10/11
-- Any modern web browser (Chrome, Firefox, Edge, Safari)
-- No external software installation required
+- No additional software required
+- All functionality runs directly from the executable files
 
-## Installation & Usage
-
-### Option 1: Zero-Dependency Portable Version (Recommended)
+## Quick Start
 
 1. **Extract all files** to any folder on your computer
-2. **Double-click `START-PORTABLE.html`** 
-   - Opens directly in your browser
-   - No server setup required
-   - Completely self-contained
-
-### Option 2: Server-Based Version
-
-1. **Double-click `START-SILENT.vbs`** for silent startup
-   - Automatically detects and uses Node.js or Python
-   - Opens in browser at http://localhost:8080
-   - Shows no terminal windows
-
-2. **Alternative: `START.bat`** 
-   - Shows terminal window with status information
-   - Same functionality as silent version
+2. **Double-click `START-APP.bat`** 
+   - Launches the complete desktop application
+   - No browser or server setup required
+   - Runs as native Windows application
 
 ## Features
 
@@ -47,68 +34,66 @@ This is a complete standalone version of the Al-Wasiloon Fertilizer Factory Mana
 - Instant language switching with preserved data
 
 ### Data Management
-- **Automatic Save** - All data saved locally in browser storage
+- **Automatic Save** - All data saved locally to files
 - **Data Export** - Export individual modules (Sales, Expenses, etc.)
 - **Backup System** - Create complete data backups
 - **Import/Restore** - Restore from previous backups
 
-## Application Structure
+## Application Files
 
 ```
 fertilizer-standalone/
-├── START-PORTABLE.html    # Portable single-file version (RECOMMENDED)
-├── index.html            # Main application interface  
-├── app.js               # Complete application logic
-├── server.js            # Node.js server (if available)
-├── START.bat            # Windows batch launcher (with terminal)
-├── START-SILENT.vbs     # Silent VBS launcher (no terminal)
-└── README.md            # This documentation
+├── Al-Wasiloon-Factory-Management.hta    # Main application (HTA format)
+├── START-APP.bat                         # Application launcher (RECOMMENDED)
+└── README.md                            # This documentation
 ```
 
-## Which Version to Use?
+## How It Works
 
-- **START-PORTABLE.html**: Best choice - works everywhere, no dependencies
-- **START-SILENT.vbs**: If you prefer server-based hosting (requires Node.js/Python)
-- **START.bat**: Same as above but shows technical details
+- **Al-Wasiloon-Factory-Management.hta** - Self-contained Windows HTML Application
+- **START-APP.bat** - Simple launcher that starts the application
+- All data stored in local files alongside the application
+- No internet connection required after initial setup
+- Complete offline functionality
 
 ## Data Storage
 
-- All data is stored locally in your browser's local storage
-- No internet connection required after initial setup
+- All data stored locally in the application folder
 - Data persists between sessions
+- Automatic backup to `factory_data.json`
 - Safe and secure - data never leaves your computer
 
 ## Technical Details
 
-- **Frontend**: Pure HTML5, CSS3, JavaScript
+- **Format**: Windows HTA (HTML Application)
 - **Charts**: Chart.js for financial visualizations
 - **Fonts**: Google Fonts (Cairo for Arabic, Inter for English)
-- **Server**: Python HTTP server (built into Windows)
-- **Port**: 8080 (automatically configured)
+- **Storage**: Local file system with JSON format
+- **Compatibility**: All Windows versions with Internet Explorer engine
+
+## Usage Tips
+
+1. **First Time Setup**: Application comes with sample data to demonstrate interface
+2. **Regular Backups**: Use the Export function to backup your data regularly
+3. **Multi-User**: Each installation maintains separate data
+4. **Performance**: Application handles thousands of records efficiently
 
 ## Troubleshooting
 
 ### Application Won't Start
-1. Ensure Python is installed (usually pre-installed on Windows)
-2. Try running `START.bat` to see error messages
-3. Check if port 8080 is available
+1. Ensure all files are extracted to the same folder
+2. Right-click `START-APP.bat` and select "Run as administrator"
+3. Check Windows security settings allow HTA files to run
 
 ### Data Loss Prevention
 1. Use the Export function regularly to backup your data
-2. Data is stored in browser - clearing browser data will delete application data
-3. Export before major system changes or browser updates
+2. Data is stored in `factory_data.json` in the application folder
+3. Keep backup copies of this file for safety
 
 ### Browser Compatibility
-- Tested on: Chrome, Firefox, Edge, Safari
-- Requires JavaScript enabled
-- Modern browser features required (ES6+)
-
-## Usage Tips
-
-1. **First Time Setup**: Application comes with sample data to help you understand the interface
-2. **Regular Backups**: Export your data weekly using the Reports section
-3. **Multi-User**: Each browser profile maintains separate data
-4. **Performance**: Application handles thousands of records efficiently
+- Runs on Windows Internet Explorer engine (built into Windows)
+- No external browser required
+- Modern HTML/CSS/JavaScript features supported
 
 ## Security
 
@@ -116,12 +101,13 @@ fertilizer-standalone/
 - No external connections except for fonts (optional)
 - No user accounts or passwords required
 - Complete offline functionality
+- Data files can be encrypted using Windows file encryption
 
 ## Support
 
-This is the exact original Replit application code converted to run as a standalone desktop application. All functionality from the original web version is preserved with no modifications to the core business logic.
+This standalone desktop application contains the exact original functionality from the Replit web version, converted to run natively on Windows without any external dependencies.
 
 ---
 
 **Al-Wasiloon Factory Management System v1.0**  
-*Standalone Desktop Edition*
+*Standalone Desktop Edition - HTA Format*
