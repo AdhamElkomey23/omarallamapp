@@ -74,8 +74,8 @@
         .ltr .sidebar {
             border-right: 1px solid var(--gray-200);
             border-left: none;
-            right: 0;
-            left: auto;
+            left: 0;
+            right: auto;
         }
 
         .sidebar-header {
@@ -743,6 +743,136 @@
             background: #fee2e2;
             color: #dc2626;
         }
+
+        /* Quick Access Buttons */
+        .quick-access-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-access-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .quick-access-icon {
+            font-size: 32px;
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quick-access-text {
+            text-align: right;
+            flex: 1;
+        }
+
+        .ltr .quick-access-text {
+            text-align: left;
+        }
+
+        .quick-access-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .quick-access-subtitle {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .quick-access-primary {
+            border-color: var(--success-600);
+        }
+
+        .quick-access-primary .quick-access-icon {
+            background: linear-gradient(135deg, var(--success-600), var(--success-500));
+            color: white;
+        }
+
+        .quick-access-primary .quick-access-title {
+            color: var(--success-600);
+        }
+
+        .quick-access-secondary {
+            border-color: var(--gray-400);
+        }
+
+        .quick-access-secondary .quick-access-icon {
+            background: linear-gradient(135deg, var(--gray-600), var(--gray-500));
+            color: white;
+        }
+
+        .quick-access-secondary .quick-access-title {
+            color: var(--gray-600);
+        }
+
+        .quick-access-warning {
+            border-color: var(--warning-500);
+        }
+
+        .quick-access-warning .quick-access-icon {
+            background: linear-gradient(135deg, var(--warning-500), #f59e0b);
+            color: white;
+        }
+
+        .quick-access-warning .quick-access-title {
+            color: var(--warning-500);
+        }
+
+        .quick-access-info {
+            border-color: var(--blue-500);
+        }
+
+        .quick-access-info .quick-access-icon {
+            background: linear-gradient(135deg, var(--blue-500), #3b82f6);
+            color: white;
+        }
+
+        .quick-access-info .quick-access-title {
+            color: var(--blue-500);
+        }
+
+        .quick-access-success {
+            border-color: var(--success-600);
+        }
+
+        .quick-access-success .quick-access-icon {
+            background: linear-gradient(135deg, var(--success-600), var(--success-500));
+            color: white;
+        }
+
+        .quick-access-success .quick-access-title {
+            color: var(--success-600);
+        }
+
+        .quick-access-purple {
+            border-color: var(--purple-500);
+        }
+
+        .quick-access-purple .quick-access-icon {
+            background: linear-gradient(135deg, var(--purple-500), #8b5cf6);
+            color: white;
+        }
+
+        .quick-access-purple .quick-access-title {
+            color: var(--purple-500);
+        }
     </style>
 </head>
 <body class="rtl">
@@ -854,6 +984,63 @@
                             </button>
                         </div>
                     </section>
+
+                    <!-- Quick Access Buttons -->
+                    <div class="card" style="margin-bottom: 32px;">
+                        <div class="card-header">
+                            <h3 class="card-title" data-key="quickAccess">الوصول السريع</h3>
+                            <p class="card-description" data-key="quickAccessDesc">انتقل بسرعة إلى أي قسم في النظام</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <button onclick="showPage('sales')" class="quick-access-btn quick-access-primary">
+                                <div class="quick-access-icon">🛒</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="sales">المبيعات</div>
+                                    <div class="quick-access-subtitle" data-key="manageSales">إدارة المبيعات</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="showPage('storage')" class="quick-access-btn quick-access-secondary">
+                                <div class="quick-access-icon">📦</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="storage">المخزون</div>
+                                    <div class="quick-access-subtitle" data-key="manageStorage">إدارة المخزون</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="showPage('expenses')" class="quick-access-btn quick-access-warning">
+                                <div class="quick-access-icon">💰</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="expenses">المصروفات</div>
+                                    <div class="quick-access-subtitle" data-key="manageExpenses">إدارة المصروفات</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="showPage('workers')" class="quick-access-btn quick-access-info">
+                                <div class="quick-access-icon">👥</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="workers">العمال</div>
+                                    <div class="quick-access-subtitle" data-key="manageWorkers">إدارة العمال</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="showPage('reports')" class="quick-access-btn quick-access-success">
+                                <div class="quick-access-icon">📈</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="reports">التقارير</div>
+                                    <div class="quick-access-subtitle" data-key="viewReports">عرض التقارير</div>
+                                </div>
+                            </button>
+                            
+                            <button onclick="showPage('activity-logs')" class="quick-access-btn quick-access-purple">
+                                <div class="quick-access-icon">📋</div>
+                                <div class="quick-access-text">
+                                    <div class="quick-access-title" data-key="activityLogs">سجل الأنشطة</div>
+                                    <div class="quick-access-subtitle" data-key="viewActivities">عرض الأنشطة</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Quick Overview -->
                     <div class="stats-grid">

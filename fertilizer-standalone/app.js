@@ -415,7 +415,17 @@ const translations = {
         cancel: "إلغاء",
         edit: "تعديل",
         delete: "حذف",
-        confirmDelete: "هل أنت متأكد من الحذف؟"
+        confirmDelete: "هل أنت متأكد من الحذف؟",
+        
+        // Quick Access
+        quickAccess: "الوصول السريع",
+        quickAccessDesc: "انتقل بسرعة إلى أي قسم في النظام",
+        manageSales: "إدارة المبيعات",
+        manageStorage: "إدارة المخزون",
+        manageExpenses: "إدارة المصروفات",
+        manageWorkers: "إدارة العمال",
+        viewReports: "عرض التقارير",
+        viewActivities: "عرض الأنشطة"
     },
     en: {
         // Navigation
@@ -492,7 +502,17 @@ const translations = {
         cancel: "Cancel",
         edit: "Edit",
         delete: "Delete",
-        confirmDelete: "Are you sure you want to delete?"
+        confirmDelete: "Are you sure you want to delete?",
+        
+        // Quick Access
+        quickAccess: "Quick Access",
+        quickAccessDesc: "Navigate quickly to any section of the system",
+        manageSales: "Manage Sales",
+        manageStorage: "Manage Storage",
+        manageExpenses: "Manage Expenses", 
+        manageWorkers: "Manage Workers",
+        viewReports: "View Reports",
+        viewActivities: "View Activities"
     }
 };
 
