@@ -866,17 +866,62 @@ function deleteSale(id) {
 // Storage Management
 function initStorage() {
     updateStorageTable();
+    updateStorageStats();
     
     // Setup form submission for storage
     const storageForm = document.getElementById('storage-form');
-    const addStorageForm = document.getElementById('add-storage-form');
     
     if (storageForm) {
-        storageForm.addEventListener('submit', addStorageItem);
+        storageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addStorageItem(e);
+            return false;
+        });
     }
-    if (addStorageForm) {
-        addStorageForm.addEventListener('submit', addStorageItem);
+    
+    // Set today's date as default
+    const storageDateInput = document.getElementById('storage-date');
+    if (storageDateInput) {
+        storageDateInput.value = getCurrentDate();
     }
+}
+
+function updateStorageStats() {
+    const stoppedElement = document.getElementById('stopped-items');
+    const lowElement = document.getElementById('low-items');
+    const normalElement = document.getElementById('normal-items');
+    const calciumElement = document.getElementById('calcium-items');
+    
+    if (!appData.storageItems) {
+        appData.storageItems = [];
+    }
+    
+    let stoppedTotal = 0;
+    let lowTotal = 0;
+    let normalTotal = 0;
+    let calciumTotal = 0;
+    
+    appData.storageItems.forEach(item => {
+        const quantity = item.quantity || 0;
+        
+        if (quantity === 0) {
+            stoppedTotal += quantity;
+        } else if (quantity <= item.minLevel) {
+            lowTotal += quantity;
+        } else {
+            normalTotal += quantity;
+        }
+        
+        if (item.itemName.toLowerCase().includes('calcium') || 
+            item.itemName.toLowerCase().includes('كالسيوم')) {
+            calciumTotal += quantity;
+        }
+    });
+    
+    if (stoppedElement) stoppedElement.textContent = `${stoppedTotal} طن`;
+    if (lowElement) lowElement.textContent = `${lowTotal} طن`;
+    if (normalElement) normalElement.textContent = `${normalTotal} طن`;
+    if (calciumElement) calciumElement.textContent = `${calciumTotal} طن`;
 }
 
 function updateStorageTable() {
@@ -927,36 +972,43 @@ function addStorageItem(event) {
     var newItem = {
         id: generateId(appData.storageItems),
         itemName: document.getElementById('storage-item').value,
-        itemType: document.getElementById('storage-type').value,
+        itemType: 'raw_material',
         quantity: parseInt(document.getElementById('storage-quantity').value),
-        unit: document.getElementById('storage-unit').value,
-        minLevel: parseInt(document.getElementById('storage-min').value),
+        unit: 'ton',
+        minLevel: 10,
+        price: parseFloat(document.getElementById('storage-price').value) || 0,
+        dealer: document.getElementById('storage-dealer').value,
+        dealerContact: document.getElementById('storage-contact').value,
+        purchaseDate: document.getElementById('storage-date').value,
         createdAt: new Date()
     };
     
     appData.storageItems.push(newItem);
     saveData();
     updateStorageTable();
+    updateStorageStats();
     
-    // Reset form
+    // Reset form and close modal
     document.getElementById('storage-form').reset();
+    document.getElementById('storage-date').value = getCurrentDate();
+    closeModal('add-storage-modal');
     
     showSuccessMessage('Storage item added successfully');
     return false;
 }
 
 function deleteStorageItem(id) {
-    if (confirm(translations[currentLanguage].confirmDelete)) {
+    if (confirm('Are you sure you want to delete this item?')) {
         var newItems = [];
-        for (var i = 0; i < data.storageItems.length; i++) {
-            if (data.storageItems[i].id !== id) {
-                newItems.push(data.storageItems[i]);
+        for (var i = 0; i < appData.storageItems.length; i++) {
+            if (appData.storageItems[i].id !== id) {
+                newItems.push(appData.storageItems[i]);
             }
         }
-        data.storageItems = newItems;
+        appData.storageItems = newItems;
         saveData();
         updateStorageTable();
-        showSuccessMessage(translations[currentLanguage].success);
+        showSuccessMessage('Storage item deleted successfully');
     }
 }
 
