@@ -1564,23 +1564,136 @@ function addWorker(event) {
     
     const worker = {
         id: generateId(appData.workers),
-        name: document.getElementById('worker-name').value,
-        position: document.getElementById('worker-position').value,
-        department: document.getElementById('worker-department').value,
-        salary: parseFloat(document.getElementById('worker-salary').value),
-        phone: document.getElementById('worker-phone').value,
-        hireDate: document.getElementById('worker-hire-date').value
+        name: document.getElementById('new-worker-name').value,
+        position: document.getElementById('new-worker-position').value,
+        department: document.getElementById('new-worker-department').value,
+        salary: parseFloat(document.getElementById('new-worker-salary').value),
+        phone: document.getElementById('new-worker-phone').value,
+        hireDate: document.getElementById('new-worker-hire-date').value
     };
     
     appData.workers.push(worker);
-    updateWorkersTable();
+    updateWorkersCards();
+    updateWorkersStats();
+    populateWorkerSelects();
     saveData();
     
-    // Reset form
+    // Reset form and close modal
     event.target.reset();
-    document.getElementById('worker-hire-date').value = getCurrentDate();
+    document.getElementById('new-worker-hire-date').value = getCurrentDate();
+    closeModal('add-worker-modal');
     
-    showSuccessMessage('تم إضافة العامل بنجاح');
+    showSuccessMessage('Worker added successfully');
+}
+
+function recordAttendance(event) {
+    event.preventDefault();
+    
+    const workerId = parseInt(document.getElementById('attendance-worker').value);
+    const date = document.getElementById('attendance-record-date').value;
+    const checkIn = document.getElementById('check-in-time').value;
+    const checkOut = document.getElementById('check-out-time').value;
+    const status = document.getElementById('attendance-status').value;
+    const deduction = parseFloat(document.getElementById('salary-deduction').value) || 0;
+    const notes = document.getElementById('attendance-notes').value;
+    
+    // Check if attendance already exists for this worker and date
+    const existingIndex = appData.attendance.findIndex(a => a.workerId === workerId && a.date === date);
+    
+    const attendanceRecord = {
+        id: existingIndex !== -1 ? appData.attendance[existingIndex].id : generateId(appData.attendance),
+        workerId: workerId,
+        date: date,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        status: status,
+        deduction: deduction,
+        notes: notes
+    };
+    
+    if (existingIndex !== -1) {
+        appData.attendance[existingIndex] = attendanceRecord;
+    } else {
+        appData.attendance.push(attendanceRecord);
+    }
+    
+    // If there's a deduction, also add it to salary deductions
+    if (deduction > 0) {
+        const worker = appData.workers.find(w => w.id === workerId);
+        const salaryDeduction = {
+            id: generateId(appData.salaryDeductions),
+            workerId: workerId,
+            amount: deduction,
+            date: date,
+            reason: status === 'late' ? 'late' : status === 'absent' ? 'absent' : 'other',
+            description: `Attendance deduction for ${status}${notes ? ': ' + notes : ''}`
+        };
+        appData.salaryDeductions.push(salaryDeduction);
+    }
+    
+    updateWorkersCards();
+    updateWorkersStats();
+    loadAttendanceForDate(date);
+    saveData();
+    
+    // Reset form and close modal
+    event.target.reset();
+    document.getElementById('attendance-record-date').value = getCurrentDate();
+    closeModal('attendance-modal');
+    
+    showSuccessMessage('Attendance recorded successfully');
+}
+
+function addSalaryDeduction(event) {
+    event.preventDefault();
+    
+    const workerId = parseInt(document.getElementById('deduction-worker').value);
+    const amount = parseFloat(document.getElementById('deduction-amount').value);
+    const date = document.getElementById('deduction-date').value;
+    const reason = document.getElementById('deduction-reason').value;
+    const description = document.getElementById('deduction-description').value;
+    
+    const deduction = {
+        id: generateId(appData.salaryDeductions),
+        workerId: workerId,
+        amount: amount,
+        date: date,
+        reason: reason,
+        description: description
+    };
+    
+    appData.salaryDeductions.push(deduction);
+    saveData();
+    
+    // Reset form and close modal
+    event.target.reset();
+    document.getElementById('deduction-date').value = getCurrentDate();
+    closeModal('salary-deduction-modal');
+    
+    showSuccessMessage('Salary deduction added successfully');
+}
+
+function quickAttendance(workerId) {
+    const worker = appData.workers.find(w => w.id === workerId);
+    if (!worker) return;
+    
+    document.getElementById('attendance-worker').value = workerId;
+    document.getElementById('attendance-record-date').value = getCurrentDate();
+    document.getElementById('check-in-time').value = '08:00';
+    document.getElementById('check-out-time').value = '17:00';
+    document.getElementById('attendance-status').value = 'present';
+    
+    showModal('attendance-modal');
+}
+
+function quickDeduction(workerId) {
+    const worker = appData.workers.find(w => w.id === workerId);
+    if (!worker) return;
+    
+    document.getElementById('deduction-worker').value = workerId;
+    document.getElementById('deduction-date').value = getCurrentDate();
+    
+    showModal('salary-deduction-modal');
 }
 
 function editWorker(id) {
