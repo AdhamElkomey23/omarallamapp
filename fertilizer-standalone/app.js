@@ -1364,3 +1364,588 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// COMPLETE WORKERS MANAGEMENT FUNCTIONALITY
+function initWorkers() {
+    updateWorkersTable();
+    
+    const workersForm = document.getElementById('workers-form');
+    if (workersForm) {
+        workersForm.addEventListener('submit', addWorker);
+    }
+    
+    // Set today's date as default
+    const hireDateInput = document.getElementById('worker-hire-date');
+    if (hireDateInput) {
+        hireDateInput.value = getCurrentDate();
+    }
+}
+
+function updateWorkersTable() {
+    const tableBody = document.getElementById('workers-table');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    appData.workers.forEach(worker => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${worker.name}</td>
+            <td><span data-key="${worker.position}">${worker.position}</span></td>
+            <td><span data-key="${worker.department}">${worker.department}</span></td>
+            <td>${formatCurrency(worker.salary)}</td>
+            <td>${worker.phone || '-'}</td>
+            <td>${formatDate(worker.hireDate)}</td>
+            <td>
+                <button onclick="editWorker(${worker.id})" class="btn btn-sm btn-secondary">
+                    <span data-key="edit">تعديل</span>
+                </button>
+                <button onclick="deleteWorker(${worker.id})" class="btn btn-sm btn-danger">
+                    <span data-key="delete">حذف</span>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    updateTranslations();
+}
+
+function addWorker(event) {
+    event.preventDefault();
+    
+    const worker = {
+        id: generateId(appData.workers),
+        name: document.getElementById('worker-name').value,
+        position: document.getElementById('worker-position').value,
+        department: document.getElementById('worker-department').value,
+        salary: parseFloat(document.getElementById('worker-salary').value),
+        phone: document.getElementById('worker-phone').value,
+        hireDate: document.getElementById('worker-hire-date').value
+    };
+    
+    appData.workers.push(worker);
+    updateWorkersTable();
+    saveData();
+    
+    // Reset form
+    event.target.reset();
+    document.getElementById('worker-hire-date').value = getCurrentDate();
+    
+    showSuccessMessage('تم إضافة العامل بنجاح');
+}
+
+function editWorker(id) {
+    const worker = appData.workers.find(w => w.id === id);
+    if (!worker) return;
+    
+    document.getElementById('worker-name').value = worker.name;
+    document.getElementById('worker-position').value = worker.position;
+    document.getElementById('worker-department').value = worker.department;
+    document.getElementById('worker-salary').value = worker.salary;
+    document.getElementById('worker-phone').value = worker.phone || '';
+    document.getElementById('worker-hire-date').value = worker.hireDate;
+    
+    // Change form to update mode
+    const form = document.getElementById('workers-form');
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        updateWorker(id, event);
+    };
+    
+    const submitBtn = form.querySelector('button[type="submit"] span');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'تحديث العامل' : 'Update Worker';
+}
+
+function updateWorker(id, event) {
+    const workerIndex = appData.workers.findIndex(w => w.id === id);
+    if (workerIndex === -1) return;
+    
+    appData.workers[workerIndex] = {
+        ...appData.workers[workerIndex],
+        name: document.getElementById('worker-name').value,
+        position: document.getElementById('worker-position').value,
+        department: document.getElementById('worker-department').value,
+        salary: parseFloat(document.getElementById('worker-salary').value),
+        phone: document.getElementById('worker-phone').value,
+        hireDate: document.getElementById('worker-hire-date').value
+    };
+    
+    updateWorkersTable();
+    saveData();
+    
+    // Reset form to add mode
+    event.target.reset();
+    document.getElementById('worker-hire-date').value = getCurrentDate();
+    event.target.onsubmit = addWorker;
+    
+    const submitBtn = event.target.querySelector('button[type="submit"] span');
+    submitBtn.setAttribute('data-key', 'addWorker');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'إضافة العامل' : 'Add Worker';
+    
+    showSuccessMessage('تم تحديث بيانات العامل بنجاح');
+}
+
+function deleteWorker(id) {
+    if (confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من حذف هذا العامل؟' : 'Are you sure you want to delete this worker?')) {
+        appData.workers = appData.workers.filter(w => w.id !== id);
+        updateWorkersTable();
+        saveData();
+        showSuccessMessage('تم حذف العامل بنجاح');
+    }
+}
+
+// COMPLETE STORAGE MANAGEMENT FUNCTIONALITY
+function initStorage() {
+    updateStorageTable();
+    
+    const storageForm = document.getElementById('storage-form');
+    if (storageForm) {
+        storageForm.addEventListener('submit', addStorageItem);
+    }
+}
+
+function updateStorageTable() {
+    const tableBody = document.getElementById('storage-table');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    appData.storage.forEach(item => {
+        const status = item.quantity <= item.minLevel ? 'low' : 'normal';
+        const statusText = status === 'low' ? 
+            (currentLanguage === 'ar' ? 'منخفض' : 'Low') : 
+            (currentLanguage === 'ar' ? 'عادي' : 'Normal');
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td><span data-key="${item.type}">${item.type}</span></td>
+            <td>${item.quantity}</td>
+            <td><span data-key="${item.unit}">${item.unit}</span></td>
+            <td>${item.minLevel}</td>
+            <td><span class="status ${status}">${statusText}</span></td>
+            <td>
+                <button onclick="editStorageItem(${item.id})" class="btn btn-sm btn-secondary">
+                    <span data-key="edit">تعديل</span>
+                </button>
+                <button onclick="deleteStorageItem(${item.id})" class="btn btn-sm btn-danger">
+                    <span data-key="delete">حذف</span>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    updateTranslations();
+}
+
+function addStorageItem(event) {
+    event.preventDefault();
+    
+    const item = {
+        id: generateId(appData.storage),
+        name: document.getElementById('storage-item-name').value,
+        type: document.getElementById('storage-item-type').value,
+        quantity: parseInt(document.getElementById('storage-quantity').value),
+        unit: document.getElementById('storage-unit').value,
+        minLevel: parseInt(document.getElementById('storage-min-level').value)
+    };
+    
+    appData.storage.push(item);
+    updateStorageTable();
+    saveData();
+    
+    // Reset form
+    event.target.reset();
+    
+    showSuccessMessage('تم إضافة عنصر المخزون بنجاح');
+}
+
+function editStorageItem(id) {
+    const item = appData.storage.find(s => s.id === id);
+    if (!item) return;
+    
+    document.getElementById('storage-item-name').value = item.name;
+    document.getElementById('storage-item-type').value = item.type;
+    document.getElementById('storage-quantity').value = item.quantity;
+    document.getElementById('storage-unit').value = item.unit;
+    document.getElementById('storage-min-level').value = item.minLevel;
+    
+    // Change form to update mode
+    const form = document.getElementById('storage-form');
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        updateStorageItem(id, event);
+    };
+    
+    const submitBtn = form.querySelector('button[type="submit"] span');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'تحديث العنصر' : 'Update Item';
+}
+
+function updateStorageItem(id, event) {
+    const itemIndex = appData.storage.findIndex(s => s.id === id);
+    if (itemIndex === -1) return;
+    
+    appData.storage[itemIndex] = {
+        ...appData.storage[itemIndex],
+        name: document.getElementById('storage-item-name').value,
+        type: document.getElementById('storage-item-type').value,
+        quantity: parseInt(document.getElementById('storage-quantity').value),
+        unit: document.getElementById('storage-unit').value,
+        minLevel: parseInt(document.getElementById('storage-min-level').value)
+    };
+    
+    updateStorageTable();
+    saveData();
+    
+    // Reset form to add mode
+    event.target.reset();
+    event.target.onsubmit = addStorageItem;
+    
+    const submitBtn = event.target.querySelector('button[type="submit"] span');
+    submitBtn.setAttribute('data-key', 'addStorageItem');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'إضافة للمخزون' : 'Add Storage Item';
+    
+    showSuccessMessage('تم تحديث عنصر المخزون بنجاح');
+}
+
+// COMPLETE EXPENSES MANAGEMENT FUNCTIONALITY
+function initExpenses() {
+    updateExpensesTable();
+    updateExpensesStats();
+    
+    const expensesForm = document.getElementById('add-expense-form');
+    if (expensesForm) {
+        expensesForm.addEventListener('submit', addExpense);
+    }
+    
+    // Set today's date as default
+    const expenseDateInput = document.getElementById('new-expense-date');
+    if (expenseDateInput) {
+        expenseDateInput.value = getCurrentDate();
+    }
+}
+
+function updateExpensesTable() {
+    const container = document.getElementById('expenses-table-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    appData.expenses.forEach(expense => {
+        const expenseItem = document.createElement('div');
+        expenseItem.className = 'expense-item';
+        expenseItem.innerHTML = `
+            <div class="expense-item-info">
+                <h4 class="expense-name">${expense.name}</h4>
+                <p class="expense-details">${expense.category} • ${formatDate(expense.expenseDate)}</p>
+            </div>
+            <div class="expense-item-actions">
+                <div class="expense-amount">-${formatCurrency(expense.amount)}</div>
+                <div class="action-buttons">
+                    <button class="btn-icon edit-btn" onclick="editExpense(${expense.id})">✏️</button>
+                    <button class="btn-icon copy-btn" onclick="copyExpense(${expense.id})">📋</button>
+                    <button class="btn-icon delete-btn" onclick="deleteExpense(${expense.id})">🗑️</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(expenseItem);
+    });
+}
+
+function updateExpensesStats() {
+    const totalExpenses = appData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const thisMonthExpenses = appData.expenses
+        .filter(expense => {
+            const expenseDate = new Date(expense.expenseDate);
+            const now = new Date();
+            return expenseDate.getMonth() === now.getMonth() && expenseDate.getFullYear() === now.getFullYear();
+        })
+        .reduce((sum, expense) => sum + expense.amount, 0);
+    const expenseCount = appData.expenses.length;
+    
+    const statsElements = document.querySelectorAll('.expenses-stats-grid .stat-value');
+    if (statsElements[0]) statsElements[0].textContent = formatCurrency(totalExpenses);
+    if (statsElements[1]) statsElements[1].textContent = formatCurrency(thisMonthExpenses);
+    if (statsElements[2]) statsElements[2].textContent = expenseCount;
+}
+
+function addExpense(event) {
+    event.preventDefault();
+    
+    const expense = {
+        id: generateId(appData.expenses),
+        name: document.getElementById('new-expense-name').value,
+        amount: parseFloat(document.getElementById('new-expense-amount').value),
+        category: document.getElementById('new-expense-category').value,
+        expenseDate: document.getElementById('new-expense-date').value
+    };
+    
+    appData.expenses.push(expense);
+    updateExpensesTable();
+    updateExpensesStats();
+    updateFinancialSummary();
+    saveData();
+    
+    // Reset form and close modal
+    event.target.reset();
+    document.getElementById('new-expense-date').value = getCurrentDate();
+    closeModal('add-expense-modal');
+    
+    showSuccessMessage('تم إضافة المصروف بنجاح');
+}
+
+function editExpense(id) {
+    const expense = appData.expenses.find(e => e.id === id);
+    if (!expense) return;
+    
+    document.getElementById('new-expense-name').value = expense.name;
+    document.getElementById('new-expense-amount').value = expense.amount;
+    document.getElementById('new-expense-category').value = expense.category;
+    document.getElementById('new-expense-date').value = expense.expenseDate;
+    
+    showModal('add-expense-modal');
+    
+    // Change form to update mode
+    const form = document.getElementById('add-expense-form');
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        updateExpense(id, event);
+    };
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'تحديث المصروف' : 'Update Expense';
+}
+
+function updateExpense(id, event) {
+    const expenseIndex = appData.expenses.findIndex(e => e.id === id);
+    if (expenseIndex === -1) return;
+    
+    appData.expenses[expenseIndex] = {
+        ...appData.expenses[expenseIndex],
+        name: document.getElementById('new-expense-name').value,
+        amount: parseFloat(document.getElementById('new-expense-amount').value),
+        category: document.getElementById('new-expense-category').value,
+        expenseDate: document.getElementById('new-expense-date').value
+    };
+    
+    updateExpensesTable();
+    updateExpensesStats();
+    updateFinancialSummary();
+    saveData();
+    
+    // Reset form to add mode
+    event.target.reset();
+    document.getElementById('new-expense-date').value = getCurrentDate();
+    event.target.onsubmit = addExpense;
+    closeModal('add-expense-modal');
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.setAttribute('data-key', 'addExpense');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'إضافة المصروف' : 'Add Expense';
+    
+    showSuccessMessage('تم تحديث المصروف بنجاح');
+}
+
+function copyExpense(id) {
+    const expense = appData.expenses.find(e => e.id === id);
+    if (!expense) return;
+    
+    const newExpense = {
+        ...expense,
+        id: generateId(appData.expenses),
+        expenseDate: getCurrentDate()
+    };
+    
+    appData.expenses.push(newExpense);
+    updateExpensesTable();
+    updateExpensesStats();
+    saveData();
+    
+    showSuccessMessage('تم نسخ المصروف بنجاح');
+}
+
+function exportExpensesData() {
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + "Name,Amount,Category,Date\n"
+        + appData.expenses.map(e => `${e.name},${e.amount},${e.category},${e.expenseDate}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "expenses_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function exportSalesData() {
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + "Product,Quantity,Amount,Date,Client\n"
+        + appData.sales.map(s => `${s.productName},${s.quantity},${s.totalAmount},${s.saleDate},${s.clientName}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "sales_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// UPDATED SALES FUNCTIONALITY
+function updateSalesTable() {
+    const container = document.getElementById('sales-table-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    appData.sales.forEach(sale => {
+        const saleItem = document.createElement('div');
+        saleItem.className = 'sales-item';
+        saleItem.innerHTML = `
+            <div class="sales-item-info">
+                <h4 class="product-name">${sale.productName}</h4>
+                <p class="sale-details">Quantity: ${sale.quantity} • ${formatDate(sale.saleDate)}</p>
+                <p class="client-name">Client: ${sale.clientName}</p>
+            </div>
+            <div class="sales-item-actions">
+                <div class="sale-amount">${formatCurrency(sale.totalAmount)}</div>
+                <div class="sale-price">${formatCurrency(sale.totalAmount / sale.quantity)} per unit</div>
+                <div class="action-buttons">
+                    <button class="btn-icon edit-btn" onclick="editSale(${sale.id})">✏️</button>
+                    <button class="btn-icon copy-btn" onclick="copySale(${sale.id})">📋</button>
+                    <button class="btn-icon delete-btn" onclick="deleteSale(${sale.id})">🗑️</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(saleItem);
+    });
+}
+
+function updateSalesStats() {
+    const totalRevenue = appData.sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+    const totalSales = appData.sales.length;
+    const totalUnits = appData.sales.reduce((sum, sale) => sum + sale.quantity, 0);
+    
+    const statsElements = document.querySelectorAll('.sales-stats-grid .stat-value');
+    if (statsElements[0]) statsElements[0].textContent = formatCurrency(totalRevenue);
+    if (statsElements[1]) statsElements[1].textContent = totalSales;
+    if (statsElements[2]) statsElements[2].textContent = totalUnits;
+}
+
+function initSales() {
+    updateSalesTable();
+    updateSalesStats();
+    
+    const salesForm = document.getElementById('add-sale-form');
+    if (salesForm) {
+        salesForm.addEventListener('submit', addSale);
+    }
+    
+    // Set today's date as default
+    const saleDateInput = document.getElementById('sale-date');
+    if (saleDateInput) {
+        saleDateInput.value = getCurrentDate();
+    }
+}
+
+function addSale(event) {
+    event.preventDefault();
+    
+    const sale = {
+        id: generateId(appData.sales),
+        productName: document.getElementById('sale-product').value,
+        quantity: parseInt(document.getElementById('sale-quantity').value),
+        totalAmount: parseFloat(document.getElementById('sale-amount').value),
+        saleDate: document.getElementById('sale-date').value,
+        clientName: document.getElementById('sale-client').value,
+        clientContact: document.getElementById('sale-contact').value
+    };
+    
+    appData.sales.push(sale);
+    updateSalesTable();
+    updateSalesStats();
+    updateFinancialSummary();
+    saveData();
+    
+    // Reset form and close modal
+    event.target.reset();
+    document.getElementById('sale-date').value = getCurrentDate();
+    closeModal('add-sale-modal');
+    
+    showSuccessMessage('تم إضافة البيع بنجاح');
+}
+
+function editSale(id) {
+    const sale = appData.sales.find(s => s.id === id);
+    if (!sale) return;
+    
+    document.getElementById('sale-product').value = sale.productName;
+    document.getElementById('sale-quantity').value = sale.quantity;
+    document.getElementById('sale-amount').value = sale.totalAmount;
+    document.getElementById('sale-date').value = sale.saleDate;
+    document.getElementById('sale-client').value = sale.clientName;
+    document.getElementById('sale-contact').value = sale.clientContact || '';
+    
+    showModal('add-sale-modal');
+    
+    // Change form to update mode
+    const form = document.getElementById('add-sale-form');
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        updateSale(id, event);
+    };
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'تحديث البيع' : 'Update Sale';
+}
+
+function updateSale(id, event) {
+    const saleIndex = appData.sales.findIndex(s => s.id === id);
+    if (saleIndex === -1) return;
+    
+    appData.sales[saleIndex] = {
+        ...appData.sales[saleIndex],
+        productName: document.getElementById('sale-product').value,
+        quantity: parseInt(document.getElementById('sale-quantity').value),
+        totalAmount: parseFloat(document.getElementById('sale-amount').value),
+        saleDate: document.getElementById('sale-date').value,
+        clientName: document.getElementById('sale-client').value,
+        clientContact: document.getElementById('sale-contact').value
+    };
+    
+    updateSalesTable();
+    updateSalesStats();
+    updateFinancialSummary();
+    saveData();
+    
+    // Reset form to add mode
+    event.target.reset();
+    document.getElementById('sale-date').value = getCurrentDate();
+    event.target.onsubmit = addSale;
+    closeModal('add-sale-modal');
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    submitBtn.setAttribute('data-key', 'addSale');
+    submitBtn.textContent = currentLanguage === 'ar' ? 'إضافة البيع' : 'Add Sale';
+    
+    showSuccessMessage('تم تحديث البيع بنجاح');
+}
+
+function copySale(id) {
+    const sale = appData.sales.find(s => s.id === id);
+    if (!sale) return;
+    
+    const newSale = {
+        ...sale,
+        id: generateId(appData.sales),
+        saleDate: getCurrentDate()
+    };
+    
+    appData.sales.push(newSale);
+    updateSalesTable();
+    updateSalesStats();
+    saveData();
+    
+    showSuccessMessage('تم نسخ البيع بنجاح');
+}
