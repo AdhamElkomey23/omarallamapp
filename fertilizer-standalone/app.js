@@ -867,38 +867,54 @@ function deleteSale(id) {
 function initStorage() {
     updateStorageTable();
     
-    // Setup form submission
-    var storageForm = document.getElementById('storage-form');
-    storageForm.onsubmit = addStorageItem;
+    // Setup form submission for storage
+    const storageForm = document.getElementById('storage-form');
+    const addStorageForm = document.getElementById('add-storage-form');
+    
+    if (storageForm) {
+        storageForm.addEventListener('submit', addStorageItem);
+    }
+    if (addStorageForm) {
+        addStorageForm.addEventListener('submit', addStorageItem);
+    }
 }
 
 function updateStorageTable() {
     var tableBody = document.getElementById('storage-table');
+    if (!tableBody) return;
+    
     tableBody.innerHTML = '';
     
-    for (var i = 0; i < data.storageItems.length; i++) {
-        var item = data.storageItems[i];
+    if (!appData.storageItems) {
+        appData.storageItems = [];
+    }
+    
+    for (var i = 0; i < appData.storageItems.length; i++) {
+        var item = appData.storageItems[i];
         var status = item.quantity <= item.minLevel ? 
             (item.quantity === 0 ? 'outOfStock' : 'lowStock') : 'inStock';
         
         var statusClass = status === 'outOfStock' ? 'btn-danger' : 
                          status === 'lowStock' ? 'btn-warning' : 'btn-secondary';
         
+        var statusText = status === 'outOfStock' ? 'Out of Stock' :
+                        status === 'lowStock' ? 'Low Stock' : 'In Stock';
+        
         var row = document.createElement('tr');
         row.innerHTML = 
             '<td>' + item.itemName + '</td>' +
-            '<td>' + translations[currentLanguage][item.itemType] + '</td>' +
+            '<td>' + item.itemType + '</td>' +
             '<td>' + item.quantity + '</td>' +
-            '<td>' + translations[currentLanguage][item.unit] + '</td>' +
+            '<td>' + item.unit + '</td>' +
             '<td>' + item.minLevel + '</td>' +
             '<td>' +
                 '<span class="btn ' + statusClass + '" style="font-size: 12px; padding: 4px 8px;">' +
-                    translations[currentLanguage][status] +
+                    statusText +
                 '</span>' +
             '</td>' +
             '<td class="action-buttons">' +
                 '<button class="btn btn-danger" onclick="deleteStorageItem(' + item.id + ')">' +
-                    translations[currentLanguage].delete +
+                    'Delete' +
                 '</button>' +
             '</td>';
         tableBody.appendChild(row);
@@ -909,7 +925,7 @@ function addStorageItem(event) {
     event.preventDefault();
     
     var newItem = {
-        id: generateId(data.storageItems),
+        id: generateId(appData.storageItems),
         itemName: document.getElementById('storage-item').value,
         itemType: document.getElementById('storage-type').value,
         quantity: parseInt(document.getElementById('storage-quantity').value),
@@ -918,14 +934,15 @@ function addStorageItem(event) {
         createdAt: new Date()
     };
     
-    data.storageItems.push(newItem);
+    appData.storageItems.push(newItem);
     saveData();
     updateStorageTable();
     
     // Reset form
     document.getElementById('storage-form').reset();
     
-    showSuccessMessage(translations[currentLanguage].success);
+    showSuccessMessage('Storage item added successfully');
+    return false;
 }
 
 function deleteStorageItem(id) {
