@@ -1365,49 +1365,198 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// COMPLETE WORKERS MANAGEMENT FUNCTIONALITY
+// COMPLETE WORKERS MANAGEMENT FUNCTIONALITY WITH ATTENDANCE
 function initWorkers() {
-    updateWorkersTable();
+    updateWorkersCards();
+    updateWorkersStats();
+    loadTodayAttendance();
+    populateWorkerSelects();
     
-    const workersForm = document.getElementById('workers-form');
-    if (workersForm) {
-        workersForm.addEventListener('submit', addWorker);
+    const addWorkerForm = document.getElementById('add-worker-form');
+    if (addWorkerForm) {
+        addWorkerForm.addEventListener('submit', addWorker);
+    }
+    
+    const attendanceForm = document.getElementById('attendance-form');
+    if (attendanceForm) {
+        attendanceForm.addEventListener('submit', recordAttendance);
+    }
+    
+    const salaryDeductionForm = document.getElementById('salary-deduction-form');
+    if (salaryDeductionForm) {
+        salaryDeductionForm.addEventListener('submit', addSalaryDeduction);
     }
     
     // Set today's date as default
-    const hireDateInput = document.getElementById('worker-hire-date');
-    if (hireDateInput) {
-        hireDateInput.value = getCurrentDate();
+    const hireDateInput = document.getElementById('new-worker-hire-date');
+    const attendanceDateInput = document.getElementById('attendance-date');
+    const attendanceRecordDate = document.getElementById('attendance-record-date');
+    const deductionDateInput = document.getElementById('deduction-date');
+    
+    const today = getCurrentDate();
+    if (hireDateInput) hireDateInput.value = today;
+    if (attendanceDateInput) attendanceDateInput.value = today;
+    if (attendanceRecordDate) attendanceRecordDate.value = today;
+    if (deductionDateInput) deductionDateInput.value = today;
+    
+    // Initialize attendance and deduction data if not exists
+    if (!appData.attendance) appData.attendance = [];
+    if (!appData.salaryDeductions) appData.salaryDeductions = [];
+}
+
+function updateWorkersCards() {
+    const container = document.getElementById('workers-cards-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    appData.workers.forEach(worker => {
+        const workerCard = document.createElement('div');
+        workerCard.className = 'worker-card';
+        
+        const todayAttendance = getTodayAttendanceForWorker(worker.id);
+        const attendanceStatus = todayAttendance ? todayAttendance.status : 'not-recorded';
+        
+        workerCard.innerHTML = `
+            <div class="worker-header">
+                <div>
+                    <h4 class="worker-name">${worker.name}</h4>
+                    <p class="worker-position">${worker.position}</p>
+                </div>
+                <span class="worker-status active">Active</span>
+            </div>
+            <div class="worker-details">
+                <div class="worker-detail">
+                    <span class="label">Department:</span>
+                    <span class="value">${worker.department}</span>
+                </div>
+                <div class="worker-detail">
+                    <span class="label">Salary:</span>
+                    <span class="value">${formatCurrency(worker.salary)}</span>
+                </div>
+                <div class="worker-detail">
+                    <span class="label">Phone:</span>
+                    <span class="value">${worker.phone || 'N/A'}</span>
+                </div>
+                <div class="worker-detail">
+                    <span class="label">Hire Date:</span>
+                    <span class="value">${formatDate(worker.hireDate)}</span>
+                </div>
+                <div class="worker-detail">
+                    <span class="label">Today Status:</span>
+                    <span class="value attendance-status ${attendanceStatus}">${getAttendanceStatusText(attendanceStatus)}</span>
+                </div>
+            </div>
+            <div class="worker-actions">
+                <button class="worker-action-btn edit" onclick="editWorker(${worker.id})">Edit</button>
+                <button class="worker-action-btn attendance" onclick="quickAttendance(${worker.id})">Attendance</button>
+                <button class="worker-action-btn deduction" onclick="quickDeduction(${worker.id})">Deduction</button>
+            </div>
+        `;
+        container.appendChild(workerCard);
+    });
+}
+
+function updateWorkersStats() {
+    const totalWorkers = appData.workers.length;
+    const todayDate = getCurrentDate();
+    const presentToday = appData.attendance.filter(a => 
+        a.date === todayDate && a.status === 'present'
+    ).length;
+    const totalSalaries = appData.workers.reduce((sum, worker) => sum + worker.salary, 0);
+    
+    const totalWorkersElement = document.getElementById('total-workers-count');
+    const presentTodayElement = document.getElementById('present-today-count');
+    const totalSalariesElement = document.getElementById('total-salaries');
+    
+    if (totalWorkersElement) totalWorkersElement.textContent = totalWorkers;
+    if (presentTodayElement) presentTodayElement.textContent = presentToday;
+    if (totalSalariesElement) totalSalariesElement.textContent = formatCurrency(totalSalaries);
+}
+
+function populateWorkerSelects() {
+    const attendanceSelect = document.getElementById('attendance-worker');
+    const deductionSelect = document.getElementById('deduction-worker');
+    
+    if (attendanceSelect) {
+        attendanceSelect.innerHTML = '<option value="">Choose Worker</option>';
+        appData.workers.forEach(worker => {
+            const option = document.createElement('option');
+            option.value = worker.id;
+            option.textContent = `${worker.name} - ${worker.department}`;
+            attendanceSelect.appendChild(option);
+        });
+    }
+    
+    if (deductionSelect) {
+        deductionSelect.innerHTML = '<option value="">Choose Worker</option>';
+        appData.workers.forEach(worker => {
+            const option = document.createElement('option');
+            option.value = worker.id;
+            option.textContent = `${worker.name} - ${worker.department}`;
+            deductionSelect.appendChild(option);
+        });
     }
 }
 
-function updateWorkersTable() {
-    const tableBody = document.getElementById('workers-table');
-    if (!tableBody) return;
+function loadTodayAttendance() {
+    const todayDate = getCurrentDate();
+    loadAttendanceForDate(todayDate);
+}
+
+function loadAttendanceForDate(date = null) {
+    if (!date) {
+        const dateInput = document.getElementById('attendance-date');
+        date = dateInput ? dateInput.value : getCurrentDate();
+    }
     
-    tableBody.innerHTML = '';
+    const container = document.getElementById('attendance-grid');
+    if (!container) return;
     
-    appData.workers.forEach(worker => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${worker.name}</td>
-            <td><span data-key="${worker.position}">${worker.position}</span></td>
-            <td><span data-key="${worker.department}">${worker.department}</span></td>
-            <td>${formatCurrency(worker.salary)}</td>
-            <td>${worker.phone || '-'}</td>
-            <td>${formatDate(worker.hireDate)}</td>
-            <td>
-                <button onclick="editWorker(${worker.id})" class="btn btn-sm btn-secondary">
-                    <span data-key="edit">تعديل</span>
-                </button>
-                <button onclick="deleteWorker(${worker.id})" class="btn btn-sm btn-danger">
-                    <span data-key="delete">حذف</span>
-                </button>
-            </td>
+    container.innerHTML = '';
+    
+    const dayAttendance = appData.attendance.filter(a => a.date === date);
+    
+    if (dayAttendance.length === 0) {
+        container.innerHTML = '<p>No attendance records for this date.</p>';
+        return;
+    }
+    
+    dayAttendance.forEach(attendance => {
+        const worker = appData.workers.find(w => w.id === attendance.workerId);
+        if (!worker) return;
+        
+        const attendanceCard = document.createElement('div');
+        attendanceCard.className = `attendance-card ${attendance.status}`;
+        attendanceCard.innerHTML = `
+            <div class="attendance-worker-name">${worker.name}</div>
+            <div class="attendance-details">Department: ${worker.department}</div>
+            <div class="attendance-details">Check In: ${attendance.checkIn || 'N/A'}</div>
+            <div class="attendance-details">Check Out: ${attendance.checkOut || 'N/A'}</div>
+            <div class="attendance-details">
+                <span class="attendance-status ${attendance.status}">${getAttendanceStatusText(attendance.status)}</span>
+            </div>
+            ${attendance.deduction ? `<div class="attendance-details">Deduction: ${formatCurrency(attendance.deduction)}</div>` : ''}
+            ${attendance.notes ? `<div class="attendance-details">Notes: ${attendance.notes}</div>` : ''}
         `;
-        tableBody.appendChild(row);
+        container.appendChild(attendanceCard);
     });
-    updateTranslations();
+}
+
+function getTodayAttendanceForWorker(workerId) {
+    const todayDate = getCurrentDate();
+    return appData.attendance.find(a => a.workerId === workerId && a.date === todayDate);
+}
+
+function getAttendanceStatusText(status) {
+    const statusTexts = {
+        'present': 'Present',
+        'absent': 'Absent',
+        'late': 'Late',
+        'halfday': 'Half Day',
+        'not-recorded': 'Not Recorded'
+    };
+    return statusTexts[status] || status;
 }
 
 function addWorker(event) {
