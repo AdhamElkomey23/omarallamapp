@@ -162,9 +162,14 @@
         }
 
         .content {
-            padding: 24px;
+            padding: 0;
             max-width: 1200px;
             margin: 0 auto;
+        }
+        
+        .page {
+            padding: 24px;
+            min-height: 100vh;
         }
 
         /* Language Switcher */
@@ -682,6 +687,246 @@
         .btn-icon.delete-btn:hover {
             background: var(--red-100);
             border-color: var(--red-300);
+        }
+
+        /* Expenses Page Styles */
+        .expenses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .expenses-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .add-expense-btn {
+            background: var(--brown-600);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .add-expense-btn:hover {
+            background: var(--brown-700);
+            transform: translateY(-1px);
+        }
+
+        .expenses-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .expenses-stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--red-500);
+        }
+
+        .filter-section,
+        .recent-expenses-section {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 14px;
+        }
+
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .filter-input:focus {
+            border-color: var(--brown-600);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(124, 74, 47, 0.1);
+        }
+
+        .expenses-table-container {
+            margin-top: 20px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .expense-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .expense-item-info {
+            flex: 1;
+        }
+
+        .expense-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 4px 0;
+        }
+
+        .expense-details {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .expense-item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .expense-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--red-600);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .close {
+            color: var(--gray-500);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--gray-700);
+        }
+
+        .modal-form {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--brown-600);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(124, 74, 47, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
         }
 
         /* Hero Section */
@@ -1361,7 +1606,7 @@
                 <!-- Sales Header -->
                 <div class="sales-header">
                     <h1 class="sales-title" data-key="sales">Sales</h1>
-                    <button class="btn btn-primary record-sale-btn">
+                    <button class="btn btn-primary record-sale-btn" onclick="showModal('add-sale-modal')">
                         <span>+</span>
                         <span data-key="recordSale">Record Sale</span>
                     </button>
@@ -1410,7 +1655,7 @@
                 <div class="recent-sales-section">
                     <div class="section-header">
                         <h3 class="section-title" data-key="recentSales">المبيعات الأخيرة</h3>
-                        <button class="export-btn">
+                        <button class="export-btn" onclick="exportSalesData()">
                             <span>📥</span>
                             <span data-key="exportAllSales">تصدير جميع المبيعات</span>
                         </button>
@@ -1418,23 +1663,48 @@
                     <p class="section-subtitle" data-key="lastSalesIn30Days">آخر المبيعات خلال ٣٠ يوم</p>
                     
                     <!-- Sales Table -->
-                    <div class="sales-table-container">
-                        <div class="sales-item">
-                            <div class="sales-item-info">
-                                <h4 class="product-name">Ammonium Nitrate</h4>
-                                <p class="sale-details">Quantity: 20 • Jun 08, 2025</p>
-                                <p class="client-name" data-key="client">عميل: Green Valley Farms</p>
-                            </div>
-                            <div class="sales-item-actions">
-                                <div class="sale-amount">$50000.00</div>
-                                <div class="sale-price" data-key="pricePerUnit">$2500.00 ثمن كل وحدة</div>
-                                <div class="action-buttons">
-                                    <button class="btn-icon edit-btn">✏️</button>
-                                    <button class="btn-icon copy-btn">📋</button>
-                                    <button class="btn-icon delete-btn">🗑️</button>
-                                </div>
-                            </div>
+                    <div class="sales-table-container" id="sales-table-container">
+                        <!-- Sales items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Add Sale Modal -->
+                <div id="add-sale-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 data-key="addNewSale">إضافة بيع جديد</h3>
+                            <span class="close" onclick="closeModal('add-sale-modal')">&times;</span>
                         </div>
+                        <form id="add-sale-form" class="modal-form">
+                            <div class="form-group">
+                                <label data-key="productName">اسم المنتج</label>
+                                <input type="text" id="sale-product" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="quantity">الكمية</label>
+                                <input type="number" id="sale-quantity" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="totalAmount">المبلغ الإجمالي</label>
+                                <input type="number" id="sale-amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="saleDate">تاريخ البيع</label>
+                                <input type="date" id="sale-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="clientName">اسم العميل</label>
+                                <input type="text" id="sale-client" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="clientContact">بيانات الاتصال</label>
+                                <input type="text" id="sale-contact">
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('add-sale-modal')" data-key="cancel">إلغاء</button>
+                                <button type="submit" class="btn btn-primary" data-key="addSale">إضافة البيع</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1512,63 +1782,151 @@
 
             <!-- Expenses Page -->
             <div id="expenses" class="page">
-                <h2 class="page-title" data-key="expensesManagement">إدارة المصروفات</h2>
-                
-                <!-- Add Expense Form -->
-                <div class="card">
-                    <h3 class="card-title" data-key="addNewExpense">إضافة مصروف جديد</h3>
-                    <form id="expenses-form" class="form-grid">
-                        <div class="form-field">
-                            <label data-key="expenseName">اسم المصروف</label>
-                            <input type="text" id="expense-name" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="amount">المبلغ</label>
-                            <input type="number" id="expense-amount" step="0.01" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="category">الفئة</label>
-                            <select id="expense-category" required>
-                                <option value="operations" data-key="operations">عمليات</option>
-                                <option value="utilities" data-key="utilities">مرافق</option>
-                                <option value="maintenance" data-key="maintenance">صيانة</option>
-                                <option value="salaries" data-key="salaries">رواتب</option>
-                                <option value="materials" data-key="materials">مواد</option>
-                                <option value="transport" data-key="transport">نقل</option>
-                                <option value="administrative" data-key="administrative">إدارية</option>
-                                <option value="other" data-key="other">أخرى</option>
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="expenseDate">تاريخ المصروف</label>
-                            <input type="date" id="expense-date" required>
-                        </div>
-                        <div class="form-field">
-                            <button type="submit" class="btn btn-primary">
-                                <span data-key="addExpense">إضافة المصروف</span>
-                            </button>
-                        </div>
-                    </form>
+                <!-- Expenses Header -->
+                <div class="expenses-header">
+                    <h1 class="expenses-title" data-key="expenses">Expenses</h1>
+                    <button class="btn btn-primary add-expense-btn" onclick="showModal('add-expense-modal')">
+                        <span>+</span>
+                        <span data-key="addExpense">Add Expense</span>
+                    </button>
                 </div>
 
-                <!-- Expenses Table -->
-                <div class="card">
-                    <h3 class="card-title" data-key="expensesList">قائمة المصروفات</h3>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th data-key="expenseName">اسم المصروف</th>
-                                    <th data-key="amount">المبلغ</th>
-                                    <th data-key="category">الفئة</th>
-                                    <th data-key="expenseDate">التاريخ</th>
-                                    <th data-key="actions">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expenses-table">
-                                <!-- Expenses data will be populated here -->
-                            </tbody>
-                        </table>
+                <!-- Expenses Stats -->
+                <div class="expenses-stats-grid">
+                    <div class="expenses-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="totalExpenses">Total Expenses</span>
+                            <span class="stat-icon">💰</span>
+                        </div>
+                        <div class="stat-value">$120000.00</div>
+                    </div>
+                    <div class="expenses-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="thisMonth">هذا الشهر</span>
+                            <span class="stat-icon">📅</span>
+                        </div>
+                        <div class="stat-value">$73000.00</div>
+                    </div>
+                    <div class="expenses-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="count">العدد</span>
+                            <span class="stat-icon">📊</span>
+                        </div>
+                        <div class="stat-value">5</div>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <h3 class="section-title" data-key="filters">المرشحات</h3>
+                    <p class="section-subtitle" data-key="filterExpensesByCategory">رشح المصروفات حسب الفئة أو التاريخ</p>
+                    
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label data-key="category">Category</label>
+                            <select id="expense-category-filter" class="filter-select">
+                                <option value="all" data-key="allCategories">جميع الفئات</option>
+                                <option value="utilities">Utilities</option>
+                                <option value="salaries">Salaries</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="supplies">Supplies</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label data-key="expenseType">نوع المصروف</label>
+                            <input type="text" id="expense-type-filter" class="filter-input" placeholder="أدخل نوع المصروف">
+                        </div>
+                        <div class="filter-group">
+                            <label data-key="expenseDate">تاريخ المصروف</label>
+                            <input type="date" id="expense-date-filter" class="filter-input">
+                        </div>
+                        <div class="filter-group">
+                            <label data-key="search">بحث المصروفات</label>
+                            <input type="text" id="expense-search" class="filter-input" placeholder="بحث المصروفات">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Expenses Section -->
+                <div class="recent-expenses-section">
+                    <div class="section-header">
+                        <h3 class="section-title" data-key="recentExpenses">المصروفات الحديثة</h3>
+                        <button class="export-btn" onclick="exportExpensesData()">
+                            <span>📥</span>
+                            <span data-key="exportAllExpenses">تصدير جميع المصروفات</span>
+                        </button>
+                    </div>
+                    <p class="section-subtitle" data-key="lastExpensesNote">آخر المصروفات التي تم تسجيلها</p>
+                    
+                    <!-- Expenses Table -->
+                    <div class="expenses-table-container" id="expenses-table-container">
+                        <div class="expense-item">
+                            <div class="expense-item-info">
+                                <h4 class="expense-name">Electricity Bill</h4>
+                                <p class="expense-details">Utilities • Jun 07, 2025</p>
+                            </div>
+                            <div class="expense-item-actions">
+                                <div class="expense-amount">-$15000.00</div>
+                                <div class="action-buttons">
+                                    <button class="btn-icon edit-btn">✏️</button>
+                                    <button class="btn-icon copy-btn">📋</button>
+                                    <button class="btn-icon delete-btn">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-item-info">
+                                <h4 class="expense-name">Worker Salaries</h4>
+                                <p class="expense-details">Salaries • Jun 05, 2025</p>
+                            </div>
+                            <div class="expense-item-actions">
+                                <div class="expense-amount">-$50000.00</div>
+                                <div class="action-buttons">
+                                    <button class="btn-icon edit-btn">✏️</button>
+                                    <button class="btn-icon copy-btn">📋</button>
+                                    <button class="btn-icon delete-btn">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Expense Modal -->
+                <div id="add-expense-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 data-key="addNewExpense">إضافة مصروف جديد</h3>
+                            <span class="close" onclick="closeModal('add-expense-modal')">&times;</span>
+                        </div>
+                        <form id="add-expense-form" class="modal-form">
+                            <div class="form-group">
+                                <label data-key="expenseName">اسم المصروف</label>
+                                <input type="text" id="new-expense-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="amount">المبلغ</label>
+                                <input type="number" id="new-expense-amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="category">الفئة</label>
+                                <select id="new-expense-category" required>
+                                    <option value="">اختر الفئة</option>
+                                    <option value="utilities">مرافق</option>
+                                    <option value="salaries">رواتب</option>
+                                    <option value="maintenance">صيانة</option>
+                                    <option value="supplies">مستلزمات</option>
+                                    <option value="other">أخرى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="expenseDate">تاريخ المصروف</label>
+                                <input type="date" id="new-expense-date" required>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal('add-expense-modal')" data-key="cancel">إلغاء</button>
+                                <button type="submit" class="btn btn-primary" data-key="addExpense">إضافة المصروف</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
