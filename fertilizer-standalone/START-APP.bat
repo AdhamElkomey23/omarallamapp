@@ -1,33 +1,17 @@
 @echo off
-title Al-Wasiloon Factory Management - Starting Application
-color 0A
-
+title Al-Wasiloon Fertilizer Factory Management System
 echo.
 echo ================================================
-echo  Al-Wasiloon Fertilizer Factory Management
-echo  Starting Desktop Application...
+echo   Al-Wasiloon Mining and Chemical Industries
+echo   Fertilizer Factory Management System
 echo ================================================
 echo.
-
-REM Check if HTML file exists
-if not exist "Al-Wasiloon-Factory-Management.html" (
-    echo Error: Application file not found!
-    echo Please ensure all files are extracted properly.
-    pause
-    exit /b 1
-)
-
-echo Starting Al-Wasiloon Factory Management System...
+echo Starting the application...
 echo.
-
-REM Launch the HTML application
+echo Opening in your default web browser...
 start "" "Al-Wasiloon-Factory-Management.html"
-
-echo Application launched successfully!
 echo.
-echo The Al-Wasiloon Factory Management System is now running
-echo as a standalone desktop application.
+echo Application started successfully!
 echo.
-echo You can close this window safely.
-echo.
-pause
+echo To close this window, press any key...
+pause >nul

@@ -1,115 +1,104 @@
 # Al-Wasiloon Fertilizer Factory Management System
 
-## Standalone Desktop Application
+## نظام إدارة مصنع الأسمدة - الواصلون للتعدين والصناعات الكيميائية
 
-Complete standalone version of the Al-Wasiloon Factory Management System that runs locally without requiring internet connection, server installation, or external dependencies.
+### Installation / التثبيت
 
-## System Requirements
+1. Extract all files to a folder on your computer
+2. Double-click `START-APP.bat` to run the application
+3. The application will open in your default web browser
 
-- Windows 7/8/10/11
-- No additional software required
-- All functionality runs directly from the executable files
+### Features / الميزات
 
-## Quick Start
+#### Complete Functional Pages / صفحات وظيفية كاملة
+- ✅ **Dashboard** - Financial overview and statistics / لوحة التحكم - نظرة عامة مالية وإحصائيات
+- ✅ **Sales Management** - Add, edit, delete sales records / إدارة المبيعات - إضافة وتعديل وحذف سجلات المبيعات
+- ✅ **Expenses Management** - Track all business expenses / إدارة المصروفات - تتبع جميع مصروفات الأعمال
+- ✅ **Workers Management** - Employee records and information / إدارة العمال - سجلات ومعلومات الموظفين
+- ✅ **Storage Management** - Raw materials inventory tracking / إدارة المخزون - تتبع مخزون المواد الخام
+- ✅ **Activity Logs** - Business activity tracking / سجل الأنشطة - تتبع أنشطة العمل
+- ✅ **Reports** - Business reports and analytics / التقارير - تقارير وتحليلات الأعمال
+- ✅ **Settings** - System configuration / الإعدادات - تكوين النظام
 
-1. **Extract all files** to any folder on your computer
-2. **Double-click `START-APP.bat`** 
-   - Launches the complete desktop application
-   - No browser or server setup required
-   - Runs as native Windows application
+#### Language Support / دعم اللغات
+- ✅ **Arabic (العربية)** - Full RTL support with proper Arabic formatting
+- ✅ **English** - Complete LTR interface
+- ✅ **Language Toggle** - Switch between languages instantly / تبديل فوري بين اللغات
 
-## Features
+#### Core Functionality / الوظائف الأساسية
+- ✅ **Data Persistence** - All data saved locally / حفظ البيانات محلياً
+- ✅ **CRUD Operations** - Create, Read, Update, Delete for all modules / عمليات إنشاء وقراءة وتحديث وحذف
+- ✅ **Form Validation** - Comprehensive input validation / التحقق الشامل من المدخلات
+- ✅ **Real-time Updates** - Instant UI updates / تحديثات فورية للواجهة
+- ✅ **Modern UI** - Professional design matching Replit version / تصميم احترافي مطابق لنسخة Replit
 
-### Complete Factory Management
-- **Sales Management** - Track all sales transactions and client information
-- **Storage/Inventory** - Monitor raw materials, finished products, and stock levels
-- **Expenses Tracking** - Record and categorize all business expenses
-- **Workers Management** - Employee records, positions, and salary information
-- **Activity Logs** - Record important factory operations and events
-- **Reports & Analytics** - Financial summaries and data visualization
+#### Storage Materials Supported / المواد المدعومة في المخزون
+- الجبس (Gypsum)
+- الفلسبار (Feldspar)
+- الكاولينا (Kaolin)
+- التلك (Talc)
+- كاربونات الكالسيوم (Calcium Carbonate)
 
-### Language Support
-- **Arabic** (Default) - Complete right-to-left interface
-- **English** - Full left-to-right interface
-- Instant language switching with preserved data
+### Technical Details / التفاصيل التقنية
 
-### Data Management
-- **Automatic Save** - All data saved locally to files
-- **Data Export** - Export individual modules (Sales, Expenses, etc.)
-- **Backup System** - Create complete data backups
-- **Import/Restore** - Restore from previous backups
+- **Technology**: Pure HTML5, CSS3, JavaScript (Vanilla)
+- **Storage**: Browser LocalStorage
+- **Design**: Responsive design for all screen sizes
+- **Fonts**: Cairo font family for Arabic text
+- **Color Scheme**: Professional brown theme matching original design
 
-## Application Files
+### File Structure / هيكل الملفات
 
 ```
 fertilizer-standalone/
-├── Al-Wasiloon-Factory-Management.html   # Main application (HTML format)
-├── app.js                                # Application JavaScript code
-├── START-APP.bat                         # Application launcher (RECOMMENDED)
-└── README.md                            # This documentation
+├── Al-Wasiloon-Factory-Management.html  # Main application file
+├── app.js                               # JavaScript functionality
+├── START-APP.bat                        # Windows launcher
+└── README.md                           # This documentation
 ```
 
-## How It Works
+### Usage Instructions / تعليمات الاستخدام
 
-- **Al-Wasiloon-Factory-Management.html** - Self-contained HTML Application
-- **app.js** - Complete JavaScript functionality with IE-compatible syntax
-- **START-APP.bat** - Simple launcher that opens application in default browser
-- All data stored in browser localStorage for persistence
-- No internet connection required after initial setup (fonts may load online)
-- Complete offline functionality
+1. **Starting the App / بدء التطبيق**
+   - Run `START-APP.bat` or open `Al-Wasiloon-Factory-Management.html` directly
 
-## Data Storage
+2. **Language Switching / تبديل اللغة**
+   - Click the language toggle button in the top-left corner
 
-- All data stored in browser localStorage
-- Data persists between sessions
-- Automatic save after each operation
-- Safe and secure - data never leaves your computer
+3. **Adding Data / إضافة البيانات**
+   - Navigate to any section and click the "Add" button
+   - Fill out the form and click "Save"
 
-## Technical Details
+4. **Editing Data / تعديل البيانات**
+   - Click the edit button (✏️) next to any record
+   - Modify the information and save
 
-- **Format**: Standard HTML/CSS/JavaScript
-- **Charts**: Chart.js for financial visualizations
-- **Fonts**: Google Fonts (Cairo for Arabic, Inter for English)
-- **Storage**: Browser localStorage with JSON format
-- **Compatibility**: All modern browsers and Internet Explorer
+5. **Deleting Data / حذف البيانات**
+   - Click the delete button (🗑️) next to any record
+   - Confirm the deletion
 
-## Usage Tips
+### Browser Compatibility / التوافق مع المتصفحات
 
-1. **First Time Setup**: Application comes with sample data to demonstrate interface
-2. **Regular Backups**: Use the Export function to backup your data regularly
-3. **Multi-User**: Each installation maintains separate data
-4. **Performance**: Application handles thousands of records efficiently
+- ✅ Chrome 60+
+- ✅ Firefox 55+
+- ✅ Safari 12+
+- ✅ Edge 79+
 
-## Troubleshooting
+### Troubleshooting / استكشاف الأخطاء
 
-### Application Won't Start
-1. Ensure all files are extracted to the same folder
-2. Right-click `START-APP.bat` and select "Run as administrator"
-3. Check Windows security settings allow HTA files to run
+**Q: Data not saving?**
+A: Ensure your browser allows LocalStorage. Check browser settings.
 
-### Data Loss Prevention
-1. Use the Export function regularly to backup your data
-2. Data is stored in `factory_data.json` in the application folder
-3. Keep backup copies of this file for safety
+**س: البيانات لا تحفظ؟**
+ج: تأكد من أن متصفحك يسمح بـ LocalStorage. تحقق من إعدادات المتصفح.
 
-### Browser Compatibility
-- Runs on Windows Internet Explorer engine (built into Windows)
-- No external browser required
-- Modern HTML/CSS/JavaScript features supported
+**Q: App not loading?**
+A: Try opening the HTML file directly in your browser instead of using the BAT file.
 
-## Security
-
-- All data stored locally on your computer
-- No external connections except for fonts (optional)
-- No user accounts or passwords required
-- Complete offline functionality
-- Data files can be encrypted using Windows file encryption
-
-## Support
-
-This standalone desktop application contains the exact original functionality from the Replit web version, converted to run natively on Windows without any external dependencies.
+**س: التطبيق لا يتحمل؟**
+ج: جرب فتح ملف HTML مباشرة في متصفحك بدلاً من استخدام ملف BAT.
 
 ---
 
-**Al-Wasiloon Factory Management System v1.0**  
-*Standalone Desktop Edition - HTA Format*
+© 2025 Al-Wasiloon Mining and Chemical Industries
+الواصلون للتعدين والصناعات الكيميائية ©
