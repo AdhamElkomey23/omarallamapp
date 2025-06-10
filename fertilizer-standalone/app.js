@@ -358,6 +358,9 @@ function updateSalesTable() {
             <td>${sale.clientName}</td>
             <td>${new Date(sale.saleDate).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US')}</td>
             <td>
+                <button class="btn btn-primary" onclick="exportSaleInvoice(${sale.id})" style="margin-left: 8px;">
+                    📄 ${appData.language === 'ar' ? 'فاتورة' : 'Invoice'}
+                </button>
                 <button class="btn btn-secondary" onclick="editSale(${sale.id})" style="margin-left: 8px;">
                     ✏️ ${translations[appData.language].edit}
                 </button>
@@ -1745,6 +1748,423 @@ function generatePayrollReport() {
     
     alert(report);
     showSuccessMessage(appData.language === 'ar' ? 'تم إنشاء تقرير الرواتب بنجاح' : 'Payroll report generated successfully');
+}
+
+// ========== INVOICE EXPORT SYSTEM ==========
+
+// Export sale as professional invoice
+function exportSaleInvoice(saleId) {
+    const sale = appData.sales.find(s => s.id === saleId);
+    if (!sale) {
+        showErrorMessage(appData.language === 'ar' ? 'لم يتم العثور على البيع' : 'Sale not found');
+        return;
+    }
+    
+    const invoiceData = generateInvoiceData(sale);
+    const invoiceHTML = generateInvoiceHTML(invoiceData);
+    
+    // Create and open invoice in new window for printing/saving
+    const invoiceWindow = window.open('', '_blank', 'width=800,height=600');
+    invoiceWindow.document.write(invoiceHTML);
+    invoiceWindow.document.close();
+    
+    // Auto-focus and trigger print dialog
+    invoiceWindow.focus();
+    setTimeout(() => {
+        invoiceWindow.print();
+    }, 500);
+    
+    showSuccessMessage(appData.language === 'ar' ? 'تم إنشاء الفاتورة بنجاح' : 'Invoice generated successfully');
+}
+
+// Generate invoice data object
+function generateInvoiceData(sale) {
+    const invoiceNumber = `INV-${sale.id.toString().padStart(6, '0')}`;
+    const currentDate = new Date();
+    const unitPrice = sale.totalAmount / sale.quantity;
+    const vatRate = 0.15; // 15% VAT
+    const subtotal = sale.totalAmount;
+    const vatAmount = subtotal * vatRate;
+    const totalAmount = subtotal + vatAmount;
+    
+    return {
+        // Company Information
+        company: {
+            nameAr: 'الواصلون للتعدين والصناعات الكيميائية',
+            nameEn: 'Al-Wasiloon Mining and Chemical Industries',
+            addressAr: 'المملكة العربية السعودية - الرياض',
+            addressEn: 'Kingdom of Saudi Arabia - Riyadh',
+            phone: '+966 11 234 5678',
+            email: 'info@alwasiloon.com',
+            website: 'www.alwasiloon.com',
+            crNumber: '1010123456',
+            vatNumber: '300123456700003'
+        },
+        
+        // Invoice Details
+        invoice: {
+            number: invoiceNumber,
+            date: currentDate.toLocaleDateString(appData.language === 'ar' ? 'ar-SA' : 'en-US'),
+            dueDate: new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(appData.language === 'ar' ? 'ar-SA' : 'en-US'),
+            currency: 'SAR'
+        },
+        
+        // Customer Information
+        customer: {
+            name: sale.clientName,
+            contact: sale.clientContact || '',
+            address: ''
+        },
+        
+        // Sale Items
+        items: [{
+            description: sale.productName,
+            quantity: sale.quantity,
+            unit: appData.language === 'ar' ? 'طن' : 'Ton',
+            unitPrice: unitPrice,
+            totalPrice: sale.totalAmount
+        }],
+        
+        // Financial Summary
+        financial: {
+            subtotal: subtotal,
+            vatRate: vatRate,
+            vatAmount: vatAmount,
+            totalAmount: totalAmount
+        },
+        
+        // Additional Info
+        saleDate: sale.saleDate,
+        language: appData.language
+    };
+}
+
+// Generate professional invoice HTML
+function generateInvoiceHTML(data) {
+    const isArabic = data.language === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const align = isArabic ? 'right' : 'left';
+    
+    return `
+<!DOCTYPE html>
+<html dir="${dir}" lang="${data.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${isArabic ? 'فاتورة رقم' : 'Invoice'} ${data.invoice.number}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            direction: ${dir};
+            background: #fff;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #8B5A3C;
+        }
+        
+        .company-info {
+            flex: 1;
+        }
+        
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: #8B5A3C;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8B5A3C;
+            margin-bottom: 5px;
+        }
+        
+        .company-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .invoice-title {
+            text-align: ${isArabic ? 'left' : 'right'};
+            flex: 1;
+        }
+        
+        .invoice-title h1 {
+            font-size: 36px;
+            color: #8B5A3C;
+            margin-bottom: 10px;
+        }
+        
+        .invoice-number {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .bill-to, .invoice-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #8B5A3C;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .items-table th {
+            background: #8B5A3C;
+            color: white;
+            padding: 15px;
+            text-align: ${align};
+            font-weight: 600;
+        }
+        
+        .items-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            text-align: ${align};
+        }
+        
+        .items-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .financial-summary {
+            margin-left: auto;
+            margin-right: ${isArabic ? 'auto' : '0'};
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+        
+        .summary-row.total {
+            border-top: 2px solid #8B5A3C;
+            margin-top: 15px;
+            padding-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #8B5A3C;
+        }
+        
+        .invoice-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .terms {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        @media print {
+            body { margin: 0; }
+            .invoice-container { 
+                max-width: none; 
+                margin: 0; 
+                padding: 20px; 
+                box-shadow: none; 
+            }
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #22c55e;
+            color: white;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <div class="company-logo">🏭</div>
+                <div class="company-name">${isArabic ? data.company.nameAr : data.company.nameEn}</div>
+                <div class="company-details">
+                    ${isArabic ? data.company.addressAr : data.company.addressEn}<br>
+                    ${isArabic ? 'هاتف' : 'Phone'}: ${data.company.phone}<br>
+                    ${isArabic ? 'بريد إلكتروني' : 'Email'}: ${data.company.email}<br>
+                    ${isArabic ? 'الموقع الإلكتروني' : 'Website'}: ${data.company.website}
+                </div>
+            </div>
+            <div class="invoice-title">
+                <h1>${isArabic ? 'فاتورة' : 'INVOICE'}</h1>
+                <div class="invoice-number">${data.invoice.number}</div>
+                <div class="status-badge">${isArabic ? 'مدفوعة' : 'PAID'}</div>
+            </div>
+        </div>
+        
+        <!-- Invoice Meta Information -->
+        <div class="invoice-meta">
+            <div class="bill-to">
+                <div class="section-title">${isArabic ? 'فاتورة إلى' : 'Bill To'}</div>
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">${data.customer.name}</div>
+                ${data.customer.contact ? `<div>${isArabic ? 'جهة الاتصال' : 'Contact'}: ${data.customer.contact}</div>` : ''}
+                ${data.customer.address ? `<div>${data.customer.address}</div>` : ''}
+            </div>
+            
+            <div class="invoice-details">
+                <div class="section-title">${isArabic ? 'تفاصيل الفاتورة' : 'Invoice Details'}</div>
+                <div class="detail-row">
+                    <span class="detail-label">${isArabic ? 'تاريخ الفاتورة:' : 'Invoice Date:'}</span>
+                    <span>${data.invoice.date}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">${isArabic ? 'تاريخ الاستحقاق:' : 'Due Date:'}</span>
+                    <span>${data.invoice.dueDate}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">${isArabic ? 'العملة:' : 'Currency:'}</span>
+                    <span>${data.invoice.currency}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">${isArabic ? 'رقم السجل التجاري:' : 'CR Number:'}</span>
+                    <span>${data.company.crNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">${isArabic ? 'الرقم الضريبي:' : 'VAT Number:'}</span>
+                    <span>${data.company.vatNumber}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>${isArabic ? 'الوصف' : 'Description'}</th>
+                    <th>${isArabic ? 'الكمية' : 'Quantity'}</th>
+                    <th>${isArabic ? 'الوحدة' : 'Unit'}</th>
+                    <th>${isArabic ? 'سعر الوحدة' : 'Unit Price'}</th>
+                    <th>${isArabic ? 'المجموع' : 'Total'}</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${data.items.map(item => `
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${item.quantity.toLocaleString()}</td>
+                        <td>${item.unit}</td>
+                        <td>${formatCurrency(item.unitPrice)}</td>
+                        <td>${formatCurrency(item.totalPrice)}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        
+        <!-- Financial Summary -->
+        <div class="financial-summary">
+            <div class="summary-row">
+                <span>${isArabic ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
+                <span>${formatCurrency(data.financial.subtotal)}</span>
+            </div>
+            <div class="summary-row">
+                <span>${isArabic ? 'ضريبة القيمة المضافة' : 'VAT'} (${(data.financial.vatRate * 100).toFixed(0)}%):</span>
+                <span>${formatCurrency(data.financial.vatAmount)}</span>
+            </div>
+            <div class="summary-row total">
+                <span>${isArabic ? 'المجموع الإجمالي:' : 'Total Amount:'}</span>
+                <span>${formatCurrency(data.financial.totalAmount)}</span>
+            </div>
+        </div>
+        
+        <!-- Terms and Conditions -->
+        <div class="terms">
+            <div class="section-title">${isArabic ? 'الشروط والأحكام' : 'Terms & Conditions'}</div>
+            <p>${isArabic ? 'جميع المبيعات نهائية. يرجى الدفع خلال 30 يوماً من تاريخ الفاتورة.' : 'All sales are final. Payment is due within 30 days of invoice date.'}</p>
+            <p>${isArabic ? 'في حالة التأخير في السداد، ستطبق رسوم إضافية بنسبة 1.5% شهرياً.' : 'Late payments will incur a 1.5% monthly service charge.'}</p>
+        </div>
+        
+        <!-- Invoice Footer -->
+        <div class="invoice-footer">
+            <p>${isArabic ? 'شكراً لتعاملكم معنا!' : 'Thank you for your business!'}</p>
+            <p>${isArabic ? 'هذه الفاتورة تم إنشاؤها إلكترونياً وهي صالحة بدون توقيع' : 'This invoice was generated electronically and is valid without signature'}</p>
+        </div>
+    </div>
+</body>
+</html>`;
 }
 
 // Event listeners
