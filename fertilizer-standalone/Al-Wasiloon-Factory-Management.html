@@ -821,6 +821,60 @@
             color: var(--primary);
         }
         
+        /* Attendance Status Badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-present {
+            background: var(--success-100);
+            color: var(--success-700);
+        }
+        
+        .status-late {
+            background: var(--warning-100);
+            color: var(--warning-700);
+        }
+        
+        .status-absent {
+            background: var(--destructive-100);
+            color: var(--destructive-700);
+        }
+        
+        .status-half-day {
+            background: var(--primary-100);
+            color: var(--primary-700);
+        }
+        
+        /* Text colors */
+        .text-red {
+            color: var(--destructive-600);
+            font-weight: 600;
+        }
+        
+        /* Button sizes */
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        /* Additional success/warning/destructive colors */
+        :root {
+            --success-100: #dcfce7;
+            --success-500: #22c55e;
+            --success-700: #15803d;
+            --warning-100: #fef3c7;
+            --warning-700: #a16207;
+            --destructive-100: #fee2e2;
+            --destructive-500: #ef4444;
+            --destructive-600: #dc2626;
+            --destructive-700: #b91c1c;
+        }
+        
         /* English styles */
         body.en {
             direction: ltr;
@@ -1180,14 +1234,24 @@
                 <!-- Workers Page -->
                 <div id="workers" class="page">
                     <div class="page-header">
-                        <h1 class="page-title" data-ar="العمال" data-en="Workers">العمال</h1>
-                        <button class="btn btn-primary" onclick="showModal('add-worker-modal')">
-                            <span>+</span>
-                            <span data-ar="إضافة عامل جديد" data-en="Add New Worker">إضافة عامل جديد</span>
-                        </button>
+                        <h1 class="page-title" data-ar="إدارة العمال والحضور" data-en="Workers & Attendance Management">إدارة العمال والحضور</h1>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" onclick="showModal('attendance-modal')">
+                                <span>📅</span>
+                                <span data-ar="تسجيل الحضور" data-en="Mark Attendance">تسجيل الحضور</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="showModal('add-worker-modal')">
+                                <span>+</span>
+                                <span data-ar="إضافة عامل جديد" data-en="Add New Worker">إضافة عامل جديد</span>
+                            </button>
+                        </div>
                     </div>
                     
+                    <!-- Workers Management Section -->
                     <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" data-ar="قائمة العمال" data-en="Workers List">قائمة العمال</h2>
+                        </div>
                         <div class="table-container">
                             <table class="data-table">
                                 <thead>
@@ -1204,6 +1268,58 @@
                                     <!-- Workers data will be populated here -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendance Tracking Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" data-ar="متابعة الحضور اليومي" data-en="Daily Attendance Tracking">متابعة الحضور اليومي</h2>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <input type="date" id="attendance-date-filter" class="form-input" style="width: auto;" onchange="filterAttendanceByDate()">
+                                <button class="btn btn-secondary" onclick="showAttendanceSummary()">
+                                    <span>📊</span>
+                                    <span data-ar="ملخص الشهر" data-en="Monthly Summary">ملخص الشهر</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-ar="اسم العامل" data-en="Worker Name">اسم العامل</th>
+                                        <th data-ar="التاريخ" data-en="Date">التاريخ</th>
+                                        <th data-ar="وقت الحضور" data-en="Check In">وقت الحضور</th>
+                                        <th data-ar="وقت الانصراف" data-en="Check Out">وقت الانصراف</th>
+                                        <th data-ar="الحالة" data-en="Status">الحالة</th>
+                                        <th data-ar="ساعات العمل" data-en="Work Hours">ساعات العمل</th>
+                                        <th data-ar="الخصم" data-en="Deduction">الخصم</th>
+                                        <th data-ar="الإجراءات" data-en="Actions">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-table-body">
+                                    <!-- Attendance data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Salary Deductions Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" data-ar="ملخص الخصومات الشهرية" data-en="Monthly Deductions Summary">ملخص الخصومات الشهرية</h2>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <select id="deduction-month-filter" class="form-input" style="width: auto;" onchange="updateDeductionsSummary()">
+                                    <option value="" data-ar="جميع الأشهر" data-en="All Months">جميع الأشهر</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="generatePayrollReport()">
+                                    <span>💰</span>
+                                    <span data-ar="تقرير الرواتب" data-en="Payroll Report">تقرير الرواتب</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="deductions-summary">
+                            <!-- Dynamic content will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -1642,6 +1758,61 @@
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('add-activity-modal')" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
+                        <button type="submit" class="btn btn-primary" data-ar="حفظ" data-en="Save">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Attendance Modal -->
+    <div id="attendance-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-ar="تسجيل الحضور" data-en="Mark Attendance">تسجيل الحضور</h2>
+                <button class="modal-close" onclick="closeModal('attendance-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleAttendanceSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label" data-ar="اختر العامل" data-en="Select Worker">اختر العامل</label>
+                        <select id="attendance-worker-id" class="form-input" required>
+                            <option value="" data-ar="اختر عامل" data-en="Select Worker">اختر عامل</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-ar="التاريخ" data-en="Date">التاريخ</label>
+                        <input type="date" id="attendance-date" class="form-input" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-ar="وقت الحضور" data-en="Check In Time">وقت الحضور</label>
+                            <input type="time" id="attendance-check-in" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-ar="وقت الانصراف" data-en="Check Out Time">وقت الانصراف</label>
+                            <input type="time" id="attendance-check-out" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-ar="حالة الحضور" data-en="Attendance Status">حالة الحضور</label>
+                        <select id="attendance-status" class="form-input" required onchange="updateDeductionField()">
+                            <option value="present" data-ar="حاضر" data-en="Present">حاضر</option>
+                            <option value="late" data-ar="متأخر" data-en="Late">متأخر</option>
+                            <option value="absent" data-ar="غائب" data-en="Absent">غائب</option>
+                            <option value="half-day" data-ar="نصف يوم" data-en="Half Day">نصف يوم</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-ar="مبلغ الخصم (ريال)" data-en="Deduction Amount (SAR)">مبلغ الخصم (ريال)</label>
+                        <input type="number" id="attendance-deduction" class="form-input" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-ar="ملاحظات" data-en="Notes">ملاحظات</label>
+                        <textarea id="attendance-notes" class="form-input" rows="3" placeholder="ملاحظات إضافية عن الحضور..."></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('attendance-modal')" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
                         <button type="submit" class="btn btn-primary" data-ar="حفظ" data-en="Save">حفظ</button>
                     </div>
                 </form>

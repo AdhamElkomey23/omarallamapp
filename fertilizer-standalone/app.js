@@ -8,6 +8,7 @@ let appData = {
     workers: JSON.parse(localStorage.getItem('al-wasiloon-workers') || '[]'),
     storage: JSON.parse(localStorage.getItem('al-wasiloon-storage') || '[]'),
     activities: JSON.parse(localStorage.getItem('al-wasiloon-activities') || '[]'),
+    attendance: JSON.parse(localStorage.getItem('al-wasiloon-attendance') || '[]'),
     language: localStorage.getItem('al-wasiloon-language') || 'ar',
     currentTimeFilter: 7 // Default to 7 days
 };
@@ -199,6 +200,10 @@ function showPage(pageId) {
             break;
         case 'workers':
             updateWorkersTable();
+            updateAttendanceTable();
+            updateDeductionsSummary();
+            populateAttendanceWorkerOptions();
+            setCurrentDate();
             break;
         case 'storage':
             updateStorageDisplay();
@@ -933,6 +938,8 @@ function updateAllDisplays() {
     updateHomeOverview();
     updateDashboardAnalytics();
     updateReportsPage();
+    updateAttendanceTable();
+    updateDeductionsSummary();
 }
 
 // Home page overview
@@ -1320,6 +1327,424 @@ function generateFullReport() {
 // Get unique products
 function getUniqueProducts() {
     return [...new Set(appData.sales.map(sale => sale.productName))];
+}
+
+// ========== ATTENDANCE TRACKING SYSTEM ==========
+
+// Attendance counters
+let attendanceCounter = 1;
+
+// Set current date for attendance
+function setCurrentDate() {
+    const today = new Date().toISOString().split('T')[0];
+    const attendanceDateInput = document.getElementById('attendance-date');
+    const dateFilterInput = document.getElementById('attendance-date-filter');
+    
+    if (attendanceDateInput) attendanceDateInput.value = today;
+    if (dateFilterInput) dateFilterInput.value = today;
+}
+
+// Populate worker options in attendance modal
+function populateAttendanceWorkerOptions() {
+    const select = document.getElementById('attendance-worker-id');
+    if (!select) return;
+    
+    // Clear existing options except the first one
+    select.innerHTML = `<option value="" data-ar="اختر عامل" data-en="Select Worker">${appData.language === 'ar' ? 'اختر عامل' : 'Select Worker'}</option>`;
+    
+    appData.workers.forEach(worker => {
+        const option = document.createElement('option');
+        option.value = worker.id;
+        option.textContent = worker.name;
+        select.appendChild(option);
+    });
+}
+
+// Handle attendance form submission
+function handleAttendanceSubmit(event) {
+    event.preventDefault();
+    
+    const workerId = parseInt(document.getElementById('attendance-worker-id').value);
+    const date = document.getElementById('attendance-date').value;
+    const checkIn = document.getElementById('attendance-check-in').value;
+    const checkOut = document.getElementById('attendance-check-out').value;
+    const status = document.getElementById('attendance-status').value;
+    const deduction = parseFloat(document.getElementById('attendance-deduction').value) || 0;
+    const notes = document.getElementById('attendance-notes').value;
+    
+    // Find worker name
+    const worker = appData.workers.find(w => w.id === workerId);
+    if (!worker) {
+        showErrorMessage(appData.language === 'ar' ? 'العامل غير موجود' : 'Worker not found');
+        return;
+    }
+    
+    // Check if attendance already exists for this worker on this date
+    const existingAttendance = appData.attendance.find(a => a.workerId === workerId && a.date === date);
+    if (existingAttendance) {
+        showErrorMessage(appData.language === 'ar' ? 'تم تسجيل الحضور بالفعل لهذا العامل في هذا التاريخ' : 'Attendance already recorded for this worker on this date');
+        return;
+    }
+    
+    // Calculate work hours
+    let workHours = 0;
+    if (checkIn && checkOut) {
+        const checkInTime = new Date(`2000-01-01T${checkIn}`);
+        const checkOutTime = new Date(`2000-01-01T${checkOut}`);
+        workHours = (checkOutTime - checkInTime) / (1000 * 60 * 60); // Convert to hours
+        workHours = Math.max(0, workHours); // Ensure non-negative
+    }
+    
+    const newAttendance = {
+        id: attendanceCounter++,
+        workerId: workerId,
+        workerName: worker.name,
+        date: date,
+        checkIn: checkIn,
+        checkOut: checkOut || null,
+        status: status,
+        workHours: workHours,
+        deduction: deduction,
+        notes: notes,
+        timestamp: new Date().toISOString()
+    };
+    
+    appData.attendance.push(newAttendance);
+    localStorage.setItem('al-wasiloon-attendance', JSON.stringify(appData.attendance));
+    
+    // Add activity log
+    const activityMessage = appData.language === 'ar' 
+        ? `تم تسجيل حضور العامل: ${worker.name} - ${getStatusName(status)}`
+        : `Attendance recorded for worker: ${worker.name} - ${getStatusName(status)}`;
+    
+    const newActivity = {
+        id: (appData.activities.length + 1),
+        title: appData.language === 'ar' ? 'تسجيل حضور' : 'Attendance Record',
+        description: activityMessage,
+        activityDate: new Date().toISOString().split('T')[0],
+        timestamp: new Date().toISOString()
+    };
+    
+    appData.activities.push(newActivity);
+    localStorage.setItem('al-wasiloon-activities', JSON.stringify(appData.activities));
+    
+    updateAttendanceTable();
+    updateDeductionsSummary();
+    closeModal('attendance-modal');
+    resetModalForm('attendance-modal');
+    showSuccessMessage(appData.language === 'ar' ? 'تم تسجيل الحضور بنجاح' : 'Attendance recorded successfully');
+}
+
+// Update attendance table
+function updateAttendanceTable() {
+    const tbody = document.getElementById('attendance-table-body');
+    if (!tbody) return;
+    
+    let filteredAttendance = [...appData.attendance];
+    
+    // Apply date filter if set
+    const dateFilter = document.getElementById('attendance-date-filter');
+    if (dateFilter && dateFilter.value) {
+        filteredAttendance = filteredAttendance.filter(a => a.date === dateFilter.value);
+    }
+    
+    // Sort by date (newest first)
+    filteredAttendance.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    tbody.innerHTML = filteredAttendance.map(attendance => `
+        <tr>
+            <td>${attendance.workerName}</td>
+            <td>${new Date(attendance.date).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US')}</td>
+            <td>${attendance.checkIn || '-'}</td>
+            <td>${attendance.checkOut || '-'}</td>
+            <td>
+                <span class="status-badge status-${attendance.status}">
+                    ${getStatusName(attendance.status)}
+                </span>
+            </td>
+            <td>${attendance.workHours.toFixed(2)} ${appData.language === 'ar' ? 'ساعة' : 'hours'}</td>
+            <td class="${attendance.deduction > 0 ? 'text-red' : ''}">
+                ${attendance.deduction > 0 ? formatCurrency(attendance.deduction) : '-'}
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline" onclick="editAttendance(${attendance.id})" data-ar="تعديل" data-en="Edit">
+                    ${appData.language === 'ar' ? 'تعديل' : 'Edit'}
+                </button>
+                <button class="btn btn-sm btn-destructive" onclick="deleteAttendance(${attendance.id})" data-ar="حذف" data-en="Delete">
+                    ${appData.language === 'ar' ? 'حذف' : 'Delete'}
+                </button>
+            </td>
+        </tr>
+    `).join('');
+    
+    if (filteredAttendance.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; color: var(--muted-foreground); padding: 40px;">
+                    ${appData.language === 'ar' ? 'لا توجد سجلات حضور' : 'No attendance records found'}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Get status name in current language
+function getStatusName(status) {
+    const statusNames = {
+        'present': { ar: 'حاضر', en: 'Present' },
+        'late': { ar: 'متأخر', en: 'Late' },
+        'absent': { ar: 'غائب', en: 'Absent' },
+        'half-day': { ar: 'نصف يوم', en: 'Half Day' }
+    };
+    return statusNames[status] ? statusNames[status][appData.language] : status;
+}
+
+// Update deduction field based on status
+function updateDeductionField() {
+    const status = document.getElementById('attendance-status').value;
+    const deductionField = document.getElementById('attendance-deduction');
+    
+    if (!deductionField) return;
+    
+    // Set default deduction amounts based on status
+    switch (status) {
+        case 'absent':
+            deductionField.value = '100'; // Full day deduction
+            break;
+        case 'late':
+            deductionField.value = '25'; // Late penalty
+            break;
+        case 'half-day':
+            deductionField.value = '50'; // Half day deduction
+            break;
+        case 'present':
+        default:
+            deductionField.value = '0';
+            break;
+    }
+}
+
+// Filter attendance by date
+function filterAttendanceByDate() {
+    updateAttendanceTable();
+}
+
+// Edit attendance record
+function editAttendance(id) {
+    const attendance = appData.attendance.find(a => a.id === id);
+    if (!attendance) return;
+    
+    // Populate form with existing data
+    document.getElementById('attendance-worker-id').value = attendance.workerId;
+    document.getElementById('attendance-date').value = attendance.date;
+    document.getElementById('attendance-check-in').value = attendance.checkIn || '';
+    document.getElementById('attendance-check-out').value = attendance.checkOut || '';
+    document.getElementById('attendance-status').value = attendance.status;
+    document.getElementById('attendance-deduction').value = attendance.deduction;
+    document.getElementById('attendance-notes').value = attendance.notes || '';
+    
+    // Delete the old record (will be replaced with updated one)
+    deleteAttendance(id, false);
+    
+    showModal('attendance-modal');
+}
+
+// Delete attendance record
+function deleteAttendance(id, showConfirm = true) {
+    if (showConfirm && !confirm(appData.language === 'ar' ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Are you sure you want to delete this record?')) {
+        return;
+    }
+    
+    const index = appData.attendance.findIndex(a => a.id === id);
+    if (index > -1) {
+        appData.attendance.splice(index, 1);
+        localStorage.setItem('al-wasiloon-attendance', JSON.stringify(appData.attendance));
+        updateAttendanceTable();
+        updateDeductionsSummary();
+        if (showConfirm) {
+            showSuccessMessage(appData.language === 'ar' ? 'تم حذف السجل بنجاح' : 'Record deleted successfully');
+        }
+    }
+}
+
+// Update deductions summary
+function updateDeductionsSummary() {
+    const container = document.getElementById('deductions-summary');
+    if (!container) return;
+    
+    // Group deductions by worker and month
+    const deductionsByWorker = {};
+    const monthFilter = document.getElementById('deduction-month-filter');
+    let selectedMonth = monthFilter ? monthFilter.value : '';
+    
+    // Populate month filter options
+    if (monthFilter) {
+        const months = [...new Set(appData.attendance.map(a => {
+            const date = new Date(a.date);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }))].sort().reverse();
+        
+        const currentOptions = Array.from(monthFilter.options).map(o => o.value);
+        months.forEach(month => {
+            if (!currentOptions.includes(month)) {
+                const option = document.createElement('option');
+                option.value = month;
+                const [year, monthNum] = month.split('-');
+                const monthName = new Date(year, monthNum - 1).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US', { year: 'numeric', month: 'long' });
+                option.textContent = monthName;
+                monthFilter.appendChild(option);
+            }
+        });
+    }
+    
+    appData.attendance.forEach(attendance => {
+        if (attendance.deduction > 0) {
+            const attendanceMonth = attendance.date.substring(0, 7); // YYYY-MM format
+            
+            // Apply month filter
+            if (selectedMonth && attendanceMonth !== selectedMonth) return;
+            
+            if (!deductionsByWorker[attendance.workerId]) {
+                deductionsByWorker[attendance.workerId] = {
+                    workerName: attendance.workerName,
+                    totalDeduction: 0,
+                    deductionCount: 0,
+                    deductions: []
+                };
+            }
+            
+            deductionsByWorker[attendance.workerId].totalDeduction += attendance.deduction;
+            deductionsByWorker[attendance.workerId].deductionCount++;
+            deductionsByWorker[attendance.workerId].deductions.push({
+                date: attendance.date,
+                amount: attendance.deduction,
+                reason: getStatusName(attendance.status)
+            });
+        }
+    });
+    
+    const workers = Object.values(deductionsByWorker);
+    
+    if (workers.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--muted-foreground); padding: 40px;">
+                ${appData.language === 'ar' ? 'لا توجد خصومات في الفترة المحددة' : 'No deductions found for the selected period'}
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = `
+        <div class="stats-grid">
+            ${workers.map(worker => `
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-value">${formatCurrency(worker.totalDeduction)}</div>
+                    <div class="stat-label">${worker.workerName}</div>
+                    <div style="font-size: 12px; color: var(--muted-foreground); margin-top: 8px;">
+                        ${worker.deductionCount} ${appData.language === 'ar' ? 'خصم' : 'deductions'}
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="showWorkerDeductionDetails(${worker.workerName}, ${JSON.stringify(worker.deductions).replace(/"/g, '&quot;')})" style="margin-top: 8px;">
+                        ${appData.language === 'ar' ? 'التفاصيل' : 'Details'}
+                    </button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Show worker deduction details
+function showWorkerDeductionDetails(workerName, deductions) {
+    const deductionList = typeof deductions === 'string' ? JSON.parse(deductions.replace(/&quot;/g, '"')) : deductions;
+    
+    const details = deductionList.map(d => 
+        `${new Date(d.date).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US')}: ${formatCurrency(d.amount)} (${d.reason})`
+    ).join('\n');
+    
+    const message = `${appData.language === 'ar' ? 'تفاصيل خصومات' : 'Deduction Details'} - ${workerName}\n\n${details}`;
+    alert(message);
+}
+
+// Show attendance summary
+function showAttendanceSummary() {
+    const currentMonth = new Date().toISOString().substring(0, 7);
+    const monthlyAttendance = appData.attendance.filter(a => a.date.startsWith(currentMonth));
+    
+    if (monthlyAttendance.length === 0) {
+        alert(appData.language === 'ar' ? 'لا توجد سجلات حضور للشهر الحالي' : 'No attendance records for current month');
+        return;
+    }
+    
+    const workerStats = {};
+    monthlyAttendance.forEach(attendance => {
+        if (!workerStats[attendance.workerId]) {
+            workerStats[attendance.workerId] = {
+                name: attendance.workerName,
+                present: 0,
+                late: 0,
+                absent: 0,
+                halfDay: 0,
+                totalDeductions: 0
+            };
+        }
+        
+        workerStats[attendance.workerId][attendance.status.replace('-', '')]++;
+        workerStats[attendance.workerId].totalDeductions += attendance.deduction;
+    });
+    
+    const summary = Object.values(workerStats).map(worker => 
+        `${worker.name}: ${appData.language === 'ar' ? 'حاضر' : 'Present'} ${worker.present}, ${appData.language === 'ar' ? 'متأخر' : 'Late'} ${worker.late}, ${appData.language === 'ar' ? 'غائب' : 'Absent'} ${worker.absent}, ${appData.language === 'ar' ? 'نصف يوم' : 'Half Day'} ${worker.halfday || 0}\n${appData.language === 'ar' ? 'إجمالي الخصومات' : 'Total Deductions'}: ${formatCurrency(worker.totalDeductions)}`
+    ).join('\n\n');
+    
+    alert(`${appData.language === 'ar' ? 'ملخص الحضور الشهري' : 'Monthly Attendance Summary'}\n\n${summary}`);
+}
+
+// Generate payroll report
+function generatePayrollReport() {
+    const currentMonth = new Date().toISOString().substring(0, 7);
+    const monthlyAttendance = appData.attendance.filter(a => a.date.startsWith(currentMonth));
+    
+    const payrollData = {};
+    
+    // Initialize with all workers
+    appData.workers.forEach(worker => {
+        payrollData[worker.id] = {
+            name: worker.name,
+            baseSalary: worker.monthlySalary,
+            totalDeductions: 0,
+            workingDays: 0,
+            finalSalary: worker.monthlySalary
+        };
+    });
+    
+    // Calculate deductions and working days
+    monthlyAttendance.forEach(attendance => {
+        if (payrollData[attendance.workerId]) {
+            payrollData[attendance.workerId].totalDeductions += attendance.deduction;
+            if (attendance.status === 'present' || attendance.status === 'late') {
+                payrollData[attendance.workerId].workingDays++;
+            } else if (attendance.status === 'half-day') {
+                payrollData[attendance.workerId].workingDays += 0.5;
+            }
+        }
+    });
+    
+    // Calculate final salaries
+    Object.values(payrollData).forEach(worker => {
+        worker.finalSalary = worker.baseSalary - worker.totalDeductions;
+    });
+    
+    const reportLines = Object.values(payrollData).map(worker => 
+        `${worker.name}: ${appData.language === 'ar' ? 'الراتب الأساسي' : 'Base Salary'} ${formatCurrency(worker.baseSalary)} - ${appData.language === 'ar' ? 'الخصومات' : 'Deductions'} ${formatCurrency(worker.totalDeductions)} = ${appData.language === 'ar' ? 'الراتب النهائي' : 'Final Salary'} ${formatCurrency(worker.finalSalary)}\n${appData.language === 'ar' ? 'أيام العمل' : 'Working Days'}: ${worker.workingDays}`
+    );
+    
+    const totalSalaries = Object.values(payrollData).reduce((sum, worker) => sum + worker.finalSalary, 0);
+    const totalDeductions = Object.values(payrollData).reduce((sum, worker) => sum + worker.totalDeductions, 0);
+    
+    const report = `${appData.language === 'ar' ? 'تقرير الرواتب الشهري' : 'Monthly Payroll Report'}\n${appData.language === 'ar' ? 'الشهر' : 'Month'}: ${new Date(currentMonth + '-01').toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US', { year: 'numeric', month: 'long' })}\n\n${reportLines.join('\n\n')}\n\n${'='.repeat(50)}\n${appData.language === 'ar' ? 'إجمالي الرواتب' : 'Total Salaries'}: ${formatCurrency(totalSalaries)}\n${appData.language === 'ar' ? 'إجمالي الخصومات' : 'Total Deductions'}: ${formatCurrency(totalDeductions)}`;
+    
+    alert(report);
+    showSuccessMessage(appData.language === 'ar' ? 'تم إنشاء تقرير الرواتب بنجاح' : 'Payroll report generated successfully');
 }
 
 // Event listeners
