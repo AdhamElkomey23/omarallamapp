@@ -458,17 +458,25 @@
         /* Language toggle */
         .language-toggle {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            bottom: 20px;
+            right: 20px;
             z-index: 1001;
             background: var(--primary);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(139, 90, 60, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .language-toggle:hover {
+            background: var(--primary-600);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 90, 60, 0.4);
         }
         
         /* Success message */
@@ -511,6 +519,306 @@
             font-size: 32px;
             font-weight: 700;
             color: var(--foreground);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+            border: 1px solid var(--primary-200);
+            border-radius: 16px;
+            padding: 48px 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23E0CFC5" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            background: var(--primary);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 8px 24px rgba(139, 90, 60, 0.2);
+        }
+        
+        .hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-800);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--primary-600);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        
+        .hero-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 90, 60, 0.3);
+        }
+        
+        .hero-button:hover {
+            background: var(--primary-600);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 90, 60, 0.4);
+        }
+        
+        /* Quick Overview */
+        .quick-overview {
+            margin-bottom: 40px;
+        }
+        
+        .overview-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--foreground);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .overview-card {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .overview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-200);
+        }
+        
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-400) 100%);
+        }
+        
+        .overview-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .overview-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--foreground);
+            margin-bottom: 8px;
+        }
+        
+        .overview-label {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            font-weight: 500;
+        }
+        
+        /* Main Features */
+        .main-features {
+            margin-bottom: 40px;
+        }
+        
+        .features-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--foreground);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .feature-card {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-300);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 12px;
+        }
+        
+        .feature-description {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .feature-button {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Dashboard Time Filter */
+        .time-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .time-filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--background);
+            color: var(--muted-foreground);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .time-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .time-filter-btn:hover {
+            border-color: var(--primary-300);
+        }
+        
+        /* Dashboard Charts */
+        .chart-container {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 20px;
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: var(--gray-50);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted-foreground);
+            font-size: 14px;
+        }
+        
+        /* Top Products */
+        .top-products {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            color: var(--foreground);
+        }
+        
+        .product-sales {
+            font-weight: 600;
+            color: var(--primary);
         }
         
         /* English styles */
@@ -647,32 +955,87 @@
             <div class="content-area">
                 <!-- Home Page -->
                 <div id="home" class="page active">
-                    <div class="card">
-                        <div class="card-header">
-                            <h1 class="card-title" data-ar="مرحباً بك في نظام إدارة مصنع الأسمدة" data-en="Welcome to Fertilizer Factory Management System">مرحباً بك في نظام إدارة مصنع الأسمدة</h1>
-                            <p style="color: var(--muted-foreground);" data-ar="نظام شامل لإدارة عمليات المصنع والمبيعات والمخزون" data-en="Comprehensive system for managing factory operations, sales, and inventory">نظام شامل لإدارة عمليات المصنع والمبيعات والمخزون</p>
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <div class="hero-logo">🏭</div>
+                            <h1 class="hero-title" data-ar="الواصلون للتعدين والصناعات الكيميائية" data-en="Al-Wasiloon Mining and Chemical Industries">الواصلون للتعدين والصناعات الكيميائية</h1>
+                            <p class="hero-subtitle" data-ar="نظام إدارة شامل ومتطور لمصانع الأسمدة والصناعات الكيميائية" data-en="Advanced comprehensive management system for fertilizer factories and chemical industries">نظام إدارة شامل ومتطور لمصانع الأسمدة والصناعات الكيميائية</p>
+                            <button class="hero-button" onclick="showPage('dashboard')" data-ar="انتقل إلى لوحة التحكم" data-en="Go to Dashboard">انتقل إلى لوحة التحكم</button>
                         </div>
-                        
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">📊</div>
-                                <h3 data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</h3>
-                                <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="عرض الإحصائيات والبيانات المالية" data-en="View statistics and financial data">عرض الإحصائيات والبيانات المالية</p>
-                                <button class="btn btn-primary" onclick="showPage('dashboard')" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                    </div>
+                    
+                    <!-- Quick Overview -->
+                    <div class="quick-overview">
+                        <h2 class="overview-title" data-ar="نظرة عامة سريعة" data-en="Quick Overview">نظرة عامة سريعة</h2>
+                        <div class="overview-grid">
+                            <div class="overview-card">
+                                <div class="overview-icon">💰</div>
+                                <div class="overview-value" id="home-total-income">0</div>
+                                <div class="overview-label" data-ar="إجمالي الإيرادات" data-en="Total Income">إجمالي الإيرادات</div>
+                            </div>
+                            <div class="overview-card">
+                                <div class="overview-icon">💸</div>
+                                <div class="overview-value" id="home-total-expenses">0</div>
+                                <div class="overview-label" data-ar="إجمالي المصروفات" data-en="Total Expenses">إجمالي المصروفات</div>
+                            </div>
+                            <div class="overview-card">
+                                <div class="overview-icon">📈</div>
+                                <div class="overview-value" id="home-net-profit">0</div>
+                                <div class="overview-label" data-ar="صافي الربح" data-en="Net Profit">صافي الربح</div>
+                            </div>
+                            <div class="overview-card">
+                                <div class="overview-icon">📦</div>
+                                <div class="overview-value" id="home-total-products">0</div>
+                                <div class="overview-label" data-ar="إجمالي المنتجات" data-en="Total Products">إجمالي المنتجات</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Features -->
+                    <div class="main-features">
+                        <h2 class="features-title" data-ar="الميزات الرئيسية" data-en="Main Features">الميزات الرئيسية</h2>
+                        <div class="features-grid">
+                            <div class="feature-card" onclick="showPage('dashboard')">
+                                <span class="feature-icon">📊</span>
+                                <h3 class="feature-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</h3>
+                                <p class="feature-description" data-ar="عرض الإحصائيات المالية والتقارير التفصيلية مع تحليلات زمنية متقدمة" data-en="View financial statistics and detailed reports with advanced time analytics">عرض الإحصائيات المالية والتقارير التفصيلية مع تحليلات زمنية متقدمة</p>
+                                <button class="feature-button" data-ar="عرض اللوحة" data-en="View Dashboard">عرض اللوحة</button>
                             </div>
                             
-                            <div class="stat-card">
-                                <div class="stat-icon">🛒</div>
-                                <h3 data-ar="المبيعات" data-en="Sales">المبيعات</h3>
-                                <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="إدارة المبيعات والعملاء" data-en="Manage sales and customers">إدارة المبيعات والعملاء</p>
-                                <button class="btn btn-primary" onclick="showPage('sales')" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                            <div class="feature-card" onclick="showPage('sales')">
+                                <span class="feature-icon">🛒</span>
+                                <h3 class="feature-title" data-ar="إدارة المبيعات" data-en="Sales Management">إدارة المبيعات</h3>
+                                <p class="feature-description" data-ar="تتبع المبيعات وإدارة العملاء مع إمكانية إضافة وتعديل السجلات" data-en="Track sales and manage customers with ability to add and edit records">تتبع المبيعات وإدارة العملاء مع إمكانية إضافة وتعديل السجلات</p>
+                                <button class="feature-button" data-ar="إدارة المبيعات" data-en="Manage Sales">إدارة المبيعات</button>
                             </div>
                             
-                            <div class="stat-card">
-                                <div class="stat-icon">📦</div>
-                                <h3 data-ar="المخزون" data-en="Storage">المخزون</h3>
-                                <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="إدارة المواد الخام والمنتجات" data-en="Manage raw materials and products">إدارة المواد الخام والمنتجات</p>
-                                <button class="btn btn-primary" onclick="showPage('storage')" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                            <div class="feature-card" onclick="showPage('expenses')">
+                                <span class="feature-icon">💰</span>
+                                <h3 class="feature-title" data-ar="إدارة المصروفات" data-en="Expense Management">إدارة المصروفات</h3>
+                                <p class="feature-description" data-ar="تتبع جميع المصروفات وتصنيفها حسب الفئات لمراقبة أفضل للتكاليف" data-en="Track all expenses and categorize them for better cost monitoring">تتبع جميع المصروفات وتصنيفها حسب الفئات لمراقبة أفضل للتكاليف</p>
+                                <button class="feature-button" data-ar="إدارة المصروفات" data-en="Manage Expenses">إدارة المصروفات</button>
+                            </div>
+                            
+                            <div class="feature-card" onclick="showPage('workers')">
+                                <span class="feature-icon">👥</span>
+                                <h3 class="feature-title" data-ar="إدارة العمال" data-en="Workers Management">إدارة العمال</h3>
+                                <p class="feature-description" data-ar="إدارة بيانات الموظفين والأقسام مع تتبع الرواتب والمعلومات الشخصية" data-en="Manage employee data and departments with salary tracking and personal information">إدارة بيانات الموظفين والأقسام مع تتبع الرواتب والمعلومات الشخصية</p>
+                                <button class="feature-button" data-ar="إدارة العمال" data-en="Manage Workers">إدارة العمال</button>
+                            </div>
+                            
+                            <div class="feature-card" onclick="showPage('storage')">
+                                <span class="feature-icon">📦</span>
+                                <h3 class="feature-title" data-ar="إدارة المخزون" data-en="Storage Management">إدارة المخزون</h3>
+                                <p class="feature-description" data-ar="تتبع المواد الخام والمنتجات مع إدارة الموردين والأسعار" data-en="Track raw materials and products with supplier and price management">تتبع المواد الخام والمنتجات مع إدارة الموردين والأسعار</p>
+                                <button class="feature-button" data-ar="إدارة المخزون" data-en="Manage Storage">إدارة المخزون</button>
+                            </div>
+                            
+                            <div class="feature-card" onclick="showPage('reports')">
+                                <span class="feature-icon">📈</span>
+                                <h3 class="feature-title" data-ar="التقارير والتحليلات" data-en="Reports & Analytics">التقارير والتحليلات</h3>
+                                <p class="feature-description" data-ar="تقارير شاملة وتحليلات متقدمة لاتخاذ قرارات أعمال مدروسة" data-en="Comprehensive reports and advanced analytics for informed business decisions">تقارير شاملة وتحليلات متقدمة لاتخاذ قرارات أعمال مدروسة</p>
+                                <button class="feature-button" data-ar="عرض التقارير" data-en="View Reports">عرض التقارير</button>
                             </div>
                         </div>
                     </div>
@@ -684,6 +1047,15 @@
                         <h1 class="page-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</h1>
                     </div>
                     
+                    <!-- Time Filter -->
+                    <div class="time-filter">
+                        <button class="time-filter-btn active" onclick="setTimeFilter('7')" data-period="7" data-ar="7 أيام" data-en="7 Days">7 أيام</button>
+                        <button class="time-filter-btn" onclick="setTimeFilter('30')" data-period="30" data-ar="30 يوم" data-en="30 Days">30 يوم</button>
+                        <button class="time-filter-btn" onclick="setTimeFilter('90')" data-period="90" data-ar="90 يوم" data-en="90 Days">90 يوم</button>
+                        <button class="time-filter-btn" onclick="setTimeFilter('365')" data-period="365" data-ar="سنة واحدة" data-en="1 Year">سنة واحدة</button>
+                    </div>
+                    
+                    <!-- Main Stats -->
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon">💰</div>
@@ -704,6 +1076,42 @@
                             <div class="stat-icon">👥</div>
                             <div class="stat-value" id="total-workers">0</div>
                             <div class="stat-label" data-ar="إجمالي العمال" data-en="Total Workers">إجمالي العمال</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+                        <!-- Sales Overview Chart -->
+                        <div class="chart-container">
+                            <h3 class="chart-title" data-ar="نظرة عامة على المبيعات" data-en="Sales Overview">نظرة عامة على المبيعات</h3>
+                            <div class="chart-placeholder" data-ar="رسم بياني للمبيعات - سيتم تطويره قريباً" data-en="Sales Chart - Coming Soon">رسم بياني للمبيعات - سيتم تطويره قريباً</div>
+                        </div>
+                        
+                        <!-- Top Products -->
+                        <div class="top-products">
+                            <h3 class="chart-title" data-ar="أفضل المنتجات مبيعاً" data-en="Top Selling Products">أفضل المنتجات مبيعاً</h3>
+                            <div id="top-products-list">
+                                <!-- Dynamic content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Analytics -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <!-- Expense Categories -->
+                        <div class="chart-container">
+                            <h3 class="chart-title" data-ar="المصروفات حسب الفئة" data-en="Expenses by Category">المصروفات حسب الفئة</h3>
+                            <div id="expense-categories-chart">
+                                <!-- Dynamic content will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Activity -->
+                        <div class="chart-container">
+                            <h3 class="chart-title" data-ar="النشاط الأخير" data-en="Recent Activity">النشاط الأخير</h3>
+                            <div id="recent-activity-list">
+                                <!-- Dynamic content will be populated here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -882,29 +1290,106 @@
                 <!-- Reports Page -->
                 <div id="reports" class="page">
                     <div class="page-header">
-                        <h1 class="page-title" data-ar="التقارير" data-en="Reports">التقارير</h1>
+                        <h1 class="page-title" data-ar="التقارير والتحليلات" data-en="Reports & Analytics">التقارير والتحليلات</h1>
+                        <button class="btn btn-primary" onclick="generateFullReport()">
+                            <span>📄</span>
+                            <span data-ar="إنشاء تقرير شامل" data-en="Generate Full Report">إنشاء تقرير شامل</span>
+                        </button>
                     </div>
                     
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">📊</div>
-                            <h3 data-ar="تقرير المبيعات" data-en="Sales Report">تقرير المبيعات</h3>
-                            <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="تقرير شامل عن المبيعات" data-en="Comprehensive sales report">تقرير شامل عن المبيعات</p>
-                            <button class="btn btn-primary" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                    <!-- Report Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" data-ar="ملخص الأداء المالي" data-en="Financial Performance Summary">ملخص الأداء المالي</h2>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-value" id="report-total-sales">0</div>
+                                <div class="stat-label" data-ar="إجمالي المبيعات" data-en="Total Sales">إجمالي المبيعات</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💸</div>
+                                <div class="stat-value" id="report-total-expenses">0</div>
+                                <div class="stat-label" data-ar="إجمالي المصروفات" data-en="Total Expenses">إجمالي المصروفات</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value" id="report-profit-margin">0%</div>
+                                <div class="stat-label" data-ar="هامش الربح" data-en="Profit Margin">هامش الربح</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-value" id="report-avg-sale">0</div>
+                                <div class="stat-label" data-ar="متوسط البيع" data-en="Average Sale">متوسط البيع</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Reports -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                        <!-- Sales Analysis -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title" data-ar="تحليل المبيعات" data-en="Sales Analysis">تحليل المبيعات</h3>
+                            </div>
+                            <div id="sales-analysis-content">
+                                <!-- Dynamic content -->
+                            </div>
                         </div>
                         
-                        <div class="stat-card">
-                            <div class="stat-icon">💰</div>
-                            <h3 data-ar="تقرير المصروفات" data-en="Expenses Report">تقرير المصروفات</h3>
-                            <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="تقرير شامل عن المصروفات" data-en="Comprehensive expenses report">تقرير شامل عن المصروفات</p>
-                            <button class="btn btn-primary" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                        <!-- Expense Breakdown -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title" data-ar="تفصيل المصروفات" data-en="Expense Breakdown">تفصيل المصروفات</h3>
+                            </div>
+                            <div id="expense-breakdown-content">
+                                <!-- Dynamic content -->
+                            </div>
                         </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">📦</div>
-                            <h3 data-ar="تقرير المخزون" data-en="Inventory Report">تقرير المخزون</h3>
-                            <p style="color: var(--muted-foreground); font-size: 14px;" data-ar="تقرير شامل عن المخزون" data-en="Comprehensive inventory report">تقرير شامل عن المخزون</p>
-                            <button class="btn btn-primary" style="margin-top: 12px;" data-ar="عرض" data-en="View">عرض</button>
+                    </div>
+                    
+                    <!-- Storage Report -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" data-ar="تقرير المخزون" data-en="Storage Report">تقرير المخزون</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-ar="المادة" data-en="Material">المادة</th>
+                                        <th data-ar="الكمية الإجمالية" data-en="Total Quantity">الكمية الإجمالية</th>
+                                        <th data-ar="القيمة الإجمالية" data-en="Total Value">القيمة الإجمالية</th>
+                                        <th data-ar="متوسط السعر" data-en="Average Price">متوسط السعر</th>
+                                        <th data-ar="عدد الموردين" data-en="Suppliers Count">عدد الموردين</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="storage-report-table">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Workers Report -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" data-ar="تقرير العمال" data-en="Workers Report">تقرير العمال</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div>
+                                <h4 style="margin-bottom: 16px;" data-ar="التوزيع حسب القسم" data-en="Distribution by Department">التوزيع حسب القسم</h4>
+                                <div id="workers-by-department">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 16px;" data-ar="إحصائيات الرواتب" data-en="Salary Statistics">إحصائيات الرواتب</h4>
+                                <div id="salary-statistics">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

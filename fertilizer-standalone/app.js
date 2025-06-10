@@ -8,7 +8,8 @@ let appData = {
     workers: JSON.parse(localStorage.getItem('al-wasiloon-workers') || '[]'),
     storage: JSON.parse(localStorage.getItem('al-wasiloon-storage') || '[]'),
     activities: JSON.parse(localStorage.getItem('al-wasiloon-activities') || '[]'),
-    language: localStorage.getItem('al-wasiloon-language') || 'ar'
+    language: localStorage.getItem('al-wasiloon-language') || 'ar',
+    currentTimeFilter: 7 // Default to 7 days
 };
 
 // Translation data
@@ -183,8 +184,12 @@ function showPage(pageId) {
     
     // Initialize page-specific functionality
     switch(pageId) {
+        case 'home':
+            updateHomeOverview();
+            break;
         case 'dashboard':
             updateDashboard();
+            updateDashboardAnalytics();
             break;
         case 'sales':
             updateSalesTable();
@@ -200,6 +205,9 @@ function showPage(pageId) {
             break;
         case 'activity-logs':
             updateActivitiesTable();
+            break;
+        case 'reports':
+            updateReportsPage();
             break;
     }
 }
@@ -922,6 +930,396 @@ function updateAllDisplays() {
     updateStorageDisplay();
     updateActivitiesTable();
     updateDashboard();
+    updateHomeOverview();
+    updateDashboardAnalytics();
+    updateReportsPage();
+}
+
+// Home page overview
+function updateHomeOverview() {
+    const totalIncome = appData.sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+    const totalExpenses = appData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const profit = totalIncome - totalExpenses;
+    const totalProducts = getUniqueProducts().length;
+    
+    updateElement('home-total-income', formatCurrency(totalIncome));
+    updateElement('home-total-expenses', formatCurrency(totalExpenses));
+    updateElement('home-net-profit', formatCurrency(profit));
+    updateElement('home-total-products', totalProducts.toString());
+}
+
+// Dashboard time filter
+function setTimeFilter(days) {
+    appData.currentTimeFilter = parseInt(days);
+    
+    // Update active filter button
+    document.querySelectorAll('.time-filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.period === days) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update dashboard with filtered data
+    updateDashboard();
+    updateDashboardAnalytics();
+}
+
+// Get filtered data based on time range
+function getFilteredData(dataArray, dateField) {
+    if (!appData.currentTimeFilter) return dataArray;
+    
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - appData.currentTimeFilter);
+    
+    return dataArray.filter(item => {
+        const itemDate = new Date(item[dateField]);
+        return itemDate >= cutoffDate;
+    });
+}
+
+// Enhanced dashboard with time filtering
+function updateDashboard() {
+    const filteredSales = getFilteredData(appData.sales, 'saleDate');
+    const filteredExpenses = getFilteredData(appData.expenses, 'expenseDate');
+    
+    const totalIncome = filteredSales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+    const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const profit = totalIncome - totalExpenses;
+    const totalWorkers = appData.workers.length;
+    
+    updateElement('total-income', formatCurrency(totalIncome));
+    updateElement('total-expenses', formatCurrency(totalExpenses));
+    updateElement('profit', formatCurrency(profit));
+    updateElement('total-workers', totalWorkers.toString());
+}
+
+// Dashboard analytics
+function updateDashboardAnalytics() {
+    updateTopProducts();
+    updateExpenseCategories();
+    updateRecentActivity();
+}
+
+// Top products analysis
+function updateTopProducts() {
+    const filteredSales = getFilteredData(appData.sales, 'saleDate');
+    const productSales = {};
+    
+    filteredSales.forEach(sale => {
+        if (!productSales[sale.productName]) {
+            productSales[sale.productName] = {
+                quantity: 0,
+                revenue: 0,
+                sales: 0
+            };
+        }
+        productSales[sale.productName].quantity += sale.quantity;
+        productSales[sale.productName].revenue += sale.totalAmount;
+        productSales[sale.productName].sales += 1;
+    });
+    
+    const topProducts = Object.entries(productSales)
+        .map(([name, data]) => ({ name, ...data }))
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5);
+    
+    const container = document.getElementById('top-products-list');
+    if (container) {
+        container.innerHTML = topProducts.length > 0 
+            ? topProducts.map(product => `
+                <div class="product-item">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-sales">${formatCurrency(product.revenue)}</div>
+                </div>
+            `).join('')
+            : `<div class="product-item"><div style="color: var(--muted-foreground); text-align: center;">${appData.language === 'ar' ? 'لا توجد بيانات' : 'No data available'}</div></div>`;
+    }
+}
+
+// Expense categories analysis
+function updateExpenseCategories() {
+    const filteredExpenses = getFilteredData(appData.expenses, 'expenseDate');
+    const categoryTotals = {};
+    
+    filteredExpenses.forEach(expense => {
+        if (!categoryTotals[expense.category]) {
+            categoryTotals[expense.category] = 0;
+        }
+        categoryTotals[expense.category] += expense.amount;
+    });
+    
+    const container = document.getElementById('expense-categories-chart');
+    if (container) {
+        const categories = Object.entries(categoryTotals)
+            .sort(([,a], [,b]) => b - a);
+        
+        container.innerHTML = categories.length > 0
+            ? categories.map(([category, amount]) => `
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                    <span>${getCategoryName(category)}</span>
+                    <span style="font-weight: 600; color: var(--primary);">${formatCurrency(amount)}</span>
+                </div>
+            `).join('')
+            : `<div style="color: var(--muted-foreground); text-align: center; padding: 20px;">${appData.language === 'ar' ? 'لا توجد بيانات' : 'No data available'}</div>`;
+    }
+}
+
+// Recent activity
+function updateRecentActivity() {
+    const allActivities = [
+        ...appData.sales.map(sale => ({
+            type: 'sale',
+            description: `${appData.language === 'ar' ? 'بيع' : 'Sale'}: ${sale.productName}`,
+            amount: sale.totalAmount,
+            date: new Date(sale.saleDate)
+        })),
+        ...appData.expenses.map(expense => ({
+            type: 'expense',
+            description: `${appData.language === 'ar' ? 'مصروف' : 'Expense'}: ${expense.name}`,
+            amount: expense.amount,
+            date: new Date(expense.expenseDate)
+        }))
+    ].sort((a, b) => b.date - a.date).slice(0, 5);
+    
+    const container = document.getElementById('recent-activity-list');
+    if (container) {
+        container.innerHTML = allActivities.length > 0
+            ? allActivities.map(activity => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 500; font-size: 14px;">${activity.description}</div>
+                        <div style="font-size: 12px; color: var(--muted-foreground);">${activity.date.toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US')}</div>
+                    </div>
+                    <div style="font-weight: 600; color: ${activity.type === 'sale' ? 'var(--success-500)' : 'var(--destructive-500)'};">
+                        ${activity.type === 'sale' ? '+' : '-'}${formatCurrency(activity.amount)}
+                    </div>
+                </div>
+            `).join('')
+            : `<div style="color: var(--muted-foreground); text-align: center; padding: 20px;">${appData.language === 'ar' ? 'لا توجد أنشطة حديثة' : 'No recent activity'}</div>`;
+    }
+}
+
+// Reports page functionality
+function updateReportsPage() {
+    updateReportSummary();
+    updateSalesAnalysis();
+    updateExpenseBreakdown();
+    updateStorageReport();
+    updateWorkersReport();
+}
+
+// Report summary
+function updateReportSummary() {
+    const totalSales = appData.sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+    const totalExpenses = appData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const profitMargin = totalSales > 0 ? ((totalSales - totalExpenses) / totalSales * 100) : 0;
+    const avgSale = appData.sales.length > 0 ? totalSales / appData.sales.length : 0;
+    
+    updateElement('report-total-sales', formatCurrency(totalSales));
+    updateElement('report-total-expenses', formatCurrency(totalExpenses));
+    updateElement('report-profit-margin', profitMargin.toFixed(1) + '%');
+    updateElement('report-avg-sale', formatCurrency(avgSale));
+}
+
+// Sales analysis for reports
+function updateSalesAnalysis() {
+    const salesByMonth = {};
+    const productPerformance = {};
+    
+    appData.sales.forEach(sale => {
+        const monthKey = new Date(sale.saleDate).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US', { year: 'numeric', month: 'long' });
+        
+        if (!salesByMonth[monthKey]) salesByMonth[monthKey] = 0;
+        salesByMonth[monthKey] += sale.totalAmount;
+        
+        if (!productPerformance[sale.productName]) {
+            productPerformance[sale.productName] = { count: 0, revenue: 0 };
+        }
+        productPerformance[sale.productName].count += 1;
+        productPerformance[sale.productName].revenue += sale.totalAmount;
+    });
+    
+    const container = document.getElementById('sales-analysis-content');
+    if (container) {
+        const topMonth = Object.entries(salesByMonth).sort(([,a], [,b]) => b - a)[0];
+        const topProduct = Object.entries(productPerformance).sort(([,a], [,b]) => b.revenue - a.revenue)[0];
+        
+        container.innerHTML = `
+            <div style="padding: 16px 0;">
+                <div style="margin-bottom: 16px;">
+                    <strong>${appData.language === 'ar' ? 'أفضل شهر:' : 'Best Month:'}</strong>
+                    <div style="color: var(--muted-foreground);">${topMonth ? `${topMonth[0]} - ${formatCurrency(topMonth[1])}` : (appData.language === 'ar' ? 'لا توجد بيانات' : 'No data')}</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <strong>${appData.language === 'ar' ? 'أفضل منتج:' : 'Best Product:'}</strong>
+                    <div style="color: var(--muted-foreground);">${topProduct ? `${topProduct[0]} - ${formatCurrency(topProduct[1].revenue)}` : (appData.language === 'ar' ? 'لا توجد بيانات' : 'No data')}</div>
+                </div>
+                <div>
+                    <strong>${appData.language === 'ar' ? 'إجمالي المعاملات:' : 'Total Transactions:'}</strong>
+                    <div style="color: var(--muted-foreground);">${appData.sales.length}</div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Expense breakdown for reports
+function updateExpenseBreakdown() {
+    const expensesByCategory = {};
+    const monthlyExpenses = {};
+    
+    appData.expenses.forEach(expense => {
+        if (!expensesByCategory[expense.category]) expensesByCategory[expense.category] = 0;
+        expensesByCategory[expense.category] += expense.amount;
+        
+        const monthKey = new Date(expense.expenseDate).toLocaleDateString(appData.language === 'ar' ? 'ar-EG' : 'en-US', { year: 'numeric', month: 'long' });
+        if (!monthlyExpenses[monthKey]) monthlyExpenses[monthKey] = 0;
+        monthlyExpenses[monthKey] += expense.amount;
+    });
+    
+    const container = document.getElementById('expense-breakdown-content');
+    if (container) {
+        const topCategory = Object.entries(expensesByCategory).sort(([,a], [,b]) => b - a)[0];
+        const avgMonthly = Object.values(monthlyExpenses).length > 0 
+            ? Object.values(monthlyExpenses).reduce((a, b) => a + b, 0) / Object.values(monthlyExpenses).length 
+            : 0;
+        
+        container.innerHTML = `
+            <div style="padding: 16px 0;">
+                <div style="margin-bottom: 16px;">
+                    <strong>${appData.language === 'ar' ? 'أعلى فئة مصروفات:' : 'Top Expense Category:'}</strong>
+                    <div style="color: var(--muted-foreground);">${topCategory ? `${getCategoryName(topCategory[0])} - ${formatCurrency(topCategory[1])}` : (appData.language === 'ar' ? 'لا توجد بيانات' : 'No data')}</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <strong>${appData.language === 'ar' ? 'متوسط المصروفات الشهرية:' : 'Average Monthly Expenses:'}</strong>
+                    <div style="color: var(--muted-foreground);">${formatCurrency(avgMonthly)}</div>
+                </div>
+                <div>
+                    <strong>${appData.language === 'ar' ? 'إجمالي المعاملات:' : 'Total Transactions:'}</strong>
+                    <div style="color: var(--muted-foreground);">${appData.expenses.length}</div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Storage report
+function updateStorageReport() {
+    const materialStats = {};
+    
+    MATERIALS.forEach(material => {
+        const materialItems = appData.storage.filter(item => item.itemName === material);
+        const totalQuantity = materialItems.reduce((sum, item) => sum + item.quantityInTons, 0);
+        const totalValue = materialItems.reduce((sum, item) => sum + (item.quantityInTons * item.purchasePricePerTon), 0);
+        const avgPrice = totalQuantity > 0 ? totalValue / totalQuantity : 0;
+        const suppliers = [...new Set(materialItems.map(item => item.dealerName))].length;
+        
+        if (materialItems.length > 0) {
+            materialStats[material] = {
+                quantity: totalQuantity,
+                value: totalValue,
+                avgPrice,
+                suppliers
+            };
+        }
+    });
+    
+    const tbody = document.getElementById('storage-report-table');
+    if (tbody) {
+        tbody.innerHTML = Object.entries(materialStats).map(([material, stats]) => `
+            <tr>
+                <td>${appData.language === 'ar' ? material : getMaterialEnglishName(material)}</td>
+                <td>${stats.quantity.toLocaleString()} ${appData.language === 'ar' ? 'طن' : 'tons'}</td>
+                <td>${formatCurrency(stats.value)}</td>
+                <td>${formatCurrency(stats.avgPrice)}</td>
+                <td>${stats.suppliers}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// Workers report
+function updateWorkersReport() {
+    // Workers by department
+    const departmentCounts = {};
+    const salaryStats = {
+        total: 0,
+        min: Infinity,
+        max: 0,
+        avg: 0
+    };
+    
+    appData.workers.forEach(worker => {
+        if (!departmentCounts[worker.department]) departmentCounts[worker.department] = 0;
+        departmentCounts[worker.department]++;
+        
+        salaryStats.total += worker.monthlySalary;
+        salaryStats.min = Math.min(salaryStats.min, worker.monthlySalary);
+        salaryStats.max = Math.max(salaryStats.max, worker.monthlySalary);
+    });
+    
+    salaryStats.avg = appData.workers.length > 0 ? salaryStats.total / appData.workers.length : 0;
+    if (appData.workers.length === 0) salaryStats.min = 0;
+    
+    // Update departments
+    const deptContainer = document.getElementById('workers-by-department');
+    if (deptContainer) {
+        deptContainer.innerHTML = Object.entries(departmentCounts).map(([dept, count]) => `
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <span>${getDepartmentName(dept)}</span>
+                <span style="font-weight: 600;">${count}</span>
+            </div>
+        `).join('');
+    }
+    
+    // Update salary stats
+    const salaryContainer = document.getElementById('salary-statistics');
+    if (salaryContainer) {
+        salaryContainer.innerHTML = `
+            <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <strong>${appData.language === 'ar' ? 'إجمالي الرواتب:' : 'Total Salaries:'}</strong>
+                <div style="color: var(--muted-foreground);">${formatCurrency(salaryStats.total)}</div>
+            </div>
+            <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <strong>${appData.language === 'ar' ? 'متوسط الراتب:' : 'Average Salary:'}</strong>
+                <div style="color: var(--muted-foreground);">${formatCurrency(salaryStats.avg)}</div>
+            </div>
+            <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                <strong>${appData.language === 'ar' ? 'أعلى راتب:' : 'Highest Salary:'}</strong>
+                <div style="color: var(--muted-foreground);">${formatCurrency(salaryStats.max)}</div>
+            </div>
+            <div style="padding: 8px 0;">
+                <strong>${appData.language === 'ar' ? 'أقل راتب:' : 'Lowest Salary:'}</strong>
+                <div style="color: var(--muted-foreground);">${formatCurrency(salaryStats.min)}</div>
+            </div>
+        `;
+    }
+}
+
+// Generate full report
+function generateFullReport() {
+    const reportData = {
+        summary: {
+            totalSales: appData.sales.reduce((sum, sale) => sum + sale.totalAmount, 0),
+            totalExpenses: appData.expenses.reduce((sum, expense) => sum + expense.amount, 0),
+            totalWorkers: appData.workers.length,
+            totalStorageValue: appData.storage.reduce((sum, item) => sum + (item.quantityInTons * item.purchasePricePerTon), 0)
+        },
+        timestamp: new Date().toLocaleString(appData.language === 'ar' ? 'ar-EG' : 'en-US')
+    };
+    
+    const message = appData.language === 'ar' 
+        ? `تم إنشاء التقرير الشامل بنجاح!\n\nإجمالي المبيعات: ${formatCurrency(reportData.summary.totalSales)}\nإجمالي المصروفات: ${formatCurrency(reportData.summary.totalExpenses)}\nصافي الربح: ${formatCurrency(reportData.summary.totalSales - reportData.summary.totalExpenses)}\n\nتاريخ التقرير: ${reportData.timestamp}`
+        : `Full report generated successfully!\n\nTotal Sales: ${formatCurrency(reportData.summary.totalSales)}\nTotal Expenses: ${formatCurrency(reportData.summary.totalExpenses)}\nNet Profit: ${formatCurrency(reportData.summary.totalSales - reportData.summary.totalExpenses)}\n\nReport Date: ${reportData.timestamp}`;
+    
+    showSuccessMessage(appData.language === 'ar' ? 'تم إنشاء التقرير بنجاح' : 'Report generated successfully');
+    alert(message);
+}
+
+// Get unique products
+function getUniqueProducts() {
+    return [...new Set(appData.sales.map(sale => sale.productName))];
 }
 
 // Event listeners
