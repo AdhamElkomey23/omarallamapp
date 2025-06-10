@@ -53,6 +53,12 @@
             --brown-500: #8b5a3c;
             --brown-600: #7c4a2f;
             --brown-700: #6d3f26;
+            --green-100: #dcfce7;
+            --green-300: #86efac;
+            --blue-100: #dbeafe;
+            --blue-300: #93c5fd;
+            --red-100: #fee2e2;
+            --red-300: #fca5a5;
         }
 
         * {
@@ -453,6 +459,229 @@
             background: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Sales Page Styles */
+        .sales-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .sales-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .record-sale-btn {
+            background: var(--brown-600);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .record-sale-btn:hover {
+            background: var(--brown-700);
+            transform: translateY(-1px);
+        }
+
+        .sales-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .sales-stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--success-500);
+        }
+
+        .products-section,
+        .recent-sales-section {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 8px 0;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin: 0 0 20px 0;
+        }
+
+        .product-filter {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .product-filter label {
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: white;
+            min-width: 200px;
+        }
+
+        .filter-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .export-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .sales-table-container {
+            margin-top: 20px;
+        }
+
+        .sales-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sales-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sales-item-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 4px 0;
+        }
+
+        .sale-details {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin: 0 0 4px 0;
+        }
+
+        .client-name {
+            font-size: 14px;
+            color: var(--blue-600);
+            margin: 0;
+        }
+
+        .sales-item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .sale-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success-600);
+        }
+
+        .sale-price {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-icon {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-icon.edit-btn:hover {
+            background: var(--blue-100);
+            border-color: var(--blue-300);
+        }
+
+        .btn-icon.copy-btn:hover {
+            background: var(--green-100);
+            border-color: var(--green-300);
+        }
+
+        .btn-icon.delete-btn:hover {
+            background: var(--red-100);
+            border-color: var(--red-300);
         }
 
         /* Hero Section */
@@ -1024,21 +1253,21 @@
                                 <span class="stat-label" data-key="totalIncome">إجمالي الإيرادات</span>
                                 <span class="stat-icon">📈</span>
                             </div>
-                            <div class="stat-value income" id="total-income">EGP 169,100.00</div>
+                            <div class="stat-value income" id="total-income">ليس رقم ج.م</div>
                         </div>
                         <div class="stat-card expenses">
                             <div class="stat-header">
                                 <span class="stat-label" data-key="totalExpenses">إجمالي المصروفات</span>
                                 <span class="stat-icon">💰</span>
                             </div>
-                            <div class="stat-value expenses" id="total-expenses">EGP 120,000.00</div>
+                            <div class="stat-value expenses" id="total-expenses">ج.م ١٢٠،٠٠٠</div>
                         </div>
                         <div class="stat-card profit">
                             <div class="stat-header">
                                 <span class="stat-label" data-key="netProfit">صافي الربح</span>
                                 <span class="stat-icon">🎯</span>
                             </div>
-                            <div class="stat-value profit" id="net-profit">EGP 49,100.00</div>
+                            <div class="stat-value profit" id="net-profit">ليس رقم ج.م</div>
                         </div>
                         <div class="stat-card products">
                             <div class="stat-header">
@@ -1129,63 +1358,83 @@
 
             <!-- Sales Page -->
             <div id="sales" class="page">
-                <h2 class="page-title" data-key="salesManagement">إدارة المبيعات</h2>
-                
-                <!-- Add Sale Form -->
-                <div class="card">
-                    <h3 class="card-title" data-key="addNewSale">إضافة بيع جديد</h3>
-                    <form id="sales-form" class="form-grid">
-                        <div class="form-field">
-                            <label data-key="productName">اسم المنتج</label>
-                            <input type="text" id="sale-product" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="quantity">الكمية</label>
-                            <input type="number" id="sale-quantity" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="totalAmount">المبلغ الإجمالي</label>
-                            <input type="number" id="sale-amount" step="0.01" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="saleDate">تاريخ البيع</label>
-                            <input type="date" id="sale-date" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="clientName">اسم العميل</label>
-                            <input type="text" id="sale-client" required>
-                        </div>
-                        <div class="form-field">
-                            <label data-key="clientContact">بيانات الاتصال</label>
-                            <input type="text" id="sale-contact">
-                        </div>
-                        <div class="form-field">
-                            <button type="submit" class="btn btn-primary">
-                                <span data-key="addSale">إضافة البيع</span>
-                            </button>
-                        </div>
-                    </form>
+                <!-- Sales Header -->
+                <div class="sales-header">
+                    <h1 class="sales-title" data-key="sales">Sales</h1>
+                    <button class="btn btn-primary record-sale-btn">
+                        <span>+</span>
+                        <span data-key="recordSale">Record Sale</span>
+                    </button>
                 </div>
 
-                <!-- Sales Table -->
-                <div class="card">
-                    <h3 class="card-title" data-key="salesList">قائمة المبيعات</h3>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th data-key="productName">اسم المنتج</th>
-                                    <th data-key="quantity">الكمية</th>
-                                    <th data-key="totalAmount">المبلغ</th>
-                                    <th data-key="saleDate">التاريخ</th>
-                                    <th data-key="clientName">العميل</th>
-                                    <th data-key="actions">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sales-table">
-                                <!-- Sales data will be populated here -->
-                            </tbody>
-                        </table>
+                <!-- Sales Stats -->
+                <div class="sales-stats-grid">
+                    <div class="sales-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="totalRevenue">إجمالي الإيرادات</span>
+                            <span class="stat-icon">📈</span>
+                        </div>
+                        <div class="stat-value">$169100.00</div>
+                    </div>
+                    <div class="sales-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="totalSales">Total Sales</span>
+                            <span class="stat-icon">📊</span>
+                        </div>
+                        <div class="stat-value">5</div>
+                    </div>
+                    <div class="sales-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label" data-key="unitsSold">الوحدات المباعة</span>
+                            <span class="stat-icon">📦</span>
+                        </div>
+                        <div class="stat-value">78</div>
+                    </div>
+                </div>
+
+                <!-- Products Filter Section -->
+                <div class="products-section">
+                    <h3 class="section-title" data-key="products">المنتجات</h3>
+                    <p class="section-subtitle" data-key="sortProductsByBest">ترتيب المنتجات حسب الأفضل</p>
+                    
+                    <div class="product-filter">
+                        <label data-key="product">Product</label>
+                        <select id="product-filter" class="filter-select">
+                            <option value="all" data-key="allProducts">جميع المنتجات</option>
+                        </select>
+                        <button class="filter-btn" data-key="filterProducts">تصح المنتجات</button>
+                    </div>
+                </div>
+
+                <!-- Recent Sales Section -->
+                <div class="recent-sales-section">
+                    <div class="section-header">
+                        <h3 class="section-title" data-key="recentSales">المبيعات الأخيرة</h3>
+                        <button class="export-btn">
+                            <span>📥</span>
+                            <span data-key="exportAllSales">تصدير جميع المبيعات</span>
+                        </button>
+                    </div>
+                    <p class="section-subtitle" data-key="lastSalesIn30Days">آخر المبيعات خلال ٣٠ يوم</p>
+                    
+                    <!-- Sales Table -->
+                    <div class="sales-table-container">
+                        <div class="sales-item">
+                            <div class="sales-item-info">
+                                <h4 class="product-name">Ammonium Nitrate</h4>
+                                <p class="sale-details">Quantity: 20 • Jun 08, 2025</p>
+                                <p class="client-name" data-key="client">عميل: Green Valley Farms</p>
+                            </div>
+                            <div class="sales-item-actions">
+                                <div class="sale-amount">$50000.00</div>
+                                <div class="sale-price" data-key="pricePerUnit">$2500.00 ثمن كل وحدة</div>
+                                <div class="action-buttons">
+                                    <button class="btn-icon edit-btn">✏️</button>
+                                    <button class="btn-icon copy-btn">📋</button>
+                                    <button class="btn-icon delete-btn">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
