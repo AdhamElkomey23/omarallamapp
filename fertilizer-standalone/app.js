@@ -9,6 +9,7 @@ let appData = {
     storage: JSON.parse(localStorage.getItem('al-wasiloon-storage') || '[]'),
     activities: JSON.parse(localStorage.getItem('al-wasiloon-activities') || '[]'),
     attendance: JSON.parse(localStorage.getItem('al-wasiloon-attendance') || '[]'),
+    salaryDeductions: JSON.parse(localStorage.getItem('al-wasiloon-salary-deductions') || '[]'),
     language: localStorage.getItem('al-wasiloon-language') || 'ar',
     currentTimeFilter: 7 // Default to 7 days
 };
@@ -201,8 +202,11 @@ function showPage(pageId) {
         case 'workers':
             updateWorkersTable();
             updateAttendanceTable();
+            updateSalaryDeductionsTable();
             updateDeductionsSummary();
             populateAttendanceWorkerOptions();
+            populateDeductionWorkerDropdown();
+            populateDeductionMonthFilter();
             setCurrentDate();
             break;
         case 'storage':
@@ -497,6 +501,16 @@ function editExpense(id) {
     form.dataset.editId = id;
     
     showModal('add-expense-modal');
+}
+
+function deleteExpense(id) {
+    if (!confirm(translations[appData.language].deleteConfirm)) return;
+    
+    appData.expenses = appData.expenses.filter(item => item.id !== id);
+    localStorage.setItem('al-wasiloon-expenses', JSON.stringify(appData.expenses));
+    updateExpensesTable();
+    updateDashboard();
+    showSuccessMessage(translations[appData.language].deleteSuccess);
 }
 
 function deleteExpense(id) {
@@ -1845,326 +1859,7 @@ function generateInvoiceHTML(data) {
     const dir = isArabic ? 'rtl' : 'ltr';
     const align = isArabic ? 'right' : 'left';
     
-    return `
-<!DOCTYPE html>
-<html dir="${dir}" lang="${data.language}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${isArabic ? 'فاتورة رقم' : 'Invoice'} ${data.invoice.number}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            direction: ${dir};
-            background: #fff;
-        }
-        
-        .invoice-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 40px;
-            background: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        
-        .invoice-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #8B5A3C;
-        }
-        
-        .company-info {
-            flex: 1;
-        }
-        
-        .company-logo {
-            width: 80px;
-            height: 80px;
-            background: #8B5A3C;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-        
-        .company-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #8B5A3C;
-            margin-bottom: 5px;
-        }
-        
-        .company-details {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.4;
-        }
-        
-        .invoice-title {
-            text-align: ${isArabic ? 'left' : 'right'};
-            flex: 1;
-        }
-        
-        .invoice-title h1 {
-            font-size: 36px;
-            color: #8B5A3C;
-            margin-bottom: 10px;
-        }
-        
-        .invoice-number {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .invoice-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .bill-to, .invoice-details {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #8B5A3C;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: #555;
-        }
-        
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .items-table th {
-            background: #8B5A3C;
-            color: white;
-            padding: 15px;
-            text-align: ${align};
-            font-weight: 600;
-        }
-        
-        .items-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            text-align: ${align};
-        }
-        
-        .items-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .financial-summary {
-            margin-left: auto;
-            margin-right: ${isArabic ? 'auto' : '0'};
-            width: 300px;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 5px 0;
-        }
-        
-        .summary-row.total {
-            border-top: 2px solid #8B5A3C;
-            margin-top: 15px;
-            padding-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #8B5A3C;
-        }
-        
-        .invoice-footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-        }
-        
-        .terms {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
-        }
-        
-        @media print {
-            body { margin: 0; }
-            .invoice-container { 
-                max-width: none; 
-                margin: 0; 
-                padding: 20px; 
-                box-shadow: none; 
-            }
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            background: #22c55e;
-            color: white;
-            text-transform: uppercase;
-        }
-    </style>
-</head>
-<body>
-    <div class="invoice-container">
-        <!-- Invoice Header -->
-        <div class="invoice-header">
-            <div class="company-info">
-                <div class="company-logo">🏭</div>
-                <div class="company-name">${isArabic ? data.company.nameAr : data.company.nameEn}</div>
-                <div class="company-details">
-                    ${isArabic ? data.company.addressAr : data.company.addressEn}<br>
-                    ${isArabic ? 'هاتف' : 'Phone'}: ${data.company.phone}<br>
-                    ${isArabic ? 'بريد إلكتروني' : 'Email'}: ${data.company.email}<br>
-                    ${isArabic ? 'الموقع الإلكتروني' : 'Website'}: ${data.company.website}
-                </div>
-            </div>
-            <div class="invoice-title">
-                <h1>${isArabic ? 'فاتورة' : 'INVOICE'}</h1>
-                <div class="invoice-number">${data.invoice.number}</div>
-                <div class="status-badge">${isArabic ? 'مدفوعة' : 'PAID'}</div>
-            </div>
-        </div>
-        
-        <!-- Invoice Meta Information -->
-        <div class="invoice-meta">
-            <div class="bill-to">
-                <div class="section-title">${isArabic ? 'فاتورة إلى' : 'Bill To'}</div>
-                <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">${data.customer.name}</div>
-                ${data.customer.contact ? `<div>${isArabic ? 'جهة الاتصال' : 'Contact'}: ${data.customer.contact}</div>` : ''}
-                ${data.customer.address ? `<div>${data.customer.address}</div>` : ''}
-            </div>
-            
-            <div class="invoice-details">
-                <div class="section-title">${isArabic ? 'تفاصيل الفاتورة' : 'Invoice Details'}</div>
-                <div class="detail-row">
-                    <span class="detail-label">${isArabic ? 'تاريخ الفاتورة:' : 'Invoice Date:'}</span>
-                    <span>${data.invoice.date}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">${isArabic ? 'تاريخ الاستحقاق:' : 'Due Date:'}</span>
-                    <span>${data.invoice.dueDate}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">${isArabic ? 'العملة:' : 'Currency:'}</span>
-                    <span>${data.invoice.currency}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">${isArabic ? 'رقم السجل التجاري:' : 'CR Number:'}</span>
-                    <span>${data.company.crNumber}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">${isArabic ? 'الرقم الضريبي:' : 'VAT Number:'}</span>
-                    <span>${data.company.vatNumber}</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Items Table -->
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th>${isArabic ? 'الوصف' : 'Description'}</th>
-                    <th>${isArabic ? 'الكمية' : 'Quantity'}</th>
-                    <th>${isArabic ? 'الوحدة' : 'Unit'}</th>
-                    <th>${isArabic ? 'سعر الوحدة' : 'Unit Price'}</th>
-                    <th>${isArabic ? 'المجموع' : 'Total'}</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${data.items.map(item => `
-                    <tr>
-                        <td>${item.description}</td>
-                        <td>${item.quantity.toLocaleString()}</td>
-                        <td>${item.unit}</td>
-                        <td>${formatCurrency(item.unitPrice)}</td>
-                        <td>${formatCurrency(item.totalPrice)}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-        
-        <!-- Financial Summary -->
-        <div class="financial-summary">
-            <div class="summary-row">
-                <span>${isArabic ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
-                <span>${formatCurrency(data.financial.subtotal)}</span>
-            </div>
-            <div class="summary-row">
-                <span>${isArabic ? 'ضريبة القيمة المضافة' : 'VAT'} (${(data.financial.vatRate * 100).toFixed(0)}%):</span>
-                <span>${formatCurrency(data.financial.vatAmount)}</span>
-            </div>
-            <div class="summary-row total">
-                <span>${isArabic ? 'المجموع الإجمالي:' : 'Total Amount:'}</span>
-                <span>${formatCurrency(data.financial.totalAmount)}</span>
-            </div>
-        </div>
-        
-        <!-- Terms and Conditions -->
-        <div class="terms">
-            <div class="section-title">${isArabic ? 'الشروط والأحكام' : 'Terms & Conditions'}</div>
-            <p>${isArabic ? 'جميع المبيعات نهائية. يرجى الدفع خلال 30 يوماً من تاريخ الفاتورة.' : 'All sales are final. Payment is due within 30 days of invoice date.'}</p>
-            <p>${isArabic ? 'في حالة التأخير في السداد، ستطبق رسوم إضافية بنسبة 1.5% شهرياً.' : 'Late payments will incur a 1.5% monthly service charge.'}</p>
-        </div>
-        
-        <!-- Invoice Footer -->
-        <div class="invoice-footer">
-            <p>${isArabic ? 'شكراً لتعاملكم معنا!' : 'Thank you for your business!'}</p>
-            <p>${isArabic ? 'هذه الفاتورة تم إنشاؤها إلكترونياً وهي صالحة بدون توقيع' : 'This invoice was generated electronically and is valid without signature'}</p>
-        </div>
-    </div>
-</body>
-</html>`;
+    return 'Invoice HTML generation temporarily disabled';
 }
 
 // Event listeners
@@ -2175,6 +1870,271 @@ document.addEventListener('click', function(event) {
         closeModal(modalId);
     }
 });
+
+// ========== SALARY DEDUCTION SYSTEM ==========
+
+// Handle salary deduction form submission
+function handleSalaryDeductionSubmit(event) {
+    event.preventDefault();
+    
+    const formData = {
+        workerId: parseInt(document.getElementById('deduction-worker-id').value),
+        month: document.getElementById('deduction-month').value,
+        amount: parseFloat(document.getElementById('deduction-amount').value) || 0,
+        reason: document.getElementById('deduction-reason').value,
+        details: document.getElementById('deduction-details').value.trim(),
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    if (!formData.workerId || !formData.month || !formData.amount || !formData.reason) {
+        showErrorMessage(translations[appData.language].fillRequired);
+        return;
+    }
+    
+    // Check if deduction already exists for this worker and month
+    const existingDeduction = appData.salaryDeductions.find(d => 
+        d.workerId === formData.workerId && d.month === formData.month
+    );
+    
+    if (existingDeduction) {
+        if (!confirm(appData.language === 'ar' ? 
+            'يوجد بالفعل خصم لهذا العامل في هذا الشهر. هل تريد إضافة خصم إضافي؟' :
+            'A deduction already exists for this worker in this month. Do you want to add an additional deduction?')) {
+            return;
+        }
+    }
+    
+    // Add new salary deduction
+    formData.id = Date.now();
+    formData.createdAt = new Date().toISOString();
+    appData.salaryDeductions.push(formData);
+    
+    // Save to localStorage
+    localStorage.setItem('al-wasiloon-salary-deductions', JSON.stringify(appData.salaryDeductions));
+    
+    // Update tables and close modal
+    updateSalaryDeductionsTable();
+    updateDeductionsSummary();
+    closeModal('salary-deduction-modal');
+    
+    // Reset form
+    document.getElementById('deduction-worker-id').value = '';
+    document.getElementById('deduction-month').value = '';
+    document.getElementById('deduction-amount').value = '';
+    document.getElementById('deduction-reason').value = '';
+    document.getElementById('deduction-details').value = '';
+    
+    showSuccessMessage(appData.language === 'ar' ? 'تم إضافة خصم الراتب بنجاح' : 'Salary deduction added successfully');
+}
+
+// Update salary deductions table
+function updateSalaryDeductionsTable() {
+    const tbody = document.getElementById('salary-deductions-table-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    appData.salaryDeductions.forEach(deduction => {
+        const worker = appData.workers.find(w => w.id === deduction.workerId);
+        const workerName = worker ? worker.fullName : 'Unknown Worker';
+        
+        const monthName = new Date(deduction.month + '-01').toLocaleDateString(
+            appData.language === 'ar' ? 'ar-SA' : 'en-US', 
+            { year: 'numeric', month: 'long' }
+        );
+        
+        const reasonText = getDeductionReasonText(deduction.reason);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${workerName}</td>
+            <td>${monthName}</td>
+            <td>${formatCurrency(deduction.amount)}</td>
+            <td>${reasonText}</td>
+            <td>${new Date(deduction.date).toLocaleDateString(appData.language === 'ar' ? 'ar-SA' : 'en-US')}</td>
+            <td>
+                <button class="btn btn-secondary" onclick="editSalaryDeduction(${deduction.id})" style="margin-left: 8px;">
+                    ✏️ ${translations[appData.language].edit}
+                </button>
+                <button class="btn btn-destructive" onclick="deleteSalaryDeduction(${deduction.id})">
+                    🗑️ ${translations[appData.language].delete}
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Get deduction reason text in current language
+function getDeductionReasonText(reason) {
+    const reasons = {
+        ar: {
+            absence: 'غياب',
+            late: 'تأخير',
+            advance: 'سلفة',
+            penalty: 'مخالفة',
+            insurance: 'تأمين',
+            other: 'أخرى'
+        },
+        en: {
+            absence: 'Absence',
+            late: 'Lateness',
+            advance: 'Advance Payment',
+            penalty: 'Penalty',
+            insurance: 'Insurance',
+            other: 'Other'
+        }
+    };
+    return reasons[appData.language][reason] || reason;
+}
+
+// Delete salary deduction
+function deleteSalaryDeduction(id) {
+    if (!confirm(translations[appData.language].deleteConfirm)) return;
+    
+    appData.salaryDeductions = appData.salaryDeductions.filter(item => item.id !== id);
+    localStorage.setItem('al-wasiloon-salary-deductions', JSON.stringify(appData.salaryDeductions));
+    updateSalaryDeductionsTable();
+    updateDeductionsSummary();
+    showSuccessMessage(translations[appData.language].deleteSuccess);
+}
+
+// Edit salary deduction
+function editSalaryDeduction(id) {
+    const deduction = appData.salaryDeductions.find(item => item.id === id);
+    if (!deduction) return;
+    
+    document.getElementById('deduction-worker-id').value = deduction.workerId;
+    document.getElementById('deduction-month').value = deduction.month;
+    document.getElementById('deduction-amount').value = deduction.amount;
+    document.getElementById('deduction-reason').value = deduction.reason;
+    document.getElementById('deduction-details').value = deduction.details || '';
+    
+    // Store edit ID for form submission
+    const form = document.querySelector('#salary-deduction-modal form');
+    form.dataset.editId = id;
+    
+    showModal('salary-deduction-modal');
+}
+
+// Update deductions summary
+function updateDeductionsSummary() {
+    const summaryDiv = document.getElementById('deductions-summary');
+    if (!summaryDiv) return;
+    
+    const selectedMonth = document.getElementById('deduction-month-filter')?.value || '';
+    let filteredDeductions = appData.salaryDeductions;
+    
+    if (selectedMonth) {
+        filteredDeductions = filteredDeductions.filter(d => d.month === selectedMonth);
+    }
+    
+    // Group deductions by worker
+    const workerDeductions = {};
+    filteredDeductions.forEach(deduction => {
+        if (!workerDeductions[deduction.workerId]) {
+            workerDeductions[deduction.workerId] = {
+                worker: appData.workers.find(w => w.id === deduction.workerId),
+                totalDeduction: 0,
+                deductions: []
+            };
+        }
+        workerDeductions[deduction.workerId].totalDeduction += deduction.amount;
+        workerDeductions[deduction.workerId].deductions.push(deduction);
+    });
+    
+    if (Object.keys(workerDeductions).length === 0) {
+        summaryDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <span data-ar="لا توجد خصومات للفترة المحددة" data-en="No deductions found for the selected period">
+                    ${appData.language === 'ar' ? 'لا توجد خصومات للفترة المحددة' : 'No deductions found for the selected period'}
+                </span>
+            </div>
+        `;
+        return;
+    }
+    
+    let summaryHTML = '<div class="deductions-summary-grid">';
+    
+    Object.values(workerDeductions).forEach(data => {
+        const worker = data.worker;
+        if (!worker) return;
+        
+        summaryHTML += `
+            <div class="deduction-summary-card">
+                <div class="worker-info">
+                    <h4>${worker.fullName}</h4>
+                    <p>${worker.position} - ${getDepartmentName(worker.department)}</p>
+                    <p>${appData.language === 'ar' ? 'الراتب الأساسي' : 'Base Salary'}: ${formatCurrency(worker.monthlySalary)}</p>
+                </div>
+                <div class="deduction-info">
+                    <div class="total-deduction">
+                        <span class="deduction-label">${appData.language === 'ar' ? 'إجمالي الخصومات' : 'Total Deductions'}:</span>
+                        <span class="deduction-amount text-red">${formatCurrency(data.totalDeduction)}</span>
+                    </div>
+                    <div class="final-salary">
+                        <span class="salary-label">${appData.language === 'ar' ? 'الراتب النهائي' : 'Final Salary'}:</span>
+                        <span class="salary-amount">${formatCurrency(worker.monthlySalary - data.totalDeduction)}</span>
+                    </div>
+                    <div class="deduction-details">
+                        ${data.deductions.map(d => `
+                            <div class="deduction-item">
+                                <span>${getDeductionReasonText(d.reason)}: ${formatCurrency(d.amount)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    summaryHTML += '</div>';
+    summaryDiv.innerHTML = summaryHTML;
+}
+
+// Populate worker dropdowns for salary deduction modal
+function populateDeductionWorkerDropdown() {
+    const select = document.getElementById('deduction-worker-id');
+    if (!select) return;
+    
+    // Clear existing options except the first one
+    while (select.children.length > 1) {
+        select.removeChild(select.lastChild);
+    }
+    
+    appData.workers.forEach(worker => {
+        const option = document.createElement('option');
+        option.value = worker.id;
+        option.textContent = `${worker.fullName} - ${worker.position}`;
+        select.appendChild(option);
+    });
+}
+
+// Populate month filter dropdown
+function populateDeductionMonthFilter() {
+    const select = document.getElementById('deduction-month-filter');
+    if (!select) return;
+    
+    // Get unique months from salary deductions
+    const months = [...new Set(appData.salaryDeductions.map(d => d.month))];
+    months.sort((a, b) => new Date(b + '-01') - new Date(a + '-01')); // Sort by newest first
+    
+    // Clear existing options except the first one
+    while (select.children.length > 1) {
+        select.removeChild(select.lastChild);
+    }
+    
+    months.forEach(month => {
+        const option = document.createElement('option');
+        option.value = month;
+        const monthName = new Date(month + '-01').toLocaleDateString(
+            appData.language === 'ar' ? 'ar-SA' : 'en-US', 
+            { year: 'numeric', month: 'long' }
+        );
+        option.textContent = monthName;
+        select.appendChild(option);
+    });
+}
 
 // Initialize when page loads
 if (document.readyState === 'loading') {
