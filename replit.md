@@ -144,3 +144,13 @@ The application is configured for deployment on Replit with:
 5. `npm run db:push`: Updates the database schema using Drizzle Kit
 
 For local development, ensure the DATABASE_URL environment variable is set correctly. The application will automatically connect to the database and serve both the API and frontend application.
+
+## Recent Changes: Latest modifications with dates
+
+### July 24, 2025 - MAJOR: PHP + MySQL Backend Conversion
+- **COMPLETED**: Full backend conversion from Node.js/Express to PHP + MySQL
+- **Created**: Complete PHP API with all 6 endpoints (workers, attendance, salary-deductions, sales, expenses, dashboard)
+- **Database**: MySQL schema with all tables and relationships
+- **Deployment**: Hostinger-ready configuration with Apache .htaccess and CORS
+- **Maintained**: All existing features including salary deduction system, delete functionality, Arabic/English support
+- **Ready**: Production deployment package for Hostinger shared hosting
