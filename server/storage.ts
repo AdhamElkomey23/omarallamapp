@@ -7,6 +7,7 @@ import {
   workers,
   storageItems,
   workerAttendance,
+  salaryDeductions,
   type Product, 
   type InsertProduct,
   type Sale,
@@ -23,6 +24,8 @@ import {
   type InsertStorageItem,
   type WorkerAttendance,
   type InsertWorkerAttendance,
+  type SalaryDeduction,
+  type InsertSalaryDeduction,
   type DateRangeFilter
 } from "@shared/schema";
 
@@ -102,6 +105,12 @@ export interface IStorage {
     totalOvertimeHours: number;
     salaryDeductions: number;
   }>;
+
+  // Salary Deductions
+  getAllSalaryDeductions(workerId?: number, month?: string): Promise<SalaryDeduction[]>;
+  createSalaryDeduction(deduction: InsertSalaryDeduction): Promise<SalaryDeduction>;
+  updateSalaryDeduction(id: number, deduction: Partial<InsertSalaryDeduction>): Promise<SalaryDeduction | undefined>;
+  deleteSalaryDeduction(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -113,6 +122,7 @@ export class MemStorage implements IStorage {
   private workers: Map<number, Worker>;
   private storageItems: Map<number, StorageItem>;
   private workerAttendance: Map<number, WorkerAttendance>;
+  private salaryDeductions: Map<number, SalaryDeduction>;
   
   private userCounter: number;
   private productCounter: number;
@@ -122,6 +132,7 @@ export class MemStorage implements IStorage {
   private workerCounter: number;
   private storageItemCounter: number;
   private attendanceCounter: number;
+  private salaryDeductionCounter: number;
 
   constructor() {
     // Initialize maps
@@ -133,6 +144,7 @@ export class MemStorage implements IStorage {
     this.workers = new Map();
     this.storageItems = new Map();
     this.workerAttendance = new Map();
+    this.salaryDeductions = new Map();
     
     // Initialize counters
     this.userCounter = 1;
@@ -143,6 +155,7 @@ export class MemStorage implements IStorage {
     this.workerCounter = 1;
     this.storageItemCounter = 1;
     this.attendanceCounter = 1;
+    this.salaryDeductionCounter = 1;
     
     // Load seed data
     this.loadSeedData();
@@ -910,9 +923,12 @@ export class MemStorage implements IStorage {
     
     // Calculate salary deductions (example: 1 day salary per absent day, 0.5 day for late)
     const worker = await this.getWorker(workerId);
-    const dailySalary = worker ? worker.salary / 30 : 0;
-    const salaryDeductions = (totalAbsent * dailySalary) + (totalLate * dailySalary * 0.5);
-    
+    let salaryDeductions = 0;
+    if (worker) {
+      const dailySalary = worker.salary / 30; // Assuming 30 working days per month
+      salaryDeductions = (totalAbsent * dailySalary) + (totalLate * dailySalary * 0.5);
+    }
+
     return {
       totalDaysWorked,
       totalAbsent,
@@ -921,6 +937,50 @@ export class MemStorage implements IStorage {
       totalOvertimeHours,
       salaryDeductions
     };
+  }
+
+  // Salary Deductions Methods
+  async getAllSalaryDeductions(workerId?: number, month?: string): Promise<SalaryDeduction[]> {
+    let deductions = Array.from(this.salaryDeductions.values());
+    
+    if (workerId) {
+      deductions = deductions.filter(d => d.workerId === workerId);
+    }
+    
+    if (month) {
+      deductions = deductions.filter(d => d.month === month);
+    }
+    
+    return deductions.sort((a, b) => new Date(b.deductionDate).getTime() - new Date(a.deductionDate).getTime());
+  }
+
+  async createSalaryDeduction(insertDeduction: InsertSalaryDeduction): Promise<SalaryDeduction> {
+    const id = this.salaryDeductionCounter++;
+    const deduction: SalaryDeduction = {
+      ...insertDeduction,
+      id,
+      createdAt: new Date()
+    };
+    
+    this.salaryDeductions.set(id, deduction);
+    return deduction;
+  }
+
+  async updateSalaryDeduction(id: number, deductionUpdate: Partial<InsertSalaryDeduction>): Promise<SalaryDeduction | undefined> {
+    const existing = this.salaryDeductions.get(id);
+    if (!existing) return undefined;
+    
+    const updated: SalaryDeduction = {
+      ...existing,
+      ...deductionUpdate
+    };
+    
+    this.salaryDeductions.set(id, updated);
+    return updated;
+  }
+
+  async deleteSalaryDeduction(id: number): Promise<boolean> {
+    return this.salaryDeductions.delete(id);
   }
 }
 

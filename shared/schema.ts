@@ -169,3 +169,19 @@ export const workerAttendance = pgTable("worker_attendance", {
 export const insertWorkerAttendanceSchema = createInsertSchema(workerAttendance).omit({ id: true, createdAt: true });
 export type InsertWorkerAttendance = z.infer<typeof insertWorkerAttendanceSchema>;
 export type WorkerAttendance = typeof workerAttendance.$inferSelect;
+
+// Salary Deductions Table
+export const salaryDeductions = pgTable("salary_deductions", {
+  id: serial("id").primaryKey(),
+  workerId: integer("worker_id").notNull(),
+  month: text("month").notNull(), // Format: "YYYY-MM"
+  amount: doublePrecision("amount").notNull(),
+  reason: text("reason").notNull(), // absence, late, advance, penalty, insurance, other
+  details: text("details"),
+  deductionDate: date("deduction_date").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertSalaryDeductionSchema = createInsertSchema(salaryDeductions).omit({ id: true, createdAt: true });
+export type InsertSalaryDeduction = z.infer<typeof insertSalaryDeductionSchema>;
+export type SalaryDeduction = typeof salaryDeductions.$inferSelect;

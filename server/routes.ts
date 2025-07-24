@@ -9,6 +9,7 @@ import {
   insertWorkerSchema,
   insertStorageItemSchema,
   insertWorkerAttendanceSchema,
+  insertSalaryDeductionSchema,
   dateRangeFilterSchema
 } from "@shared/schema";
 import { z } from "zod";
@@ -687,6 +688,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(summary);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch monthly summary" });
+    }
+  });
+
+  // Salary Deductions Routes
+  apiRouter.get("/salary-deductions", async (req, res) => {
+    try {
+      const workerId = req.query.workerId ? parseInt(req.query.workerId as string) : undefined;
+      const month = req.query.month as string;
+      
+      const deductions = await storage.getAllSalaryDeductions(workerId, month);
+      res.json(deductions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch salary deductions" });
+    }
+  });
+
+  apiRouter.post("/salary-deductions", async (req, res) => {
+    try {
+      const validatedData = insertSalaryDeductionSchema.parse(req.body);
+      const newDeduction = await storage.createSalaryDeduction(validatedData);
+      res.status(201).json(newDeduction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid salary deduction data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create salary deduction" });
+    }
+  });
+
+  apiRouter.put("/salary-deductions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid salary deduction ID" });
+      }
+
+      const validatedData = insertSalaryDeductionSchema.partial().parse(req.body);
+      const updatedDeduction = await storage.updateSalaryDeduction(id, validatedData);
+      
+      if (!updatedDeduction) {
+        return res.status(404).json({ message: "Salary deduction not found" });
+      }
+      
+      res.json(updatedDeduction);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid salary deduction data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update salary deduction" });
+    }
+  });
+
+  apiRouter.delete("/salary-deductions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid salary deduction ID" });
+      }
+
+      const success = await storage.deleteSalaryDeduction(id);
+      if (!success) {
+        return res.status(404).json({ message: "Salary deduction not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete salary deduction" });
     }
   });
 

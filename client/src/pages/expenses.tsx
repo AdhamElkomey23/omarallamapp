@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Plus, PieChart, Calendar } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, PieChart, Calendar, Trash2, Edit } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,6 +87,31 @@ export default function Expenses() {
       toast({
         title: "خطأ",
         description: "فشل في إضافة المصروف. يرجى المحاولة مرة أخرى.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const deleteExpenseMutation = useMutation({
+    mutationFn: async (expenseId: number) => {
+      const response = await fetch(`/api/expenses/${expenseId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete expense');
+      return response.status === 204 ? null : response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard'] });
+      toast({
+        title: "تم حذف المصروف",
+        description: "تم حذف المصروف بنجاح.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "خطأ",
+        description: "فشل في حذف المصروف. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     }
@@ -399,8 +425,38 @@ export default function Expenses() {
                       {expense.category} • {format(new Date(expense.expenseDate), "MMM dd, yyyy")}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-red-600">-${expense.amount.toFixed(2)}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right mr-4">
+                      <p className="font-bold text-red-600">-${expense.amount.toFixed(2)}</p>
+                    </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>حذف المصروف</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            هل أنت متأكد من حذف هذا المصروف؟ لا يمكن التراجع عن هذا الإجراء.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteExpenseMutation.mutate(expense.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            حذف المصروف
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}
