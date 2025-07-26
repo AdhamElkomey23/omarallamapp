@@ -86,8 +86,8 @@ try {
                 $data['department'],
                 $data['salary'],
                 $data['hireDate'],
-                $data['email'] ?? '',
-                $data['phone'] ?? '',
+                $data['email'] ?? null,
+                $data['phone'] ?? null,
                 $data['status'] ?? 'active'
             ]);
             

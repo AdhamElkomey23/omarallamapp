@@ -43,16 +43,15 @@ try {
             // Create new expense
             $data = json_decode(file_get_contents('php://input'), true);
             
-            $query = "INSERT INTO expenses (description, category, amount, expense_date, notes) 
-                     VALUES (?, ?, ?, ?, ?)";
+            $query = "INSERT INTO expenses (name, category, amount, expense_date) 
+                     VALUES (?, ?, ?, ?)";
             $stmt = $db->prepare($query);
             
             $result = $stmt->execute([
-                $data['description'],
+                $data['name'],
                 $data['category'],
                 $data['amount'],
-                $data['expenseDate'],
-                $data['notes'] ?? ''
+                $data['expenseDate']
             ]);
             
             if ($result) {
