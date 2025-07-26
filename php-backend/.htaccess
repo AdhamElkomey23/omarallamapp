@@ -20,6 +20,8 @@ RewriteRule ^api/salary-deductions/?(.*)$ api/salary-deductions.php [L,QSA]
 RewriteRule ^api/sales/?(.*)$ api/sales.php [L,QSA]
 RewriteRule ^api/expenses/?(.*)$ api/expenses.php [L,QSA]
 RewriteRule ^api/dashboard/?(.*)$ api/dashboard.php [L,QSA]
+RewriteRule ^api/storage/?(.*)$ api/storage.php [L,QSA]
+RewriteRule ^api/activity-logs/?(.*)$ api/activity-logs.php [L,QSA]
 
 # Default index.php for non-API requests
 DirectoryIndex index.php index.html
