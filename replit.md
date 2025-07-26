@@ -147,6 +147,13 @@ For local development, ensure the DATABASE_URL environment variable is set corre
 
 ## Recent Changes: Latest modifications with dates
 
+### July 26, 2025 - CRITICAL: Frontend Display Issue SOLVED
+- **DIAGNOSED**: Database works, data stores correctly, but frontend doesn't display stored data
+- **ROOT CAUSE**: PHP APIs returned snake_case field names, frontend expected camelCase
+- **FIXED**: All PHP API responses now convert to camelCase (item_name → itemName, etc.)
+- **UPDATED**: storage.php, activity-logs.php, sales.php, expenses.php field mapping
+- **RESULT**: Frontend now displays all stored database data immediately
+
 ### July 25, 2025 - MAJOR: Complete Hostinger Deployment Solution
 - **DIAGNOSED**: Missing database tables causing deployment failures (storage_items, activity_logs, products, users)
 - **CREATED**: Complete database schema with all 9 required tables and relationships

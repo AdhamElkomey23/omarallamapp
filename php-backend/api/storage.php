@@ -40,7 +40,18 @@ try {
                 $item = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($item) {
-                    echo json_encode($item);
+                    // Convert field names to camelCase for frontend compatibility
+                    $convertedItem = [
+                        'id' => (int)$item['id'],
+                        'itemName' => $item['item_name'],
+                        'quantityInTons' => (float)$item['quantity_in_tons'],
+                        'purchasePricePerTon' => (float)$item['purchase_price_per_ton'],
+                        'dealerName' => $item['dealer_name'],
+                        'dealerContact' => $item['dealer_contact'],
+                        'purchaseDate' => $item['purchase_date'],
+                        'createdAt' => $item['created_at']
+                    ];
+                    echo json_encode($convertedItem);
                 } else {
                     http_response_code(404);
                     echo json_encode(['message' => 'Storage item not found']);
@@ -49,7 +60,22 @@ try {
                 // Get all storage items
                 $stmt = $db->query("SELECT * FROM storage_items ORDER BY created_at DESC");
                 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                echo json_encode($items);
+                
+                // Convert field names to camelCase for frontend compatibility
+                $convertedItems = array_map(function($item) {
+                    return [
+                        'id' => (int)$item['id'],
+                        'itemName' => $item['item_name'],
+                        'quantityInTons' => (float)$item['quantity_in_tons'],
+                        'purchasePricePerTon' => (float)$item['purchase_price_per_ton'],
+                        'dealerName' => $item['dealer_name'],
+                        'dealerContact' => $item['dealer_contact'],
+                        'purchaseDate' => $item['purchase_date'],
+                        'createdAt' => $item['created_at']
+                    ];
+                }, $items);
+                
+                echo json_encode($convertedItems);
             }
             break;
 
@@ -119,8 +145,20 @@ try {
             $stmt->execute([$newId]);
             $newItem = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            // Convert field names to camelCase for frontend compatibility
+            $convertedNewItem = [
+                'id' => (int)$newItem['id'],
+                'itemName' => $newItem['item_name'],
+                'quantityInTons' => (float)$newItem['quantity_in_tons'],
+                'purchasePricePerTon' => (float)$newItem['purchase_price_per_ton'],
+                'dealerName' => $newItem['dealer_name'],
+                'dealerContact' => $newItem['dealer_contact'],
+                'purchaseDate' => $newItem['purchase_date'],
+                'createdAt' => $newItem['created_at']
+            ];
+            
             http_response_code(201);
-            echo json_encode($newItem);
+            echo json_encode($convertedNewItem);
             break;
 
         case 'PUT':
@@ -169,7 +207,18 @@ try {
             $updatedItem = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($updatedItem) {
-                echo json_encode($updatedItem);
+                // Convert field names to camelCase for frontend compatibility
+                $convertedUpdatedItem = [
+                    'id' => (int)$updatedItem['id'],
+                    'itemName' => $updatedItem['item_name'],
+                    'quantityInTons' => (float)$updatedItem['quantity_in_tons'],
+                    'purchasePricePerTon' => (float)$updatedItem['purchase_price_per_ton'],
+                    'dealerName' => $updatedItem['dealer_name'],
+                    'dealerContact' => $updatedItem['dealer_contact'],
+                    'purchaseDate' => $updatedItem['purchase_date'],
+                    'createdAt' => $updatedItem['created_at']
+                ];
+                echo json_encode($convertedUpdatedItem);
             } else {
                 http_response_code(404);
                 echo json_encode(['message' => 'Storage item not found']);

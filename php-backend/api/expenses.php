@@ -28,11 +28,10 @@ try {
             $result = array_map(function($expense) {
                 return [
                     'id' => (int)$expense['id'],
-                    'description' => $expense['description'],
+                    'name' => $expense['name'],
                     'category' => $expense['category'],
                     'amount' => (float)$expense['amount'],
                     'expenseDate' => $expense['expense_date'],
-                    'notes' => $expense['notes'],
                     'createdAt' => $expense['created_at']
                 ];
             }, $expenses);

@@ -28,13 +28,12 @@ try {
             $result = array_map(function($sale) {
                 return [
                     'id' => (int)$sale['id'],
-                    'customerName' => $sale['customer_name'],
-                    'product' => $sale['product'],
-                    'quantity' => (float)$sale['quantity'],
-                    'unitPrice' => (float)$sale['unit_price'],
+                    'productName' => $sale['product_name'],
+                    'quantity' => (int)$sale['quantity'],
                     'totalAmount' => (float)$sale['total_amount'],
                     'saleDate' => $sale['sale_date'],
-                    'notes' => $sale['notes'],
+                    'clientName' => $sale['client_name'],
+                    'clientContact' => $sale['client_contact'],
                     'createdAt' => $sale['created_at']
                 ];
             }, $sales);

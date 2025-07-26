@@ -58,7 +58,18 @@ try {
             $stmt->execute($params);
             $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            echo json_encode($logs);
+            // Convert field names to camelCase for frontend compatibility
+            $convertedLogs = array_map(function($log) {
+                return [
+                    'id' => (int)$log['id'],
+                    'title' => $log['title'],
+                    'description' => $log['description'],
+                    'logDate' => $log['log_date'],
+                    'createdAt' => $log['created_at']
+                ];
+            }, $logs);
+            
+            echo json_encode($convertedLogs);
             break;
 
         case 'POST':
@@ -92,8 +103,17 @@ try {
             $stmt->execute([$newId]);
             $newLog = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            // Convert field names to camelCase for frontend compatibility
+            $convertedNewLog = [
+                'id' => (int)$newLog['id'],
+                'title' => $newLog['title'],
+                'description' => $newLog['description'],
+                'logDate' => $newLog['log_date'],
+                'createdAt' => $newLog['created_at']
+            ];
+            
             http_response_code(201);
-            echo json_encode($newLog);
+            echo json_encode($convertedNewLog);
             break;
 
         case 'DELETE':
