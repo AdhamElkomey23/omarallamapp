@@ -1,0 +1,38 @@
+RewriteEngine On
+
+# Handle CORS for API requests
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+# Handle preflight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# API routes - redirect to PHP files
+RewriteRule ^api/dashboard/?$ api/dashboard.php [L]
+RewriteRule ^api/workers/?$ api/workers.php [L]
+RewriteRule ^api/attendance/?$ api/attendance.php [L]
+RewriteRule ^api/salary-deductions/?$ api/salary-deductions.php [L]
+RewriteRule ^api/sales/?$ api/sales.php [L]
+RewriteRule ^api/expenses/?$ api/expenses.php [L]
+RewriteRule ^api/storage/?$ api/storage.php [L]
+RewriteRule ^api/activity-logs/?$ api/activity-logs.php [L]
+
+# Frontend routes - all non-API routes go to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^(.*)$ index.html [L]
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# Cache static assets
+<filesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  Header append Cache-Control "public"
+</filesMatch>
