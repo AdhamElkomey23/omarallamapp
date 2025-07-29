@@ -13,123 +13,134 @@ require_once '../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit();
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
-$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
 
 try {
     switch($method) {
         case 'GET':
-            // Get salary deductions with optional month filter
-            $month = $_GET['month'] ?? null;
-            
-            $query = "SELECT sd.*, w.name as worker_name, w.role as worker_role 
+            // Get all salary deductions with worker names
+            $query = "SELECT sd.*, w.name as worker_name 
                      FROM salary_deductions sd 
-                     JOIN workers w ON sd.worker_id = w.id";
-            
-            $params = [];
-            if ($month) {
-                $query .= " WHERE sd.month = ?";
-                $params[] = $month;
-            }
-            
-            $query .= " ORDER BY sd.deduction_date DESC, w.name";
-            
+                     JOIN workers w ON sd.worker_id = w.id 
+                     ORDER BY sd.deduction_month DESC, w.name";
             $stmt = $db->prepare($query);
-            $stmt->execute($params);
+            $stmt->execute();
             $deductions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            $result = array_map(function($deduction) {
+            // Convert to camelCase for frontend
+            $formattedDeductions = array_map(function($deduction) {
                 return [
                     'id' => (int)$deduction['id'],
                     'workerId' => (int)$deduction['worker_id'],
                     'workerName' => $deduction['worker_name'],
-                    'workerRole' => $deduction['worker_role'],
-                    'month' => $deduction['month'],
-                    'amount' => (float)$deduction['amount'],
-                    'reason' => $deduction['reason'],
-                    'details' => $deduction['details'],
-                    'deductionDate' => $deduction['deduction_date'],
+                    'deductionMonth' => $deduction['deduction_month'],
+                    'deductionAmount' => (float)$deduction['deduction_amount'],
+                    'deductionType' => $deduction['deduction_type'],
+                    'description' => $deduction['description'] ?? '',
                     'createdAt' => $deduction['created_at']
                 ];
             }, $deductions);
             
-            echo json_encode($result);
+            echo json_encode($formattedDeductions);
             break;
             
         case 'POST':
-            // Create new salary deduction
-            $data = json_decode(file_get_contents('php://input'), true);
+            // Add new salary deduction
+            $input = json_decode(file_get_contents('php://input'), true);
             
-            $query = "INSERT INTO salary_deductions (worker_id, month, amount, reason, details, deduction_date) 
-                     VALUES (?, ?, ?, ?, ?, ?)";
+            if (!$input || !isset($input['workerId']) || !isset($input['deductionAmount']) || !isset($input['deductionType'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing required fields']);
+                exit();
+            }
+            
+            $query = "INSERT INTO salary_deductions (worker_id, deduction_month, deduction_amount, deduction_type, description) 
+                     VALUES (:worker_id, :deduction_month, :deduction_amount, :deduction_type, :description)";
+            
             $stmt = $db->prepare($query);
-            
             $result = $stmt->execute([
-                $data['workerId'],
-                $data['month'],
-                $data['amount'],
-                $data['reason'],
-                $data['details'] ?? '',
-                $data['deductionDate']
+                ':worker_id' => $input['workerId'],
+                ':deduction_month' => $input['deductionMonth'] ?? date('Y-m'),
+                ':deduction_amount' => $input['deductionAmount'],
+                ':deduction_type' => $input['deductionType'],
+                ':description' => $input['description'] ?? ''
             ]);
             
             if ($result) {
-                $id = $db->lastInsertId();
-                $response = array_merge($data, ['id' => (int)$id, 'createdAt' => date('Y-m-d H:i:s')]);
-                http_response_code(201);
-                echo json_encode($response);
+                $newId = $db->lastInsertId();
+                echo json_encode(['id' => $newId, 'message' => 'Salary deduction added successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to create salary deduction']);
+                throw new Exception('Failed to add salary deduction');
             }
             break;
             
         case 'PUT':
             // Update salary deduction
-            $id = ltrim($path_info, '/');
-            $data = json_decode(file_get_contents('php://input'), true);
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing deduction ID']);
+                exit();
+            }
             
             $query = "UPDATE salary_deductions SET 
-                     worker_id = ?, month = ?, amount = ?, reason = ?, 
-                     details = ?, deduction_date = ? WHERE id = ?";
-            $stmt = $db->prepare($query);
+                     deduction_month = :deduction_month, deduction_amount = :deduction_amount, 
+                     deduction_type = :deduction_type, description = :description
+                     WHERE id = :id";
             
+            $stmt = $db->prepare($query);
             $result = $stmt->execute([
-                $data['workerId'],
-                $data['month'],
-                $data['amount'],
-                $data['reason'],
-                $data['details'] ?? '',
-                $data['deductionDate'],
-                $id
+                ':id' => $input['id'],
+                ':deduction_month' => $input['deductionMonth'],
+                ':deduction_amount' => $input['deductionAmount'],
+                ':deduction_type' => $input['deductionType'],
+                ':description' => $input['description'] ?? ''
             ]);
             
             if ($result) {
                 echo json_encode(['message' => 'Salary deduction updated successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to update salary deduction']);
+                throw new Exception('Failed to update salary deduction');
             }
             break;
             
         case 'DELETE':
             // Delete salary deduction
-            $id = ltrim($path_info, '/');
+            $input = json_decode(file_get_contents('php://input'), true);
             
-            $query = "DELETE FROM salary_deductions WHERE id = ?";
+            if (!$input || !isset($input['id'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing deduction ID']);
+                exit();
+            }
+            
+            $query = "DELETE FROM salary_deductions WHERE id = :id";
             $stmt = $db->prepare($query);
-            $result = $stmt->execute([$id]);
+            $result = $stmt->execute([':id' => $input['id']]);
             
             if ($result) {
                 echo json_encode(['message' => 'Salary deduction deleted successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to delete salary deduction']);
+                throw new Exception('Failed to delete salary deduction');
             }
             break;
+            
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
     }
+    
 } catch(Exception $e) {
+    error_log("Salary Deductions API Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Server error occurred']);
 }
 ?>

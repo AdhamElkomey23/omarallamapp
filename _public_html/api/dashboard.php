@@ -13,6 +13,12 @@ require_once '../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit();
+}
+
 try {
     // Get total income from sales
     $salesQuery = "SELECT COALESCE(SUM(total_amount), 0) as total_income FROM sales";
@@ -50,30 +56,30 @@ try {
     $monthlySalesStmt->execute();
     $monthlySales = $monthlySalesStmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format recent sales for frontend
+    // Format recent sales for frontend (convert to camelCase)
     $formattedRecentSales = array_map(function($sale) {
         return [
             'id' => (int)$sale['id'],
-            'customerName' => $sale['customer_name'],
-            'product' => $sale['product'],
+            'customerName' => $sale['customer_name'] ?? $sale['client_name'] ?? '',
+            'product' => $sale['product'] ?? $sale['product_name'] ?? '',
             'quantity' => (float)$sale['quantity'],
-            'unitPrice' => (float)$sale['unit_price'],
+            'unitPrice' => (float)($sale['unit_price'] ?? ($sale['total_amount'] / $sale['quantity'])),
             'totalAmount' => (float)$sale['total_amount'],
             'saleDate' => $sale['sale_date'],
-            'notes' => $sale['notes'],
+            'notes' => $sale['notes'] ?? '',
             'createdAt' => $sale['created_at']
         ];
     }, $recentSales);
     
-    // Format recent expenses for frontend
+    // Format recent expenses for frontend (convert to camelCase)
     $formattedRecentExpenses = array_map(function($expense) {
         return [
             'id' => (int)$expense['id'],
-            'description' => $expense['description'],
+            'description' => $expense['description'] ?? $expense['name'] ?? '',
             'category' => $expense['category'],
             'amount' => (float)$expense['amount'],
             'expenseDate' => $expense['expense_date'],
-            'notes' => $expense['notes'],
+            'notes' => $expense['notes'] ?? '',
             'createdAt' => $expense['created_at']
         ];
     }, $recentExpenses);
@@ -98,7 +104,8 @@ try {
     echo json_encode($response);
     
 } catch(Exception $e) {
+    error_log("Dashboard API Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Server error occurred']);
 }
 ?>

@@ -13,104 +13,127 @@ require_once '../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit();
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
-$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
 
 try {
     switch($method) {
         case 'GET':
             // Get all expenses
-            $query = "SELECT * FROM expenses ORDER BY expense_date DESC, created_at DESC";
+            $query = "SELECT * FROM expenses ORDER BY created_at DESC";
             $stmt = $db->prepare($query);
             $stmt->execute();
             $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            $result = array_map(function($expense) {
+            // Convert to camelCase for frontend
+            $formattedExpenses = array_map(function($expense) {
                 return [
                     'id' => (int)$expense['id'],
                     'name' => $expense['name'],
-                    'category' => $expense['category'],
                     'amount' => (float)$expense['amount'],
+                    'category' => $expense['category'],
                     'expenseDate' => $expense['expense_date'],
                     'createdAt' => $expense['created_at']
                 ];
             }, $expenses);
             
-            echo json_encode($result);
+            echo json_encode($formattedExpenses);
             break;
             
         case 'POST':
-            // Create new expense
-            $data = json_decode(file_get_contents('php://input'), true);
+            // Add new expense
+            $input = json_decode(file_get_contents('php://input'), true);
             
-            $query = "INSERT INTO expenses (description, category, amount, expense_date, notes) 
-                     VALUES (?, ?, ?, ?, ?)";
+            if (!$input || !isset($input['name']) || !isset($input['amount']) || !isset($input['category'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing required fields']);
+                exit();
+            }
+            
+            $query = "INSERT INTO expenses (name, amount, category, expense_date) 
+                     VALUES (:name, :amount, :category, :expense_date)";
+            
             $stmt = $db->prepare($query);
-            
             $result = $stmt->execute([
-                $data['description'],
-                $data['category'],
-                $data['amount'],
-                $data['expenseDate'],
-                $data['notes'] ?? ''
+                ':name' => $input['name'],
+                ':amount' => $input['amount'],
+                ':category' => $input['category'],
+                ':expense_date' => $input['expenseDate'] ?? date('Y-m-d')
             ]);
             
             if ($result) {
-                $id = $db->lastInsertId();
-                $response = array_merge($data, ['id' => (int)$id, 'createdAt' => date('Y-m-d H:i:s')]);
-                http_response_code(201);
-                echo json_encode($response);
+                $newId = $db->lastInsertId();
+                echo json_encode(['id' => $newId, 'message' => 'Expense added successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to create expense']);
+                throw new Exception('Failed to add expense');
             }
             break;
             
         case 'PUT':
             // Update expense
-            $id = ltrim($path_info, '/');
-            $data = json_decode(file_get_contents('php://input'), true);
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!$input || !isset($input['id'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing expense ID']);
+                exit();
+            }
             
             $query = "UPDATE expenses SET 
-                     description = ?, category = ?, amount = ?, 
-                     expense_date = ?, notes = ? WHERE id = ?";
-            $stmt = $db->prepare($query);
+                     name = :name, amount = :amount, category = :category, expense_date = :expense_date
+                     WHERE id = :id";
             
+            $stmt = $db->prepare($query);
             $result = $stmt->execute([
-                $data['description'],
-                $data['category'],
-                $data['amount'],
-                $data['expenseDate'],
-                $data['notes'] ?? '',
-                $id
+                ':id' => $input['id'],
+                ':name' => $input['name'],
+                ':amount' => $input['amount'],
+                ':category' => $input['category'],
+                ':expense_date' => $input['expenseDate']
             ]);
             
             if ($result) {
                 echo json_encode(['message' => 'Expense updated successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to update expense']);
+                throw new Exception('Failed to update expense');
             }
             break;
             
         case 'DELETE':
             // Delete expense
-            $id = ltrim($path_info, '/');
+            $input = json_decode(file_get_contents('php://input'), true);
             
-            $query = "DELETE FROM expenses WHERE id = ?";
+            if (!$input || !isset($input['id'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing expense ID']);
+                exit();
+            }
+            
+            $query = "DELETE FROM expenses WHERE id = :id";
             $stmt = $db->prepare($query);
-            $result = $stmt->execute([$id]);
+            $result = $stmt->execute([':id' => $input['id']]);
             
             if ($result) {
                 echo json_encode(['message' => 'Expense deleted successfully']);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to delete expense']);
+                throw new Exception('Failed to delete expense');
             }
             break;
+            
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
     }
+    
 } catch(Exception $e) {
+    error_log("Expenses API Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Server error occurred']);
 }
 ?>

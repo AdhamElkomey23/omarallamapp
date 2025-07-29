@@ -1,16 +1,16 @@
 // Production configuration for deployment
 export const PRODUCTION_CONFIG = {
-  // Replace 'yourdomain.com' with your actual Hostinger domain
-  API_BASE_URL: 'https://yourdomain.com/api',
+  // Using relative URLs for better compatibility
+  API_BASE_URL: '/api',
   
   // Environment detection
   IS_PRODUCTION: import.meta.env.PROD,
   IS_DEVELOPMENT: import.meta.env.DEV,
   
-  // Fallback to development URL if in dev mode
+  // Use relative URLs in production, localhost in development
   getApiUrl: () => {
     if (import.meta.env.PROD) {
-      return 'https://yourdomain.com/api';
+      return '/api';
     }
     return 'http://localhost:5000/api';
   }
