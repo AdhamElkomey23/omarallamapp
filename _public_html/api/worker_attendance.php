@@ -8,10 +8,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-require_once '../config/database.php';
-
-$database = new Database();
-$db = $database->getConnection();
+// Direct database connection with error handling
+try {
+    $host = 'localhost';
+    $db_name = 'u179479756_newomar';
+    $username = 'u179479756_newomarapp';
+    $password = '#sS9ei3lK+';
+    
+    $db = new PDO(
+        "mysql:host=$host;dbname=$db_name;charset=utf8mb4",
+        $username,
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]
+    );
+} catch(PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
+    exit();
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
