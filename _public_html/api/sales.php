@@ -42,16 +42,17 @@ try {
             $stmt->execute();
             $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Convert to camelCase for frontend
+            // Convert to camelCase for frontend, matching actual database schema
             $formattedSales = array_map(function($sale) {
                 return [
                     'id' => (int)$sale['id'],
-                    'productName' => $sale['product_name'],
+                    'productName' => $sale['product'],
                     'quantity' => (int)$sale['quantity'],
+                    'unitPrice' => (float)$sale['unit_price'],
                     'totalAmount' => (float)$sale['total_amount'],
                     'saleDate' => $sale['sale_date'],
-                    'clientName' => $sale['client_name'],
-                    'clientContact' => $sale['client_contact'] ?? '',
+                    'clientName' => $sale['customer_name'],
+                    'clientContact' => $sale['notes'] ?? '',
                     'createdAt' => $sale['created_at']
                 ];
             }, $sales);
@@ -102,17 +103,42 @@ try {
             
             // Insert with proper error handling
             try {
-                $query = "INSERT INTO sales (product_name, quantity, total_amount, sale_date, client_name, client_contact) 
-                         VALUES (?, ?, ?, ?, ?, ?)";
+                // First check if sales table exists and create if not
+                $checkTable = "SHOW TABLES LIKE 'sales'";
+                $stmt = $db->prepare($checkTable);
+                $stmt->execute();
+                
+                if ($stmt->rowCount() == 0) {
+                    // Create sales table if it doesn't exist matching the schema
+                    $createTable = "CREATE TABLE sales (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        customer_name VARCHAR(255) NOT NULL,
+                        product VARCHAR(255) NOT NULL,
+                        quantity DECIMAL(10,2) NOT NULL,
+                        unit_price DECIMAL(10,2) NOT NULL,
+                        total_amount DECIMAL(12,2) NOT NULL,
+                        sale_date DATE NOT NULL,
+                        notes TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )";
+                    $db->exec($createTable);
+                }
+                
+                // Calculate unit price from total amount and quantity
+                $unitPrice = (float)$input['totalAmount'] / (int)$input['quantity'];
+                
+                $query = "INSERT INTO sales (customer_name, product, quantity, unit_price, total_amount, sale_date, notes) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?)";
                 
                 $stmt = $db->prepare($query);
                 $result = $stmt->execute([
-                    $input['productName'],
+                    $clientName, // customer_name
+                    $input['productName'], // product
                     (int)$input['quantity'],
+                    $unitPrice, // calculated unit_price
                     (float)$input['totalAmount'],
                     $input['saleDate'] ?? date('Y-m-d'),
-                    $clientName, // Use the resolved client name
-                    $input['clientContact'] ?? ''
+                    $input['clientContact'] ?? '' // notes field for contact info
                 ]);
                 
                 if ($result) {

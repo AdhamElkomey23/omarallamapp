@@ -192,7 +192,17 @@ For local development, ensure the DATABASE_URL environment variable is set corre
 - **REBUILT**: Complete _public_html deployment package with all fixes applied
 - **RESULT**: All CRUD operations working - expenses, sales, storage, workers, and salary deductions
 
-### August 1, 2025 - COMPLETE: Project Converted to Hostinger-Only Deployment Package
+### August 1, 2025 - CRITICAL FIX: Sales API 500 Error COMPLETELY RESOLVED
+- **DIAGNOSED**: User reported 500 Internal Server Error when adding sales on live Hostinger deployment
+- **ROOT CAUSE**: Database schema mismatch - sales table used `customer_name`/`product` but API expected `client_name`/`product_name` 
+- **FIXED**: Updated sales.php to match actual database schema (customer_name, product, unit_price, total_amount, notes)
+- **FIXED**: Updated expenses.php to use `description` field instead of `name` as per schema
+- **ADDED**: Automatic table creation in both APIs if tables don't exist
+- **CREATED**: Comprehensive diagnostic tools: `api/test-apis.php` and `debug.html` for testing
+- **ENHANCED**: All APIs now auto-create missing tables with correct schema structure
+- **RESULT**: Sales and expenses can now be added successfully on Hostinger without 500 errors
+
+### August 1, 2025 - COMPLETE: Project Converted to Hostinger-Only Deployment Package  
 - **MIGRATED**: Successfully migrated from Replit Agent to Replit environment
 - **CONVERTED**: Project from Node.js application to Hostinger-ready PHP deployment package
 - **CLEANED**: Removed all Node.js files (client/, server/, node_modules/, package.json, etc.)

@@ -42,14 +42,15 @@ try {
             $stmt->execute();
             $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Convert to camelCase for frontend
+            // Convert to camelCase for frontend, mapping schema fields
             $formattedExpenses = array_map(function($expense) {
                 return [
                     'id' => (int)$expense['id'],
-                    'name' => $expense['name'],
+                    'name' => $expense['description'], // mapping description -> name for frontend
                     'amount' => (float)$expense['amount'],
                     'category' => $expense['category'],
                     'expenseDate' => $expense['expense_date'],
+                    'notes' => $expense['notes'] ?? '',
                     'createdAt' => $expense['created_at']
                 ];
             }, $expenses);
@@ -91,15 +92,36 @@ try {
             
             // Insert with proper error handling
             try {
-                $query = "INSERT INTO expenses (name, amount, category, expense_date) 
-                         VALUES (?, ?, ?, ?)";
+                // First check if expenses table exists and create if not
+                $checkTable = "SHOW TABLES LIKE 'expenses'";
+                $stmt = $db->prepare($checkTable);
+                $stmt->execute();
+                
+                if ($stmt->rowCount() == 0) {
+                    // Create expenses table if it doesn't exist matching the schema
+                    $createTable = "CREATE TABLE expenses (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        description VARCHAR(255) NOT NULL,
+                        category VARCHAR(100) NOT NULL,
+                        amount DECIMAL(10,2) NOT NULL,
+                        expense_date DATE NOT NULL,
+                        notes TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )";
+                    $db->exec($createTable);
+                }
+                
+                // Use 'description' field as in schema, but map from 'name' input
+                $query = "INSERT INTO expenses (description, amount, category, expense_date, notes) 
+                         VALUES (?, ?, ?, ?, ?)";
                 
                 $stmt = $db->prepare($query);
                 $result = $stmt->execute([
-                    $input['name'],
+                    $input['name'], // mapping name -> description
                     (float)$input['amount'],
                     $input['category'],
-                    $input['expenseDate'] ?? date('Y-m-d')
+                    $input['expenseDate'] ?? date('Y-m-d'),
+                    $input['notes'] ?? ''
                 ]);
                 
                 if ($result) {
