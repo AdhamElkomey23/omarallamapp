@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -26,8 +30,9 @@ try {
         ]
     );
 } catch(PDOException $e) {
+    error_log("Sales API Connection Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Database connection failed']);
     exit();
 }
 
@@ -60,33 +65,78 @@ try {
             break;
             
         case 'POST':
-            // Add new sale
-            $input = json_decode(file_get_contents('php://input'), true);
+            // Add new sale with comprehensive validation
+            $rawInput = file_get_contents('php://input');
+            error_log("Sales POST raw input: " . $rawInput);
             
-            if (!$input || !isset($input['productName']) || !isset($input['quantity']) || !isset($input['totalAmount']) || !isset($input['clientName'])) {
+            if (empty($rawInput)) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Missing required fields']);
+                echo json_encode(['error' => 'No input data received']);
                 exit();
             }
             
-            $query = "INSERT INTO sales (product_name, quantity, total_amount, sale_date, client_name, client_contact) 
-                     VALUES (:product_name, :quantity, :total_amount, :sale_date, :client_name, :client_contact)";
+            $input = json_decode($rawInput, true);
             
-            $stmt = $db->prepare($query);
-            $result = $stmt->execute([
-                ':product_name' => $input['productName'],
-                ':quantity' => $input['quantity'],
-                ':total_amount' => $input['totalAmount'],
-                ':sale_date' => $input['saleDate'] ?? date('Y-m-d'),
-                ':client_name' => $input['clientName'],
-                ':client_contact' => $input['clientContact'] ?? ''
-            ]);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log("Sales POST JSON error: " . json_last_error_msg());
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid JSON data']);
+                exit();
+            }
             
-            if ($result) {
-                $newId = $db->lastInsertId();
-                echo json_encode(['id' => $newId, 'message' => 'Sale added successfully']);
-            } else {
-                throw new Exception('Failed to add sale');
+            // Validate required fields
+            $required = ['productName', 'quantity', 'totalAmount', 'clientName'];
+            foreach ($required as $field) {
+                if (!isset($input[$field]) || (is_string($input[$field]) && trim($input[$field]) === '')) {
+                    http_response_code(400);
+                    echo json_encode(['error' => "Missing required field: $field"]);
+                    exit();
+                }
+            }
+            
+            // Validate numeric fields
+            if (!is_numeric($input['quantity']) || $input['quantity'] <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Quantity must be a positive number']);
+                exit();
+            }
+            
+            if (!is_numeric($input['totalAmount']) || $input['totalAmount'] <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Total amount must be a positive number']);
+                exit();
+            }
+            
+            // Insert with proper error handling
+            try {
+                $query = "INSERT INTO sales (product_name, quantity, total_amount, sale_date, client_name, client_contact) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
+                
+                $stmt = $db->prepare($query);
+                $result = $stmt->execute([
+                    $input['productName'],
+                    (int)$input['quantity'],
+                    (float)$input['totalAmount'],
+                    $input['saleDate'] ?? date('Y-m-d'),
+                    $input['clientName'],
+                    $input['clientContact'] ?? ''
+                ]);
+                
+                if ($result) {
+                    $newId = $db->lastInsertId();
+                    echo json_encode([
+                        'success' => true,
+                        'id' => (int)$newId,
+                        'message' => 'Sale added successfully'
+                    ]);
+                } else {
+                    throw new Exception('Insert operation failed');
+                }
+            } catch (PDOException $e) {
+                error_log("Sales POST database error: " . $e->getMessage());
+                http_response_code(500);
+                echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+                exit();
             }
             break;
             
