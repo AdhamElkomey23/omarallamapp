@@ -1,15 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
     exit(0);
 }
 
@@ -31,9 +26,8 @@ try {
         ]
     );
 } catch(PDOException $e) {
-    error_log("Expenses API Connection Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
+    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
     exit();
 }
 
@@ -64,22 +58,12 @@ try {
             break;
             
         case 'POST':
-            // Add new expense with comprehensive validation
-            $rawInput = file_get_contents('php://input');
-            error_log("Expenses POST raw input: " . $rawInput);
+            // Add new expense
+            $input = json_decode(file_get_contents('php://input'), true);
             
-            if (empty($rawInput)) {
+            if (!$input) {
                 http_response_code(400);
                 echo json_encode(['error' => 'No input data received']);
-                exit();
-            }
-            
-            $input = json_decode($rawInput, true);
-            
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log("Expenses POST JSON error: " . json_last_error_msg());
-                http_response_code(400);
-                echo json_encode(['error' => 'Invalid JSON data']);
                 exit();
             }
             
@@ -129,7 +113,6 @@ try {
                     throw new Exception('Insert operation failed');
                 }
             } catch (PDOException $e) {
-                error_log("Expenses POST database error: " . $e->getMessage());
                 http_response_code(500);
                 echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
                 exit();
