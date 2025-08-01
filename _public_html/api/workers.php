@@ -72,6 +72,28 @@ try {
                 exit();
             }
             
+            // First check if workers table exists and create if not
+            $checkTable = "SHOW TABLES LIKE 'workers'";
+            $stmt = $db->prepare($checkTable);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() == 0) {
+                // Create workers table if it doesn't exist
+                $createTable = "CREATE TABLE workers (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    role VARCHAR(100) NOT NULL,
+                    department VARCHAR(100) NOT NULL,
+                    salary DECIMAL(10,2) NOT NULL,
+                    hire_date DATE NOT NULL,
+                    email VARCHAR(255),
+                    phone VARCHAR(50),
+                    status ENUM('active', 'inactive') DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+                $db->exec($createTable);
+            }
+            
             $query = "INSERT INTO workers (name, role, department, salary, hire_date, email, phone, status) 
                      VALUES (:name, :role, :department, :salary, :hire_date, :email, :phone, :status)";
             
@@ -131,7 +153,21 @@ try {
             
         case 'DELETE':
             // Delete worker
-            $input = json_decode(file_get_contents('php://input'), true);
+            $rawInput = file_get_contents('php://input');
+            
+            if (empty($rawInput)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'No input data received']);
+                exit();
+            }
+            
+            $input = json_decode($rawInput, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid JSON data']);
+                exit();
+            }
             
             if (!$input || !isset($input['id'])) {
                 http_response_code(400);
@@ -139,12 +175,36 @@ try {
                 exit();
             }
             
+            // Validate worker ID is numeric
+            if (!is_numeric($input['id'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Worker ID must be numeric']);
+                exit();
+            }
+            
+            // Check if worker exists before deleting
+            $checkQuery = "SELECT name FROM workers WHERE id = :id";
+            $checkStmt = $db->prepare($checkQuery);
+            $checkStmt->execute([':id' => (int)$input['id']]);
+            $worker = $checkStmt->fetch();
+            
+            if (!$worker) {
+                http_response_code(404);
+                echo json_encode(['error' => 'Worker not found']);
+                exit();
+            }
+            
+            // Delete the worker
             $query = "DELETE FROM workers WHERE id = :id";
             $stmt = $db->prepare($query);
-            $result = $stmt->execute([':id' => $input['id']]);
+            $result = $stmt->execute([':id' => (int)$input['id']]);
             
             if ($result) {
-                echo json_encode(['message' => 'Worker deleted successfully']);
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Worker deleted successfully',
+                    'deletedWorker' => $worker['name']
+                ]);
             } else {
                 throw new Exception('Failed to delete worker');
             }
