@@ -42,10 +42,10 @@ export default function Storage() {
 
   const updateItemMutation = useMutation({
     mutationFn: ({ id, ...values }: StorageItemFormValues & { id: number }) =>
-      fetch(`/api/storage/${id}`, {
+      fetch("/api/storage", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ id, ...values }),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/storage"] });
@@ -55,8 +55,10 @@ export default function Storage() {
 
   const deleteItemMutation = useMutation({
     mutationFn: (id: number) =>
-      fetch(`/api/storage/${id}`, {
+      fetch("/api/storage", {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/storage"] });

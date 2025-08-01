@@ -81,11 +81,17 @@ export default function Sales() {
 
   const addSaleMutation = useMutation({
     mutationFn: async (values: SaleFormValues) => {
+      // Convert Date to string format for PHP API
+      const payload = {
+        ...values,
+        saleDate: format(values.saleDate, 'yyyy-MM-dd')
+      };
+      
       // First create the sale record
       const response = await fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error('Failed to add sale');
       
@@ -134,11 +140,13 @@ export default function Sales() {
       });
 
       // Then delete the sale record
-      const response = await fetch(`/api/sales/${sale.id}`, {
+      const response = await fetch('/api/sales', {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: sale.id }),
       });
       if (!response.ok) throw new Error('Failed to delete sale');
-      return response.status === 204 ? null : response.json();
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/sales'] });

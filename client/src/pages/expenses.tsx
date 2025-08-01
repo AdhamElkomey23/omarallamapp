@@ -66,10 +66,16 @@ export default function Expenses() {
 
   const addExpenseMutation = useMutation({
     mutationFn: async (values: ExpenseFormValues) => {
+      // Convert Date to string format for PHP API
+      const payload = {
+        ...values,
+        expenseDate: format(values.expenseDate, 'yyyy-MM-dd')
+      };
+      
       const response = await fetch('/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error('Failed to add expense');
       return response.json();
@@ -94,11 +100,13 @@ export default function Expenses() {
 
   const deleteExpenseMutation = useMutation({
     mutationFn: async (expenseId: number) => {
-      const response = await fetch(`/api/expenses/${expenseId}`, {
+      const response = await fetch('/api/expenses', {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: expenseId }),
       });
       if (!response.ok) throw new Error('Failed to delete expense');
-      return response.status === 204 ? null : response.json();
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/expenses'] });
