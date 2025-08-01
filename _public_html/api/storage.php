@@ -126,7 +126,21 @@ try {
             
         case 'DELETE':
             // Delete storage item
-            $input = json_decode(file_get_contents('php://input'), true);
+            $rawInput = file_get_contents('php://input');
+            
+            if (empty($rawInput)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'No input data received']);
+                exit();
+            }
+            
+            $input = json_decode($rawInput, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid JSON data']);
+                exit();
+            }
             
             if (!$input || !isset($input['id'])) {
                 http_response_code(400);
@@ -134,14 +148,26 @@ try {
                 exit();
             }
             
-            $query = "DELETE FROM storage_items WHERE id = :id";
-            $stmt = $db->prepare($query);
-            $result = $stmt->execute([':id' => $input['id']]);
+            $itemId = $input['id'];
             
-            if ($result) {
-                echo json_encode(['message' => 'Storage item deleted successfully']);
+            // Check if record exists
+            $checkStmt = $db->prepare("SELECT id FROM storage_items WHERE id = ?");
+            $checkStmt->execute([$itemId]);
+            
+            if ($checkStmt->rowCount() == 0) {
+                http_response_code(404);
+                echo json_encode(['error' => 'Storage item not found']);
+                exit();
+            }
+            
+            // Perform delete
+            $stmt = $db->prepare("DELETE FROM storage_items WHERE id = ?");
+            $result = $stmt->execute([$itemId]);
+            
+            if ($result && $stmt->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Storage item deleted successfully']);
             } else {
-                throw new Exception('Failed to delete storage item');
+                throw new Exception('Failed to delete storage item - no rows affected');
             }
             break;
             

@@ -118,7 +118,21 @@ try {
             
         case 'DELETE':
             // Delete expense
-            $input = json_decode(file_get_contents('php://input'), true);
+            $rawInput = file_get_contents('php://input');
+            
+            if (empty($rawInput)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'No input data received']);
+                exit();
+            }
+            
+            $input = json_decode($rawInput, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid JSON data']);
+                exit();
+            }
             
             if (!$input || !isset($input['id'])) {
                 http_response_code(400);
@@ -126,14 +140,26 @@ try {
                 exit();
             }
             
-            $query = "DELETE FROM expenses WHERE id = :id";
-            $stmt = $db->prepare($query);
-            $result = $stmt->execute([':id' => $input['id']]);
+            $expenseId = $input['id'];
             
-            if ($result) {
-                echo json_encode(['message' => 'Expense deleted successfully']);
+            // Check if record exists
+            $checkStmt = $db->prepare("SELECT id FROM expenses WHERE id = ?");
+            $checkStmt->execute([$expenseId]);
+            
+            if ($checkStmt->rowCount() == 0) {
+                http_response_code(404);
+                echo json_encode(['error' => 'Expense not found']);
+                exit();
+            }
+            
+            // Perform delete
+            $stmt = $db->prepare("DELETE FROM expenses WHERE id = ?");
+            $result = $stmt->execute([$expenseId]);
+            
+            if ($result && $stmt->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Expense deleted successfully']);
             } else {
-                throw new Exception('Failed to delete expense');
+                throw new Exception('Failed to delete expense - no rows affected');
             }
             break;
             
