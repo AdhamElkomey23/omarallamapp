@@ -84,14 +84,22 @@ try {
                 exit();
             }
             
-            // Validate required fields
-            $required = ['productName', 'quantity', 'totalAmount', 'clientName'];
+            // Validate required fields - support both frontend field names
+            $required = ['productName', 'quantity', 'totalAmount'];
             foreach ($required as $field) {
                 if (!isset($input[$field]) || (is_string($input[$field]) && trim($input[$field]) === '')) {
                     http_response_code(400);
                     echo json_encode(['error' => "Missing required field: $field"]);
                     exit();
                 }
+            }
+            
+            // Check for client name (support both clientName and buyerName for compatibility)
+            $clientName = $input['clientName'] ?? $input['buyerName'] ?? '';
+            if (empty(trim($clientName))) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Client name is required']);
+                exit();
             }
             
             // Validate numeric fields
@@ -118,7 +126,7 @@ try {
                     (int)$input['quantity'],
                     (float)$input['totalAmount'],
                     $input['saleDate'] ?? date('Y-m-d'),
-                    $input['clientName'],
+                    $clientName, // Use the resolved client name
                     $input['clientContact'] ?? ''
                 ]);
                 

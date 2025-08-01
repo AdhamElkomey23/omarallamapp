@@ -177,7 +177,20 @@ For local development, ensure the DATABASE_URL environment variable is set corre
 - **UPDATED**: storage.php, activity-logs.php, sales.php, expenses.php field mapping
 - **RESULT**: Frontend now displays all stored database data immediately
 
-### August 1, 2025 - COMPLETE: Replit Migration + All Issues Fixed
+### August 1, 2025 - CRITICAL FIX: Frontend-API Communication Issues RESOLVED
+- **DIAGNOSED**: Expenses and Sales pages couldn't add new records despite working APIs
+- **ROOT CAUSE**: Frontend DELETE requests used URL parameters instead of request body format
+- **ROOT CAUSE**: Date formatting mismatch between frontend (Date objects) and PHP APIs (string format)
+- **ROOT CAUSE**: Field name inconsistencies between frontend data and API validation
+- **FIXED**: All DELETE operations now use proper request body format with JSON
+- **FIXED**: Date formatting to PHP-compatible yyyy-MM-dd string format for all operations
+- **FIXED**: Sales API to accept both clientName and buyerName for compatibility
+- **FIXED**: Expenses API validation to handle proper data types and empty strings
+- **TESTED**: Both APIs now return HTTP 201 success with proper JSON responses
+- **REBUILT**: Frontend with all fixes and updated _public_html deployment package
+- **RESULT**: Complete working CRUD operations for expenses, sales, storage, and workers
+
+### August 1, 2025 - COMPLETE: Replit Migration + All Issues Fixed  
 - **COMPLETED**: Full migration from Replit Agent to Replit environment
 - **DIAGNOSED**: All reported functionality issues in _public_html deployment
 - **FIXED**: Workers page salary deduction functionality - complete CRUD operations

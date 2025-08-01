@@ -85,9 +85,14 @@ try {
             // Validate required fields
             $required = ['name', 'amount', 'category'];
             foreach ($required as $field) {
-                if (!isset($input[$field]) || (is_string($input[$field]) && trim($input[$field]) === '')) {
+                if (!isset($input[$field])) {
                     http_response_code(400);
                     echo json_encode(['error' => "Missing required field: $field"]);
+                    exit();
+                }
+                if (is_string($input[$field]) && trim($input[$field]) === '') {
+                    http_response_code(400);
+                    echo json_encode(['error' => "Field $field cannot be empty"]);
                     exit();
                 }
             }
