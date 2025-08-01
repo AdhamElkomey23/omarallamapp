@@ -5,14 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx server/index.ts"
+    "dev": "tsx server/index.ts",
+    "db:push": "drizzle-kit push"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.4",
+    "drizzle-zod": "^0.8.2",
     "express": "^5.1.0",
-    "tsx": "^4.20.3"
+    "postgres": "^3.4.7",
+    "tsx": "^4.20.3",
+    "zod": "^3.25.76"
   },
   "type": "module"
 }
