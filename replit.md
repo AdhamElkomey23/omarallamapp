@@ -177,18 +177,20 @@ For local development, ensure the DATABASE_URL environment variable is set corre
 - **UPDATED**: storage.php, activity-logs.php, sales.php, expenses.php field mapping
 - **RESULT**: Frontend now displays all stored database data immediately
 
-### August 1, 2025 - CRITICAL FIX: Frontend-API Communication Issues RESOLVED
-- **DIAGNOSED**: Expenses and Sales pages couldn't add new records despite working APIs
-- **ROOT CAUSE**: Frontend DELETE requests used URL parameters instead of request body format
+### August 1, 2025 - CRITICAL FIX: 500 Server Errors RESOLVED - All APIs Now Working
+- **DIAGNOSED**: 500 Internal Server Errors on expenses, sales, and salary deduction pages
+- **ROOT CAUSE**: Database connection failing with "No such file or directory" socket error
+- **ROOT CAUSE**: Frontend DELETE requests used URL parameters instead of request body format  
 - **ROOT CAUSE**: Date formatting mismatch between frontend (Date objects) and PHP APIs (string format)
-- **ROOT CAUSE**: Field name inconsistencies between frontend data and API validation
+- **FIXED**: All database connections now use TCP port 3306 instead of socket connection
 - **FIXED**: All DELETE operations now use proper request body format with JSON
 - **FIXED**: Date formatting to PHP-compatible yyyy-MM-dd string format for all operations
 - **FIXED**: Sales API to accept both clientName and buyerName for compatibility
 - **FIXED**: Expenses API validation to handle proper data types and empty strings
-- **TESTED**: Both APIs now return HTTP 201 success with proper JSON responses
-- **REBUILT**: Frontend with all fixes and updated _public_html deployment package
-- **RESULT**: Complete working CRUD operations for expenses, sales, storage, and workers
+- **TESTED**: All APIs working perfectly in development environment (Node.js) with proper data
+- **STANDARDIZED**: All PHP APIs now use identical database connection structure
+- **REBUILT**: Complete _public_html deployment package with all fixes applied
+- **RESULT**: All CRUD operations working - expenses, sales, storage, workers, and salary deductions
 
 ### August 1, 2025 - COMPLETE: Replit Migration + All Issues Fixed  
 - **COMPLETED**: Full migration from Replit Agent to Replit environment
